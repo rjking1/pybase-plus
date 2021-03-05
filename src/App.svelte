@@ -9,8 +9,9 @@
 	let viewName = "News Email"
 
 	let sender = "heather@artspace7.com.au"
-	let subject = "Test"
-	let contents = "Something to say"
+	let subject = "Enter subject line here"
+	let contents = "Write or paste email body text here"
+	let attachments = "https://artspace7.com.au/pybase/hut/news/2021-01.docx"
 	let encrypted = ""
 
 	let result = null
@@ -39,7 +40,12 @@
 					To : row["EMAIL"],
 					From : sender,
 					Subject : subject,
-					Body : contents
+					Body : contents,
+					Attachments : [
+						{
+							name : "Newsletter",
+							path : attachments
+						}]
 				}).then(
 					message => console.log(message)
 				); 
@@ -65,6 +71,7 @@
 <label>From</label><input bind:value={sender} />
 <label>Subject</label><input bind:value={subject} />
 <label>Contents</label><textarea bind:value={contents} />
+<label>Attachment</label><input bind:value={attachments} />
 <br>
 <button type="submit" on:click={doSend}>
 	Send Emails
