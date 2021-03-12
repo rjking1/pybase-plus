@@ -7,7 +7,7 @@
 	import { onMount } from 'svelte'
 
 	let db = 'art25285_hut'
-	let sql = "select * from members where NAME = 'Richard'"
+	let sql = "select * from members where NAME = 'Richard' and News_Email = 'Y'"
 	let viewName = "News Email"
 
 	let sender = "heather@artspace7.com.au"
@@ -47,11 +47,12 @@
 						{
 							name : "newsletter.pdf",
 							path : attachments
-						}]
+						}
+					]
 		}
-		let contents = template_contents
-		contents.replace("!name", row["NAME"])
 		result.forEach(row => {
+			let contents = template_contents.replace("!name", row["NAME"])
+
 			if(row["EMAIL"]) {			
 				Email.send({
 					Host : "mail.artspace7.com.au",
@@ -94,7 +95,7 @@
 <p><b>Email</b></p>
 <label>From</label><input bind:value={sender} />
 <label>Subject</label><input bind:value={subject} />
-<label>Contents</label><textarea bind:value={contents} />
+<label>Contents</label><textarea bind:value={template_contents} />
 <label>Attachment</label><input bind:value={attachments} />
 <br>
 
