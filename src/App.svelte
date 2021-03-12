@@ -4,17 +4,28 @@
 <script>
     import { doFetch } from './common.js'
 
+	import { onMount } from 'svelte'
+
 	let db = 'art25285_hut'
-	let sql = "select * from members where LASTNAME = 'King'" 
+	let sql = "select * from members where NAME = 'Richard'"
 	let viewName = "News Email"
 
 	let sender = "heather@artspace7.com.au"
 	let subject = "Enter subject line here"
-	let contents = "Write or paste email body text here"
-	let attachments = "https://artspace7.com.au/pybase/hut/news/2021-01.docx"
+	let template_contents = "<html>\nHi !name\nPASTE HERE\n...<a href=\"www.artspace7.com.au/pybase/plus/hut/news/test.pdf\">Newsletter.pdf</a>\n</html>"
+	let attachments = "https://artspace7.com.au/pybase/hut/news/test.pdf"
 	let encrypted = ""
+	let atts = undefined
 
 	let result = null
+
+	let views = []
+  	let templates = []
+
+  	onMount(async () => {
+    	views = await doFetch(db, "select id, name from py_views where incl_in_index='Y' order by name")
+    	templates = await doFetch(db, 'select id, name from py_templates order by name')
+  	})
 	
 	//fetch('https://www.artspace7.com.au/dsql/json_helper_get.php?db=art25285_rides2&sql=select%20*%20from%20bikes')
 
@@ -31,6 +42,15 @@
 	}
 
 	async function doSend() {
+		if (attachments != '') {
+			atts = [
+						{
+							name : "newsletter.pdf",
+							path : attachments
+						}]
+		}
+		let contents = template_contents
+		contents.replace("!name", row["NAME"])
 		result.forEach(row => {
 			if(row["EMAIL"]) {			
 				Email.send({
@@ -41,11 +61,7 @@
 					From : sender,
 					Subject : subject,
 					Body : contents,
-					Attachments : [
-						{
-							name : "Newsletter",
-							path : attachments
-						}]
+					Attachments : atts
 				}).then(
 					message => console.log(message)
 				); 
@@ -63,7 +79,15 @@
 
 <label>db</label><input bind:value={db} />
 <label>sql</label><input bind:value={sql} />
-<label>viewName</label><input bind:value={viewName} />
+
+<label>View</label>
+<select id="id_view" bind:value={viewName}>
+  {#each views as view}
+    <option value={view.name}>{view.name}</option>
+  {/each}
+</select>
+
+<!-- <label>viewName</label><input bind:value={viewName} /> -->
 <br>
 <button type="submit" on:click={doQuery}>SQL Query</button>
 <button type="submit" on:click={doView}>View Query</button>
@@ -73,9 +97,6 @@
 <label>Contents</label><textarea bind:value={contents} />
 <label>Attachment</label><input bind:value={attachments} />
 <br>
-<button type="submit" on:click={doSend}>
-	Send Emails
-</button>
 
 <pre>
 {#if result}
@@ -88,3 +109,7 @@
 </ul> 
 {/if}
 </pre>
+
+<button type="submit" on:click={doSend}>
+	Send Emails
+</button>
