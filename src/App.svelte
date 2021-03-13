@@ -9,6 +9,7 @@
 	let db = 'art25285_hut'
 	let sql = "select * from members where NAME = 'Richard' and News_Email = 'Y'"
 	let viewName = "News Email"
+	let templateName = 'Welcome email'
 
 	let sender = "heather@artspace7.com.au"
 	let subject = "Enter subject line here"
@@ -24,21 +25,27 @@
 
   	onMount(async () => {
     	views = await doFetch(db, "select id, name from py_views where incl_in_index='Y' order by name")
-    	templates = await doFetch(db, 'select id, name from py_templates order by name')
+    	templates = await doFetch(db, "select id, name from py_templates where class='email' order by name")
   	})
 	
 	//fetch('https://www.artspace7.com.au/dsql/json_helper_get.php?db=art25285_rides2&sql=select%20*%20from%20bikes')
 
 	async function doQuery() {
 		result = await doFetch(db, sql)
-		console.log(result)
+		// console.log(result)
 	}
 
 	async function doView() {
 		let rows = await doFetch(db, "SELECT get_sql FROM py_views WHERE name = '" + viewName + "'")
 		sql = rows[0]["get_sql"]
 		result = await doFetch(db, sql)
-		console.log(result)
+		// console.log(result)
+	}
+
+	async function doLoadtemplate() {
+		let rows = await doFetch(db, "SELECT contents FROM py_templates WHERE name = '" + templateName + "'")
+		template_contents = rows[0]["contents"]
+		// template_contents = await doFetch(db, sql)
 	}
 
 	async function doSend() {
@@ -80,6 +87,7 @@
 
 <label>db</label><input bind:value={db} />
 <label>sql</label><input bind:value={sql} />
+<button type="submit" on:click={doQuery}>SQL Query</button>
 
 <label>View</label>
 <select id="id_view" bind:value={viewName}>
@@ -88,10 +96,18 @@
   {/each}
 </select>
 
-<!-- <label>viewName</label><input bind:value={viewName} /> -->
-<br>
-<button type="submit" on:click={doQuery}>SQL Query</button>
 <button type="submit" on:click={doView}>View Query</button>
+
+<label>Template</label>
+<select id="id_template" bind:value={templateName}>
+  {#each templates as template}
+    <option value={template.name}>{template.name}</option>
+  {/each}
+</select>
+
+<button type="submit" on:click={doLoadtemplate}>Load</button>
+
+<br>
 <p><b>Email</b></p>
 <label>From</label><input bind:value={sender} />
 <label>Subject</label><input bind:value={subject} />
