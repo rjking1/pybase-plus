@@ -8,3 +8,9 @@ export async function doFetch(db, sql) {
   )
   return await resp.json()
 }
+
+export function isAllowedTo(what, permissions) {
+  // to do
+  // check!!
+  return true
+}
