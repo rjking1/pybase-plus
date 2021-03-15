@@ -1,6 +1,17 @@
 <script>
+  import { loggedIn, page } from './Stores.js'
+
   export let name
-  export let page
+  // export let page
+
+  function doLoginCheck() {
+    if($loggedIn == "false"){
+      $page = "login"
+    } else {
+      $page = name
+    }
+  }
+
 </script>
 
 <style>
@@ -17,6 +28,6 @@
   }
 </style>
 
-<button class:active={page === name} on:click={() => (page = name)}>
+<button class:active={$page === name} on:click={doLoginCheck}>
   <slot />
 </button>

@@ -1,4 +1,5 @@
 <script>
+  import { loggedIn, page } from './Stores.js'
 
   import NavButton from './NavButton.svelte'
 
@@ -12,7 +13,7 @@
     email: EmailPage,
   }
 
-let page = 'login'
+// let page = 'login'
 
 </script>
 
@@ -21,13 +22,13 @@ let page = 'login'
 <h1>Pybase</h1>
 
 <nav>
-  <NavButton bind:page name="login">Login</NavButton>
-  <NavButton bind:page name="members">Members</NavButton>
-  <NavButton bind:page name="email">Email</NavButton>
+  <NavButton  name="login">Login</NavButton>
+  <NavButton  name="members">Members</NavButton>
+  <NavButton  name="email">Email</NavButton>
 </nav>
 
 <main>
-  <svelte:component this={ pageMap[page] } />
+  <svelte:component this={ pageMap[$page] } />
 </main>
 
 <style>

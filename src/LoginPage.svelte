@@ -1,15 +1,16 @@
 <script>
   import { doFetch } from './Common.js'
-  import { dbN } from './Stores.js'
+  import { dbN, loggedIn } from './Stores.js'
 
   import { onMount } from 'svelte'
 
-  let db = "hut"
+  let db = "art25285_hut"
   let username= "RICHARD"
   let password = ""
 
   function doLogin() {
     $dbN = db
+    $loggedIn= "true"
   }
 </script>
 
