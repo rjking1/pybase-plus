@@ -30,7 +30,7 @@
 
 <main>
   <!-- <label>View</label> -->
-  <select id="id_view" bind:value={viewName} on:change={doListMembers}>
+  <select id="id_view" bind:value={viewName} on:click={doListMembers}>
     {#each views as view}
       <option value={view.name}>{view.name}</option>
     {/each}
