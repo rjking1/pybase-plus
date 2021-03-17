@@ -1,11 +1,11 @@
 <script>
   import { doFetch } from "./Common.js";
-  import { dbN, loggedIn, permissions } from "./Stores.js";
+  import { page, dbN, loggedIn, permissions } from "./Stores.js";
 
   import { onMount } from "svelte";
 
   let db = "art25285_hut";
-  let username = "RICHARD";
+  let username = "";
   let password = "";
 
   async function doLogin() {
@@ -25,6 +25,7 @@
       console.log($permissions);
       $dbN = db;
       $loggedIn = "true";
+      $page = 'members'
     }
   }
 </script>

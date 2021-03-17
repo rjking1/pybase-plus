@@ -1,31 +1,36 @@
 <script>
-	import { onMount } from 'svelte'
+  import { onMount } from "svelte";
 
-  import { doFetch } from './Common.js'
-  import { dbN } from './Stores.js'
+  import { doFetch, titleCase } from "./Common.js";
+  import { dbN } from "./Stores.js";
 
-  let columns = ['1','2','3']
-
-  let views = []
-  let viewName = "Not Renewed"
-  let qresult = null
+  let columns = [];
+  let views = [];
+  let viewName = "Not Renewed";
+  let qresult = null;
+  let firstColIsID = true;
 
   onMount(async () => {
-    	views = await doFetch($dbN, "select id, name from py_views where incl_in_index='Y' and not name like 'PY_%' order by name")
-  	})
+    views = await doFetch(
+      $dbN,
+      "select id, name from py_views where incl_in_index='Y' and not name like 'PY_%' order by name"
+    );
+  });
 
-	async function doListMembers() {
-		let rows = await doFetch($dbN, "SELECT get_sql FROM py_views WHERE name = '" + viewName + "'")
-		let sql = rows[0]["get_sql"]
-		qresult = await doFetch($dbN, sql)
-		console.log(qresult)
-	}  
+  async function doListMembers() {
+    let rows = await doFetch(
+      $dbN,
+      "SELECT get_sql FROM py_views WHERE name = '" + viewName + "'"
+    );
+    let sql = rows[0]["get_sql"];
+    qresult = await doFetch($dbN, sql);
+    firstColIsID = (Object.keys(qresult[0])[0] == 'ID')
+  }
 </script>
 
 <main>
-
-  <label>View</label>
-  <select id="id_view" bind:value={viewName}>
+  <!-- <label>View</label> -->
+  <select id="id_view" bind:value={viewName} on:change={doListMembers}>
     {#each views as view}
       <option value={view.name}>{view.name}</option>
     {/each}
@@ -33,47 +38,43 @@
 
   <button type="button" on:click={doListMembers}>List</button>
 
-  <!-- <pre>
-    {#if qresult}
-      <ul>
-        {#each qresult as row}
-          <li>
-            {#each Object.values(row) as field}{field + ' '}{/each}
-          </li>
+  {#if qresult}
+    <table>
+      <tr>
+        <th />
+        {#each Object.keys(qresult[0]) as column, index}
+          {#if index > 0 || !firstColIsID}
+            <th>{titleCase(column)}</th>
+          {/if}
         {/each}
-      </ul>
-    {/if}
-  </pre> -->
+      </tr>
 
-    {#if qresult}
+      {#each qresult as row}
+        <tr>
+          <th><input type="checkbox" unchecked /></th>
+          {#each Object.values(row) as cell, index}
+            {#if index > 0 || !firstColIsID}
+              <td contenteditable="false" bind:innerHTML={cell} />
+            {/if}
+          {/each}
+        </tr>
+      {/each}
 
-<table>
-	<tr>
-		{#each Object.keys(qresult[0]) as column}
-			<th>{column}</th>
-		{/each}
-	</tr>
-	
-	{#each qresult as row}
-		<tr>
-			{#each Object.values(row) as cell}
-			<td contenteditable="true" bind:innerHTML={cell} />
-			{/each}
-		</tr>
-	{/each}
-	
-	<!-- <tr class="new">
+      <!-- <tr class="new">
 		{#each newRow as column}
 			<td contenteditable="true" bind:innerHTML={column} />
 		{/each}
 		<button on:click={addRow}>+</button>
 	</tr> -->
-</table>
-    {/if}
-  
+    </table>
+  {/if}
 </main>
 
 <style>
-  tr:nth-child(even) {background: rgb(229, 233, 218)}
-  tr:nth-child(odd) {background: #FFF}
+  tr:nth-child(even) {
+    background: rgb(229, 233, 218);
+  }
+  tr:nth-child(odd) {
+    background: #fff;
+  }
 </style>
