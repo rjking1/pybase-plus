@@ -26,11 +26,60 @@
     qresult = await doFetch($dbN, sql);
     firstColIsID = (Object.keys(qresult[0])[0] == 'ID')
   }
+
+
+function downloadCSV(csv, filename) {
+    var csvFile;
+    var downloadLink;
+
+    // CSV file
+    csvFile = new Blob([csv], {type: "text/csv"});
+
+    // Download link
+    downloadLink = document.createElement("a");
+
+    // File name
+    downloadLink.download = filename;
+
+    // Create a link to the file
+    downloadLink.href = window.URL.createObjectURL(csvFile);
+
+    // Hide download link
+    downloadLink.style.display = "none";
+
+    // Add the link to DOM
+    document.body.appendChild(downloadLink);
+
+    // Click download link
+    downloadLink.click();
+}
+
+function exportTableToCSV(filename) {
+    var csv = [];
+    var rows = document.querySelectorAll("table tr");
+    
+    for (var i = 0; i < rows.length; i++) {
+        var row = [], cols = rows[i].querySelectorAll("td, th");
+        
+        for (var j = 0; j < cols.length; j++) 
+            row.push(cols[j].innerText);
+        
+        csv.push(row.join(","));        
+    }
+
+    // Download CSV file
+    downloadCSV(csv.join("\n"), filename);
+}
+
+  function saveToXL() {
+    exportTableToCSV("pybase.csv")  
+  }
+
 </script>
 
 <main>
   <!-- <label>View</label> -->
-  <select id="id_view" bind:value={viewName} on:click={doListMembers}>
+  <select id="id_view" bind:value={viewName} on:change={doListMembers}>
     {#each views as view}
       <option value={view.name}>{view.name}</option>
     {/each}
@@ -61,12 +110,14 @@
       {/each}
 
       <!-- <tr class="new">
-		{#each newRow as column}
-			<td contenteditable="true" bind:innerHTML={column} />
-		{/each}
-		<button on:click={addRow}>+</button>
-	</tr> -->
+        {#each newRow as column}
+          <td contenteditable="true" bind:innerHTML={column} />
+        {/each}
+        <button on:click={addRow}>+</button>
+	    </tr> -->
     </table>
+
+    <button on:click={saveToXL}>Save as CSV file</button>
   {/if}
 </main>
 

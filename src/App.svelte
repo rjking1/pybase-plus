@@ -1,5 +1,5 @@
 <script>
-  import { loggedIn, page } from './Stores.js'
+  import { page } from './Stores.js'
 
   import NavButton from './NavButton.svelte'
 
@@ -12,8 +12,6 @@
     members: MembersPage,
     email: EmailPage,
   }
-
-// let page = 'login'
 
 </script>
 
