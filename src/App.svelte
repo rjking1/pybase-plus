@@ -1,5 +1,5 @@
 <script>
-  import { page } from './Stores.js'
+  import { society, page } from './Stores.js'
 
   import NavButton from './NavButton.svelte'
 
@@ -17,9 +17,8 @@
 
 <!-- =============== HTML =============== -->
 
-<h1>Pybase</h1>
-
 <nav>
+  <h1>{$society}</h1>
   <NavButton  name="login">Login</NavButton>
   <NavButton  name="members">Members</NavButton>
   <NavButton  name="email">Email</NavButton>
@@ -39,5 +38,7 @@
     background-color: cornflowerblue;
     padding: 10px;
   }
+
+  h1 {color:aliceblue; padding-right: 10px;}
 </style>
 

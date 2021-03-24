@@ -22,9 +22,11 @@
     height: 38px;
     margin-right: var(--space);
     padding: var(--space);
+    display: none;
   }
   .active {
     background-color: yellow;
+    display: inline;
   }
 </style>
 

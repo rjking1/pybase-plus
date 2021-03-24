@@ -2,7 +2,7 @@
   import { onMount } from "svelte";
 
   import { doFetch, titleCase } from "./Common.js";
-  import { dbN } from "./Stores.js";
+  import { dbN, page } from "./Stores.js";
 
   let columns = [];
   let views = [];
@@ -75,6 +75,10 @@ function exportTableToCSV(filename) {
     exportTableToCSV("pybase.csv")  
   }
 
+  function gotoEmail() {
+    $page = "email"
+  }
+
 </script>
 
 <main>
@@ -117,7 +121,9 @@ function exportTableToCSV(filename) {
 	    </tr> -->
     </table>
 
+    <br>
     <button on:click={saveToXL}>Save as CSV file</button>
+    <button on:click={gotoEmail}>Email...</button>
   {/if}
 </main>
 
