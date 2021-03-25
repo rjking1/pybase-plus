@@ -1,50 +1,48 @@
 <script>
   import { onMount } from "svelte";
-import { object_without_properties } from "svelte/internal";
+  // import { object_without_properties } from "svelte/internal";
 
-  import { doFetch } from './Common.js'
-  import { dbN } from './Stores.js'
+  import { doFetch, titleCase } from "./Common.js";
+  import { dbN, page, id } from "./Stores.js";
 
-  export let id
-  let qresult = null
-  let items
+  // export let id
+  let result;
+  let qresult;
 
   onMount(async () => {
-    qresult = await doFetch(
-      $dbN,
-      "select * from members limit 1" //where id = " + id
-    );
-    console.log(qresult[0])
-    items = []
-    let keys = Object.keys(qresult[0])
-    let vals = Object.values(qresult[0])
-    for(let i = 0; i < keys.length; i++) {
-      let k = keys[i]
-      let v = vals[i]
-      let o = {}
-      o[k]= v 
-      items.push(o)
+    if ($id == 0) {
+      result = await doFetch(
+        $dbN,
+        "select myQuery.* from (select 1) as ignoreMe left join (select * from members where false ) as myQuery on true"
+      );
+    } else {
+      result = await doFetch(
+        $dbN,
+        "select * from members where id = " + $id 
+      );
     }
-    console.log(items)
+    qresult = result[0];
   });
 
-  function requery() {
+  function doUpdate() {
+    $page = "members";
   }
-
 </script>
 
 <main>
-  <button on:click={requery}>Requery</button>
   {#if qresult}
-    {#each Object.keys(qresult[0]) as column, index}
+    {#each Object.keys(qresult) as column, index}
       <tr>
-        <td>{column}</td> 
-        <td><input type="text" value={Object.values(qresult[0])[index]} /> </td> 
+        <td>{titleCase(column)}</td>
+        <td><input type="text" value={Object.values(qresult)[index]} /> </td>
       </tr>
     {/each}
   {/if}
+  <button on:click={doUpdate}>Update</button>
 </main>
 
 <style>
-  input { width: 200px}
+  input {
+    width: 300px;
+  }
 </style>

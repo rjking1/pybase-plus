@@ -29,7 +29,7 @@
 
 <main>
   {#if $page == 'memberEdit' }
-    <svelte:component this={ pageMap[$page] } id = {22} /> 
+    <svelte:component this={ pageMap[$page] } /> 
   {:else} 
     <svelte:component this={ pageMap[$page] } /> 
   {/if}

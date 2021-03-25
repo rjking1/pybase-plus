@@ -2,7 +2,7 @@
   import { onMount } from "svelte";
 
   import { doFetch, titleCase } from "./Common.js";
-  import { dbN, page } from "./Stores.js";
+  import { dbN, page, id } from "./Stores.js";
 
   let columns = [];
   let views = [];
@@ -65,7 +65,14 @@ function exportTableToCSV(filename) {
     $page = "email"
   }
 
-  function gotoMemberEdit() {
+  function editId(a) {
+    console.log(a)
+    $id = a
+    $page = "memberEdit"
+  }
+
+  function addRow() {
+    $id = 0
     $page = "memberEdit"
   }
 
@@ -99,7 +106,7 @@ function exportTableToCSV(filename) {
 
       {#each qresult as row}
         <tr>
-          <td><input class="checkable" type="checkbox" unchecked /></td>
+          <td><input class="checkable" type="checkbox" unchecked /> <button on:click={editId(Object.values(row)[0])}>✎</button></td>
           {#each Object.values(row) as cell, index}
             {#if index > 0 || !firstColIsID}
               <td contenteditable="false" bind:innerHTML={cell} />
@@ -114,12 +121,13 @@ function exportTableToCSV(filename) {
         {/each}
         <button on:click={addRow}>+</button>
 	    </tr> -->
+      <button on:click={addRow}>Add new member</button>
     </table>
 
     <br>
     <button on:click={saveToXL}>Save as CSV file</button>
     <button on:click={gotoEmail}>Email...</button>
-    <button on:click={gotoMemberEdit}>Member Edit...</button>
+    <!-- <button on:click={gotoMemberEdit}>Member Edit...</button> -->
   {/if}
 </main>
 
