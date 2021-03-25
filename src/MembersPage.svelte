@@ -29,54 +29,49 @@
 
 
 function downloadCSV(csv, filename) {
-    var csvFile;
-    var downloadLink;
-
-    // CSV file
-    csvFile = new Blob([csv], {type: "text/csv"});
-
-    // Download link
-    downloadLink = document.createElement("a");
-
-    // File name
+    let csvFile = new Blob([csv], {type: "text/csv"});
+    let downloadLink = document.createElement("a");
     downloadLink.download = filename;
-
     // Create a link to the file
     downloadLink.href = window.URL.createObjectURL(csvFile);
-
     // Hide download link
     downloadLink.style.display = "none";
-
-    // Add the link to DOM
     document.body.appendChild(downloadLink);
-
-    // Click download link
     downloadLink.click();
 }
 
 function exportTableToCSV(filename) {
-    var csv = [];
-    var rows = document.querySelectorAll("table tr");
+    let csv = [];
+    let rows = document.querySelectorAll("table tr");
     
-    for (var i = 0; i < rows.length; i++) {
-        var row = [], cols = rows[i].querySelectorAll("td, th");
+    for (let i = 0; i < rows.length; i++) {
+        let row = []
+        let cols = rows[i].querySelectorAll("td, th");
         
-        for (var j = 0; j < cols.length; j++) 
+        for (let j = 0; j < cols.length; j++) 
             row.push(cols[j].innerText);
         
         csv.push(row.join(","));        
     }
 
-    // Download CSV file
     downloadCSV(csv.join("\n"), filename);
 }
 
   function saveToXL() {
-    exportTableToCSV("pybase.csv")  
+    exportTableToCSV("pybase.csv")  // can we gen a file name from selected list?
   }
 
   function gotoEmail() {
     $page = "email"
+  }
+
+  function gotoMemberEdit() {
+    $page = "memberEdit"
+  }
+
+  function doCheckAll() {
+    let cboxes = Array.from(document.getElementsByClassName("checkable"))
+      cboxes.forEach((cbox) => cbox.checked = document.getElementById("idCheckAll").checked)
   }
 
 </script>
@@ -94,7 +89,7 @@ function exportTableToCSV(filename) {
   {#if qresult}
     <table>
       <tr>
-        <th />
+        <th><input id="idCheckAll" type="checkbox" unchecked on:click={doCheckAll} /></th>
         {#each Object.keys(qresult[0]) as column, index}
           {#if index > 0 || !firstColIsID}
             <th>{titleCase(column)}</th>
@@ -104,7 +99,7 @@ function exportTableToCSV(filename) {
 
       {#each qresult as row}
         <tr>
-          <th><input type="checkbox" unchecked /></th>
+          <td><input class="checkable" type="checkbox" unchecked /></td>
           {#each Object.values(row) as cell, index}
             {#if index > 0 || !firstColIsID}
               <td contenteditable="false" bind:innerHTML={cell} />
@@ -124,6 +119,7 @@ function exportTableToCSV(filename) {
     <br>
     <button on:click={saveToXL}>Save as CSV file</button>
     <button on:click={gotoEmail}>Email...</button>
+    <button on:click={gotoMemberEdit}>Member Edit...</button>
   {/if}
 </main>
 

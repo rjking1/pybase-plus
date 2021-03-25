@@ -5,11 +5,13 @@
 
   import LoginPage from './LoginPage.svelte'
   import MembersPage from './MembersPage.svelte'
+  import MemberEditPage from './MemberEditPage.svelte'
   import EmailPage from './EmailPage.svelte'
 
   const pageMap = {
     login: LoginPage,
     members: MembersPage,
+    memberEdit: MemberEditPage,
     email: EmailPage,
   }
 
@@ -21,11 +23,16 @@
   <h1>{$society}</h1>
   <NavButton  name="login">Login</NavButton>
   <NavButton  name="members">Members</NavButton>
+  <NavButton  name="memberEdit">Member Edit</NavButton>
   <NavButton  name="email">Email</NavButton>
 </nav>
 
 <main>
-  <svelte:component this={ pageMap[$page] } />
+  {#if $page == 'memberEdit' }
+    <svelte:component this={ pageMap[$page] } id = {22} /> 
+  {:else} 
+    <svelte:component this={ pageMap[$page] } /> 
+  {/if}
 </main>
 
 <style>
