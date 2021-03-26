@@ -13,12 +13,12 @@ import { dbN, page, id } from "./Stores.js";
     if ($id == 0) {
       result = await doFetch(
         $dbN,
-        "select myQuery.* from (select 1) as ignoreMe left join (select * from members where false ) as myQuery on true"
+        "select myQuery.* from (select 1) as ignoreMe left join (select * from " + p.viewName + "s where false ) as myQuery on true"  // todo: fix ...
       );
     } else {
       result = await doFetch(
         $dbN,
-        "select * from " + p.viewName + "s where id = " + p.id 
+        "select * from " + p.viewName + "s where id = " + p.id  // todo: fix - not real purpose of viewname
       );
     }
     qresult = result[0];

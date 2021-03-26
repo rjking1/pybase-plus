@@ -1,20 +1,21 @@
 <script>
   import { onMount } from "svelte";
 
-  import { doFetch, titleCase } from "./Common.js";
-  import { dbN, page, viewName, id } from "./Stores.js";
+  import { doFetch, titleCase, viewDetail } from "./Common.js";
+  import { dbN, page, viewName, id, views } from "./Stores.js";
   import { gotoPage, pageDetails } from "./pageStack.js";
 
-  let columns = [];
-  let views = [];    // todo: replace with $viewsif we keep this
+  // let columns = [];
+  // let views = [];    // todo: replace with $viewsif we keep this
   let qresult = null;
   let firstColIsID = true;
 
   onMount(async () => {
-    views = await doFetch(
-      $dbN,
-      "select id, name from py_views where incl_in_index='Y' and not name like 'PY_%' order by name"
-    );
+    // views = await doFetch(
+    //   $dbN,
+    //   "select id, name from py_views where incl_in_index='Y' and not name like 'PY_%' order by name"
+    // );
+    doListMembers()
   });
 
   async function doListMembers() {
@@ -70,7 +71,10 @@ function exportTableToCSV(filename) {
   function editId(anID) {
     // console.log(a)
     $id = anID  // todo: get rid of this
-    $page = gotoPage("memberEdit", "member", anID)
+    let p = pageDetails()
+    let v = viewDetail($views, p.viewName)
+    console.log(v)
+    $page = gotoPage("memberEdit", v.to_view, anID) // todo: need to get .to_view from the current view we are on
   }
 
   function addRow() {
@@ -86,14 +90,14 @@ function exportTableToCSV(filename) {
 </script>
 
 <main>
-  <!-- <label>View</label> -->
-  <select id="id_view" bind:value={$viewName} on:change={doListMembers}>
-    {#each views as view}
+  <h3>{$viewName}</h3>
+  <!-- <select id="id_view" bind:value={$viewName} on:change={doListMembers}>
+    {#each $views as view}
       <option value={view.name}>{view.name}</option>
     {/each}
   </select>
 
-  <button type="button" on:click={doListMembers}>List</button>
+  <button type="button" on:click={doListMembers}>List</button> -->
 
   {#if qresult}
     <table>
@@ -123,7 +127,7 @@ function exportTableToCSV(filename) {
         {/each}
         <button on:click={addRow}>+</button>
 	    </tr> -->
-      <button on:click={addRow}>Add new member</button>
+      <button on:click={addRow}>+ Add</button>
     </table>
 
     <br>
