@@ -2,7 +2,6 @@
   import { loggedIn, page } from './Stores.js'
 
   export let name
-  // export let page
 
   function doLoginCheck() {
     if($loggedIn == "false"){
@@ -22,7 +21,7 @@
     height: 38px;
     margin-right: var(--space);
     padding: var(--space);
-    display: none;
+    /* display: none; */
   }
   .active {
     background-color: yellow;

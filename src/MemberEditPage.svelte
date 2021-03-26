@@ -1,15 +1,15 @@
 <script>
-  import { onMount } from "svelte";
-  // import { object_without_properties } from "svelte/internal";
 
-  import { doFetch, titleCase } from "./Common.js";
-  import { dbN, page, id } from "./Stores.js";
+import { onMount } from "svelte";
+import { doFetch, titleCase } from "./Common.js";
+import { goBack, pageDetails } from "./pageStack.js";
+import { dbN, page, id } from "./Stores.js";
 
-  // export let id
   let result;
   let qresult;
 
   onMount(async () => {
+    let p = pageDetails()
     if ($id == 0) {
       result = await doFetch(
         $dbN,
@@ -18,14 +18,14 @@
     } else {
       result = await doFetch(
         $dbN,
-        "select * from members where id = " + $id 
+        "select * from " + p.viewName + "s where id = " + p.id 
       );
     }
     qresult = result[0];
   });
 
   function doUpdate() {
-    $page = "members";
+    $page = goBack(); // "members";
   }
 </script>
 

@@ -2,11 +2,11 @@
   import { onMount } from "svelte";
 
   import { doFetch, titleCase } from "./Common.js";
-  import { dbN, page, id } from "./Stores.js";
+  import { dbN, page, viewName, id } from "./Stores.js";
+  import { gotoPage, pageDetails } from "./pageStack.js";
 
   let columns = [];
-  let views = [];
-  let viewName = "Not Renewed";
+  let views = [];    // todo: replace with $viewsif we keep this
   let qresult = null;
   let firstColIsID = true;
 
@@ -18,9 +18,11 @@
   });
 
   async function doListMembers() {
+    let p = pageDetails()
+    // console.log(p)
     let rows = await doFetch(
       $dbN,
-      "SELECT get_sql FROM py_views WHERE name = '" + viewName + "'"
+      "SELECT get_sql FROM py_views WHERE name = '" + p.viewName + "'"
     );
     let sql = rows[0]["get_sql"];
     qresult = await doFetch($dbN, sql);
@@ -65,10 +67,10 @@ function exportTableToCSV(filename) {
     $page = "email"
   }
 
-  function editId(a) {
-    console.log(a)
-    $id = a
-    $page = "memberEdit"
+  function editId(anID) {
+    // console.log(a)
+    $id = anID  // todo: get rid of this
+    $page = gotoPage("memberEdit", "member", anID)
   }
 
   function addRow() {
@@ -85,7 +87,7 @@ function exportTableToCSV(filename) {
 
 <main>
   <!-- <label>View</label> -->
-  <select id="id_view" bind:value={viewName} on:change={doListMembers}>
+  <select id="id_view" bind:value={$viewName} on:change={doListMembers}>
     {#each views as view}
       <option value={view.name}>{view.name}</option>
     {/each}
