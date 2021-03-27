@@ -1,9 +1,9 @@
 <script>
 import { onMount } from "svelte";
 
-import { doFetch, titleCase } from "./Common.js";
+import { doFetch, isAllowedTo, titleCase } from "./Common.js";
 import { gotoPage } from "./pageStack.js";
-import { dbN, page } from "./Stores.js";
+import { dbN, page, permissions } from "./Stores.js";
 
   let views = null;
 
@@ -24,8 +24,10 @@ import { dbN, page } from "./Stores.js";
   {#if views}
     <ul>
       {#each views as view}
-        <button on:click={viewClick(view.name)}> ▸ {view.name}</button>
+        {#if isAllowedTo($permissions, view.name)}
+        <button disabled={!isAllowedTo($permissions, view.name)} on:click={viewClick(view.name)}> ▸ {view.name}</button>
         <br>
+        {/if}
       {/each}
     </ul>
   {/if}
