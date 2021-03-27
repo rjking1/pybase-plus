@@ -4,13 +4,14 @@
 
   // import { onMount } from "svelte";
 
-  let db = "art25285_hut";
+  const db_base = "art25285_"
+  let db = "hut";
   let username = "";
   let password = "";
 
   async function doLogin() {
     let qresult = await doFetch(
-      db,
+      db_base + db,
       "select u.id, u.user_name, def_capab, exceptions from py_roles r join py_users u on r.id=u.role_id where upper(u.user_name)='" +
         username.toUpperCase() +
         "' and u.password='" +
@@ -19,19 +20,19 @@
     );
 
     if(qresult.length == 0) {
-      alert("invalid user name or password")
+      alert("Invalid user name or password")
     } else {
       $permissions = { u_id: qresult[0]["id"], u_name: qresult[0]["user_name"], cap: qresult[0]["def_capab"], ex: qresult[0]["exceptions"] };
-      $dbN = db;
+      $dbN = db_base + db;
       $loggedIn = "true";
       $page = 'index'
 
-      qresult = await doFetch(db, "select val from named_values where id like 'sys.society.%' order by id")
+      qresult = await doFetch($dbN, "select val from named_values where id like 'sys.society.%' order by id")
       $society = qresult[0]["val"] 
       $permissions["tables_prefix"] = qresult[1]["val"] 
-      // console.log($permissions);
+      console.log($permissions);
 
-      $views = await doFetch(db, "select id, name, to_view from py_views where NAME not like 'py_%'")
+      $views = await doFetch($dbN, "select id, name, to_view, get_sql, put_sql from py_views where NAME not like 'py_%'")
       console.log($views)
     }
   }

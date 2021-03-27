@@ -21,11 +21,12 @@
   async function doListMembers() {
     let p = pageDetails()
     // console.log(p)
-    let rows = await doFetch(
-      $dbN,
-      "SELECT get_sql FROM py_views WHERE name = '" + p.viewName + "'"
-    );
-    let sql = rows[0]["get_sql"];
+    // let rows = await doFetch(
+    //   $dbN,
+    //   "SELECT get_sql FROM py_views WHERE name = '" + p.viewName + "'"
+    // );
+    let v = viewDetail($views, p.viewName)
+    let sql = v.get_sql
     qresult = await doFetch($dbN, sql);
     firstColIsID = (Object.keys(qresult[0])[0] == 'ID')
   }
@@ -73,13 +74,14 @@ function exportTableToCSV(filename) {
     $id = anID  // todo: get rid of this
     let p = pageDetails()
     let v = viewDetail($views, p.viewName)
-    console.log(v)
-    $page = gotoPage("memberEdit", v.to_view, anID) // todo: need to get .to_view from the current view we are on
+    $page = gotoPage("memberEdit", v.to_view, anID)
   }
 
   function addRow() {
     $id = 0
-    $page = "memberEdit"
+    let p = pageDetails()
+    let v = viewDetail($views, p.viewName)
+    $page = gotoPage("memberEdit", v.to_view, 0)  // should this be .to_view + '_add'
   }
 
   function doCheckAll() {
