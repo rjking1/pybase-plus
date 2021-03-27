@@ -27,7 +27,7 @@
       $loggedIn = "true";
       $page = 'index'
 
-      qresult = await doFetch($dbN, "select val from named_values where id like 'sys.society.%' order by id")
+      qresult = await doFetch($dbN, "select val from py_named_values where id like 'sys.society.%' order by id")
       $society = qresult[0]["val"] 
       $permissions["tables_prefix"] = qresult[1]["val"] 
       console.log($permissions);

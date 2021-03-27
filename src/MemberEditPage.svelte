@@ -7,6 +7,7 @@ import { dbN, page, id } from "./Stores.js";
 
   let result;
   let qresult;
+  let viewName;
 
   onMount(async () => {
     let p = pageDetails()
@@ -22,6 +23,7 @@ import { dbN, page, id } from "./Stores.js";
       );
     }
     qresult = result[0];
+    viewName = qresult.NAME || ''
   });
 
   function doUpdate() {
@@ -30,6 +32,7 @@ import { dbN, page, id } from "./Stores.js";
 </script>
 
 <main>
+  <h3>{viewName}</h3>
   {#if qresult}
     {#each Object.keys(qresult) as column, index}
       <tr>

@@ -3,7 +3,7 @@ import { onMount } from "svelte";
 
 import { doFetch, titleCase } from "./Common.js";
 import { gotoPage } from "./pageStack.js";
-import { dbN, page, viewName } from "./Stores.js";
+import { dbN, page } from "./Stores.js";
 
   let views = null;
 
@@ -15,9 +15,7 @@ import { dbN, page, viewName } from "./Stores.js";
   });
 
   function viewClick(name) {
-    $viewName = name
-    // $page = 'members'
-    $page = gotoPage('members', name, 0)  // todo: get rid of $viewName as at top of stack
+    $page = gotoPage('members', name, 0)
   }
 
 </script>
@@ -26,7 +24,7 @@ import { dbN, page, viewName } from "./Stores.js";
   {#if views}
     <ul>
       {#each views as view}
-        <button on:click={viewClick(view.name)}> ▶ {view.name}</button>
+        <button on:click={viewClick(view.name)}> ▸ {view.name}</button>
         <br>
       {/each}
     </ul>

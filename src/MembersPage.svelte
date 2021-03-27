@@ -2,33 +2,27 @@
   import { onMount } from "svelte";
 
   import { doFetch, titleCase, viewDetail } from "./Common.js";
-  import { dbN, page, viewName, id, views } from "./Stores.js";
+  import { dbN, page, id, views } from "./Stores.js";
   import { gotoPage, pageDetails } from "./pageStack.js";
 
+  let p
+  let v
+  let viewName
   // let columns = [];
-  // let views = [];    // todo: replace with $viewsif we keep this
   let qresult = null;
   let firstColIsID = true;
 
   onMount(async () => {
-    // views = await doFetch(
-    //   $dbN,
-    //   "select id, name from py_views where incl_in_index='Y' and not name like 'PY_%' order by name"
-    // );
+    p = pageDetails()
+    viewName = p.viewName
+    v = viewDetail($views, viewName)
     doListMembers()
   });
 
   async function doListMembers() {
-    let p = pageDetails()
-    // console.log(p)
-    // let rows = await doFetch(
-    //   $dbN,
-    //   "SELECT get_sql FROM py_views WHERE name = '" + p.viewName + "'"
-    // );
-    let v = viewDetail($views, p.viewName)
     let sql = v.get_sql
     qresult = await doFetch($dbN, sql);
-    firstColIsID = (Object.keys(qresult[0])[0] == 'ID')
+    firstColIsID = (Object.keys(qresult[0])[0].toUpperCase() === 'ID')
   }
 
 
@@ -66,21 +60,16 @@ function exportTableToCSV(filename) {
   }
 
   function gotoEmail() {
-    $page = "email"
+    $page = "email"   // tooo: make an action
   }
 
   function editId(anID) {
-    // console.log(a)
     $id = anID  // todo: get rid of this
-    let p = pageDetails()
-    let v = viewDetail($views, p.viewName)
     $page = gotoPage("memberEdit", v.to_view, anID)
   }
 
   function addRow() {
     $id = 0
-    let p = pageDetails()
-    let v = viewDetail($views, p.viewName)
     $page = gotoPage("memberEdit", v.to_view, 0)  // should this be .to_view + '_add'
   }
 
@@ -92,13 +81,12 @@ function exportTableToCSV(filename) {
 </script>
 
 <main>
-  <h3>{$viewName}</h3>
-  <!-- <select id="id_view" bind:value={$viewName} on:change={doListMembers}>
+  <h3>{viewName}</h3>
+  <!-- <select id="id_view" bind:value={viewName} on:change={doListMembers}>
     {#each $views as view}
       <option value={view.name}>{view.name}</option>
     {/each}
   </select>
-
   <button type="button" on:click={doListMembers}>List</button> -->
 
   {#if qresult}
@@ -134,8 +122,7 @@ function exportTableToCSV(filename) {
 
     <br>
     <button on:click={saveToXL}>Save as CSV file</button>
-    <button on:click={gotoEmail}>Email...</button>
-    <!-- <button on:click={gotoMemberEdit}>Member Edit...</button> -->
+    <!-- <button on:click={gotoEmail}>Email...</button> -->
   {/if}
 </main>
 
