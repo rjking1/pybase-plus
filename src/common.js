@@ -23,10 +23,10 @@ export function isAllowedTo(permissions, sFunc) {
   // eg if sFunc = 'staff.*' and have allCapabs exceptFor 'staff.*,patient.new' then result is false
   // at the moment ~.* is not expanded and matched -- must test exactly
 
-  console.log(permissions, sFunc)
+  // console.log(permissions, sFunc)
 
   if (permissions.cap === 'D') {
-    console.log( !(permissions.ex.includes(sFunc)) )
+    // console.log( !(permissions.ex.includes(sFunc)) )
     return !(permissions.ex.includes(sFunc))
   }
 
@@ -37,4 +37,8 @@ export function isAllowedTo(permissions, sFunc) {
   }
   
   return (permissions.ex.includes(sFunc))
+}
+
+function setSqlParams(sql, params) {
+  
 }

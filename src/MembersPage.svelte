@@ -2,7 +2,7 @@
   import { onMount } from "svelte";
 
   import { doFetch, titleCase, viewDetail } from "./Common.js";
-  import { dbN, page, id, views } from "./Stores.js";
+  import { dbN, page, views } from "./Stores.js";
   import { gotoPage, pageDetails } from "./pageStack.js";
 
   let p
@@ -64,12 +64,10 @@ function exportTableToCSV(filename) {
   }
 
   function editId(anID) {
-    $id = anID  // todo: get rid of this
     $page = gotoPage("memberEdit", v.to_view, anID)
   }
 
   function addRow() {
-    $id = 0
     $page = gotoPage("memberEdit", v.to_view, 0)  // should this be .to_view + '_add'
   }
 
@@ -105,7 +103,7 @@ function exportTableToCSV(filename) {
           <td><input class="checkable" type="checkbox" unchecked /> <button on:click={editId(Object.values(row)[0])}>✎</button></td>
           {#each Object.values(row) as cell, index}
             {#if index > 0 || !firstColIsID}
-              <td contenteditable="false" bind:innerHTML={cell} />
+              <td class="cell" contenteditable="false" bind:innerHTML={cell} />
             {/if}
           {/each}
         </tr>
@@ -133,4 +131,6 @@ function exportTableToCSV(filename) {
   tr:nth-child(odd) {
     background: #fff;
   }
+
+  .cell { padding-left: 5px; padding-right: 5px;}
 </style>
