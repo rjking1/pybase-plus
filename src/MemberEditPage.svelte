@@ -40,7 +40,8 @@ import { dbN, page, permissions } from "./Stores.js";
 
   async function doDelete() {
     if(window.confirm('Delete ' + viewName + '?')) {
-      await doFetch( $dbN, "delete from " + p.viewName + "s where id=" + p.id );
+      result = await doFetch( $dbN, "delete from " + p.viewName + "s where id=" + p.id );
+      console.log(result)
       $page = goBack();
     }
   }
@@ -50,12 +51,20 @@ import { dbN, page, permissions } from "./Stores.js";
     let vals = []
     let fields = Array.from( document.getElementsByClassName("field") )
     fields.forEach(field => {
-      vals.push( "'" + field.value + "'" )
+      if(field.value.trim() == '') {
+        vals.push( "NULL" )
+      } else {
+        vals.push( "'" + field.value + "'" )
+      }
     });
     sql = sql + vals.join() + ')'
 
     // console.log(sql)
-    await doFetch( $dbN, sql );
+    result = await doFetch( $dbN, sql );
+    console.log(result)
+    if('error' in result[0]){
+      window.alert(result[0].error)
+    }
 
     $page = goBack();
   }
