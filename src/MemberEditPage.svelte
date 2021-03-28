@@ -1,15 +1,16 @@
 <script>
 
 import { onMount } from "svelte";
-import { doFetch, titleCase } from "./Common.js";
+import { doFetch, isAllowedTo, titleCase } from "./Common.js";
 import { goBack, pageDetails } from "./pageStack.js";
-import { dbN, page } from "./Stores.js";
+import { dbN, page, permissions } from "./Stores.js";
 
   let result;
   let qresult;
   let viewName;
   let p;
   let cols;
+  let viewIsDeletable = false;
 
   onMount(async () => {
     p = pageDetails()
@@ -25,7 +26,9 @@ import { dbN, page } from "./Stores.js";
       );
     }
     qresult = result[0];
-    viewName = qresult.NAME || ''
+    viewName = qresult.NAME || qresult.name || ''
+
+    viewIsDeletable = isAllowedTo($permissions, viewName + "_delete")
 
     cols = Object.keys(qresult)
     // console.log(cols)
@@ -36,8 +39,10 @@ import { dbN, page } from "./Stores.js";
   }
 
   async function doDelete() {
-    await doFetch( $dbN, "delete from " + p.viewName + "s where id=" + p.id );
-    $page = goBack();
+    if(window.confirm('Delete ' + viewName + '?')) {
+      await doFetch( $dbN, "delete from " + p.viewName + "s where id=" + p.id );
+      $page = goBack();
+    }
   }
 
   async function doUpdate() {
@@ -66,9 +71,9 @@ import { dbN, page } from "./Stores.js";
       </tr>
     {/each}
   {/if}
-  <button on:click={doCancel}>Cancel</button>
-  <button on:click={doDelete}>Delete</button>
-  <button on:click={doUpdate}>Update</button>
+  <button disabled={!viewIsDeletable} on:click={doDelete}>❌ Delete</button>&nbsp;&nbsp;
+  <button on:click={doCancel}>❎ Cancel</button>&nbsp;&nbsp;
+  <button on:click={doUpdate}>✅ Update</button>
 </main>
 
 <style>

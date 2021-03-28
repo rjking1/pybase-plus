@@ -25,9 +25,9 @@
   <h1>{$society}</h1>
   <NavButton  name="login">Login</NavButton>
   <NavButton  name="index">Home</NavButton>
-  <NavButton  name="members">Members</NavButton>
+  <!-- <NavButton  name="members">Members</NavButton>
   <NavButton  name="memberEdit">Member Edit</NavButton>
-  <NavButton  name="email">Email</NavButton>
+  <NavButton  name="email">Email</NavButton> -->
 </nav>
 
 <main>

@@ -1,8 +1,8 @@
 <script>
   import { onMount } from "svelte";
 
-  import { doFetch, titleCase, viewDetail } from "./Common.js";
-  import { dbN, page, views } from "./Stores.js";
+  import { doFetch, isAllowedTo, titleCase, viewDetail } from "./Common.js";
+  import { dbN, page, permissions, views } from "./Stores.js";
   import { gotoPage, pageDetails } from "./pageStack.js";
 
   let p
@@ -11,11 +11,13 @@
   // let columns = [];
   let qresult = null;
   let firstColIsID = true;
+  let viewIsEditable = false;
 
   onMount(async () => {
     p = pageDetails()
     viewName = p.viewName
     v = viewDetail($views, viewName)
+    viewIsEditable = isAllowedTo($permissions, viewName + "_edit")
     doListMembers()
   });
 
@@ -100,7 +102,12 @@ function exportTableToCSV(filename) {
 
       {#each qresult as row}
         <tr>
-          <td><input class="checkable" type="checkbox" unchecked /> <button on:click={editId(Object.values(row)[0])}>✎</button></td>
+          <td>
+            <input class="checkable" type="checkbox" unchecked /> 
+            {#if viewIsEditable}
+              <button on:click={editId(Object.values(row)[0])}>✎</button>
+            {/if}
+          </td>
           {#each Object.values(row) as cell, index}
             {#if index > 0 || !firstColIsID}
               <td class="cell" contenteditable="false" bind:innerHTML={cell} />
@@ -115,7 +122,9 @@ function exportTableToCSV(filename) {
         {/each}
         <button on:click={addRow}>+</button>
 	    </tr> -->
-      <button on:click={addRow}>+ Add</button>
+      {#if viewIsEditable}
+        <button on:click={addRow}>+ Add</button>
+      {/if}
     </table>
 
     <br>
