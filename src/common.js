@@ -1,5 +1,5 @@
 
-export async function doFetch(db, sql) {
+export async function doFetchGet(db, sql) {
   let resp = await fetch(
     'https://www.artspace7.com.au/dsql/json_helper_get.php?db=' +
       db +
@@ -8,6 +8,25 @@ export async function doFetch(db, sql) {
   )
   return await resp.json()
 }
+
+export async function doFetch(db, sql) {
+  let formData = new FormData()
+  formData.append('db', db)
+  formData.append('sql', encodeURI(sql))  // encodeURIComponent
+  //formData.append('noenc', 'true') 
+
+  let resp = await fetch(
+    `https://www.artspace7.com.au/dsql/json_helper_post.php`,
+    {
+      method: 'POST',
+      body: formData,
+    },
+  )
+  let j = await resp.json()
+  //console.log(j)
+  return j
+}
+
 
 export function titleCase(s) {
   return s.toLowerCase()

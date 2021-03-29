@@ -10,8 +10,9 @@
   let viewName
   // let columns = [];
   let qresult = null;
-  let firstColIsID = true;
   let viewIsEditable = false;
+  let hideCols
+  // let fieldTypes   // not needed for lists atm
 
   onMount(async () => {
     p = pageDetails()
@@ -23,10 +24,13 @@
 
   async function doListMembers() {
     let sql = v.get_sql
+    let ff = JSON.parse(v.form_fields)
+    hideCols = (ff === null) ? [] : ff.hidden
+    // console.log(hideCols)
+    //fieldTypes = JSON.parse(v.field_types)
+    //console.log(fieldTypes)
     qresult = await doFetch($dbN, sql);
-    firstColIsID = (Object.keys(qresult[0])[0].toUpperCase() === 'ID')
   }
-
 
 function downloadCSV(csv, filename) {
     let csvFile = new Blob([csv], {type: "text/csv"});
@@ -94,7 +98,7 @@ function exportTableToCSV(filename) {
       <tr>
         <th><input id="idCheckAll" type="checkbox" unchecked on:click={doCheckAll} /></th>
         {#each Object.keys(qresult[0]) as column, index}
-          {#if index > 0 || !firstColIsID}
+          {#if !(hideCols.includes(column.toLowerCase()))}
             <th>{titleCase(column)}</th>
           {/if}
         {/each}
@@ -109,7 +113,7 @@ function exportTableToCSV(filename) {
             {/if}
           </td>
           {#each Object.values(row) as cell, index}
-            {#if index > 0 || !firstColIsID}
+            {#if !(hideCols.includes(Object.keys(qresult[0])[index].toLowerCase()))}
               <td class="cell" contenteditable="false" bind:innerHTML={cell} />
             {/if}
           {/each}
