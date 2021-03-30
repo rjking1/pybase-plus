@@ -1,37 +1,52 @@
 <script>
 
 import { onMount } from "svelte";
-import { doFetch, isAllowedTo, titleCase } from "./Common.js";
+import { doFetch, isAllowedTo, titleCase, viewDetail } from "./Common.js";
 import { goBack, pageDetails } from "./pageStack.js";
-import { dbN, page, permissions } from "./Stores.js";
+import { dbN, page, permissions, views } from "./Stores.js";
 
+  let p;
+  let v;
+  let fields = [];
+  let viewIsDeletable = false;
+  let cols;
   let result;
   let qresult;
   let viewName;
-  let p;
-  let cols;
-  let viewIsDeletable = false;
+  let entityName;
 
   onMount(async () => {
     p = pageDetails()
+    viewName = p.viewName
+    v = viewDetail($views, viewName)
+
+    fields = JSON.parse(v.fields)
+    if (fields === null) {
+      fields = []
+    }
+    fields.push({"fieldName":"id","visibility":false})
+    console.log(fields)
+
     if (p.id == 0) { 
       result = await doFetch(
         $dbN,
-        "select myQuery.* from (select 1) as ignoreMe left join (select * from " + p.viewName + "s where false ) as myQuery on true"  // todo: fix ...
+        "select myQuery.* from (select 1) as ignoreMe left join (select * from " + p.viewName + "s where false ) as myQuery on true"  // note must have passed member and not member_add
       );
     } else {
       result = await doFetch(
         $dbN,
-        "select * from " + p.viewName + "s where id = " + p.id  // todo: fix - not real purpose of viewname --- query using <get_sql> 
+        v.get_sql.replace('%d', p.id)
+        // "select * from " + p.viewName + "s where id = " + p.id  // todo: fix - not real purpose of viewname --- query using <get_sql> 
       );
     }
     qresult = result[0];
-    viewName = qresult.NAME || qresult.name || ''
+    entityName = qresult.NAME || qresult.name || ''
 
     viewIsDeletable = isAllowedTo($permissions, viewName + "_delete")
 
-    cols = Object.keys(qresult)
-    // console.log(cols)
+    cols = []
+    Object.keys(qresult).forEach(col => { if (includeField(col)) { cols.push(col) } } )
+    console.log(cols)
   });
 
   function doCancel() {
@@ -47,8 +62,9 @@ import { dbN, page, permissions } from "./Stores.js";
   }
 
   async function doUpdate() {
-    let sql = "replace into " + p.viewName + "s (" + cols.join() + ") values ("
+    let sql = "replace into " + p.viewName + "s (id," + cols.join() + ") values ("
     let vals = []
+    vals.push(p.id)
     let fields = Array.from( document.getElementsByClassName("field") )
     fields.forEach(field => {
       if(field.value.trim() == '') {
@@ -59,7 +75,7 @@ import { dbN, page, permissions } from "./Stores.js";
     });
     sql = sql + vals.join() + ')'
 
-    // console.log(sql)
+    console.log(sql)
     result = await doFetch( $dbN, sql );
     console.log(result)
     if('error' in result[0]){
@@ -68,15 +84,23 @@ import { dbN, page, permissions } from "./Stores.js";
 
     $page = goBack();
   }
+
+  function includeField(columnName) {
+    let f = fields.find(field => field.fieldName === columnName.toLowerCase());
+    return (f === undefined) ? true : f.visibility
+  }
+
 </script>
 
 <main>
-  <h3>{viewName}</h3>
+  <h3>{entityName}</h3>
   {#if qresult}
     {#each Object.keys(qresult) as column, index}
       <tr>
-        <td class="label">{titleCase(column)}</td>
-        <td><input type="text" name="{column}" class="field" value={Object.values(qresult)[index]} /> </td>
+        {#if includeField(column)} 
+          <td class="label">{titleCase(column)}</td>
+          <td><input type="text" name="{column}" class="field" value={Object.values(qresult)[index]} /> </td>
+        {/if}
       </tr>
     {/each}
   {/if}

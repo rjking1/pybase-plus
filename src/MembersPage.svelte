@@ -7,12 +7,10 @@
 
   let p
   let v
-  let viewName
-  // let columns = [];
-  let qresult = null;
+  let fields = [];
   let viewIsEditable = false;
-  let hideCols
-  // let fieldTypes   // not needed for lists atm
+  let viewName
+  let qresult = null;
 
   onMount(async () => {
     p = pageDetails()
@@ -23,12 +21,13 @@
   });
 
   async function doListMembers() {
+    fields = JSON.parse(v.fields)
+    if (fields === null) {
+      fields = []
+    }
+    fields.push({"fieldName":"id","visibility":false})
+    console.log(fields)
     let sql = v.get_sql
-    let ff = JSON.parse(v.form_fields)
-    hideCols = (ff === null) ? [] : ff.hidden
-    // console.log(hideCols)
-    //fieldTypes = JSON.parse(v.field_types)
-    //console.log(fieldTypes)
     qresult = await doFetch($dbN, sql);
   }
 
@@ -82,6 +81,11 @@ function exportTableToCSV(filename) {
       cboxes.forEach((cbox) => cbox.checked = document.getElementById("idCheckAll").checked)
   }
 
+  function includeField(columnName) {
+    let f = fields.find(field => field.fieldName === columnName.toLowerCase());
+    return (f === undefined) ? true : f.visibility
+  }
+
 </script>
 
 <main>
@@ -93,12 +97,15 @@ function exportTableToCSV(filename) {
   </select>
   <button type="button" on:click={doListMembers}>List</button> -->
 
+  {#if viewIsEditable}
+    <button on:click={addRow}>+ Add</button>
+  {/if}
   {#if qresult}
     <table>
       <tr>
         <th><input id="idCheckAll" type="checkbox" unchecked on:click={doCheckAll} /></th>
-        {#each Object.keys(qresult[0]) as column, index}
-          {#if !(hideCols.includes(column.toLowerCase()))}
+        {#each Object.keys(qresult[0]) as column}
+          {#if includeField(column)} 
             <th>{titleCase(column)}</th>
           {/if}
         {/each}
@@ -113,7 +120,7 @@ function exportTableToCSV(filename) {
             {/if}
           </td>
           {#each Object.values(row) as cell, index}
-            {#if !(hideCols.includes(Object.keys(qresult[0])[index].toLowerCase()))}
+            {#if includeField(Object.keys(qresult[0])[index])}
               <td class="cell" contenteditable="false" bind:innerHTML={cell} />
             {/if}
           {/each}
@@ -126,9 +133,6 @@ function exportTableToCSV(filename) {
         {/each}
         <button on:click={addRow}>+</button>
 	    </tr> -->
-      {#if viewIsEditable}
-        <button on:click={addRow}>+ Add</button>
-      {/if}
     </table>
 
     <br>
