@@ -2,9 +2,10 @@
 	<script src="https://smtpjs.com/v3/smtp.js"></script>
 </svelte:head>
 <script>
-    import { doFetch } from './common.js'
+    import { doFetch, logToLogs } from './common.js'
 
 	import { onMount } from 'svelte'
+import { permissions } from './Stores.js';
 
 	let db = 'art25285_hut'
 	let sql = "select * from members where NAME = 'Richard' and News_Email = 'Y'"
@@ -71,7 +72,10 @@
 					Body : contents,
 					Attachments : atts
 				}).then(
-					message => console.log(message)
+					message => {
+						console.log(row["EMAIL"], message)
+						logToLogs(db, $permissions.u_id, $permissions.u_name, "emailed " + row["EMAIL"] + " subject " + subject + " response " + message) 
+					}
 				); 
 			}
 		});

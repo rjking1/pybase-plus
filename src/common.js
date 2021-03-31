@@ -1,13 +1,13 @@
 
-export async function doFetchGet(db, sql) {
-  let resp = await fetch(
-    'https://www.artspace7.com.au/dsql/json_helper_get.php?db=' +
-      db +
-      '&sql=' +
-      sql,
-  )
-  return await resp.json()
-}
+// export async function doFetchGet(db, sql) {
+//   let resp = await fetch(
+//     'https://www.artspace7.com.au/dsql/json_helper_get.php?db=' +
+//       db +
+//       '&sql=' +
+//       sql,
+//   )
+//   return await resp.json()
+// }
 
 export async function doFetch(db, sql) {
   let formData = new FormData()
@@ -60,4 +60,11 @@ export function isAllowedTo(permissions, sFunc) {
 
 function setSqlParams(sql, params) {
   
+}
+
+export async function logToLogs(db, user_id, user_name, message) {
+  // todo: change to logging user_name one day
+  await doFetch(db,
+    "insert into py_logs (user_id, description) values (" + user_id + ", '" + message + "')"
+  )
 }
