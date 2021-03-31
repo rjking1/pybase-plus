@@ -137,7 +137,9 @@ function exportTableToCSV(filename) {
 
     <br>
     <button on:click={saveToXL}>Save as CSV file</button>
-    <!-- <button on:click={gotoEmail}>Email...</button> -->
+    {#if isAllowedTo($permissions, 'email')}
+      <button on:click={gotoEmail}>Email...</button>
+    {/if}
   {/if}
 </main>
 

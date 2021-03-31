@@ -11,8 +11,8 @@
 	let viewName = "News Email"
 	let templateName = 'Welcome email'
 
-	let sender = "heather@artspace7.com.au"
-	let subject = "Enter subject line here"
+	let sender = "no-reply@ftgas.com.au"
+	let subject = "SUBJECT"
 	let template_contents = "<html>\nHi !name\nPASTE HERE\n...<a href=\"www.artspace7.com.au/pybase/plus/hut/news/test.pdf\">Newsletter.pdf</a>\n</html>"
 	let attachments = "https://artspace7.com.au/pybase/hut/news/test.pdf"
 	let encrypted = ""
