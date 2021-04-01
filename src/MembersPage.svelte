@@ -83,7 +83,7 @@ function exportTableToCSV(filename) {
 
   function includeField(columnName) {
     let f = fields.find(field => field.fieldName === columnName.toLowerCase());
-    return (f === undefined) ? true : f.visibility
+    return (f === undefined) ? true : (f.visibility === undefined ? true : f.visibility)
   }
 
 </script>

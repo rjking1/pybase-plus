@@ -90,6 +90,11 @@ import { dbN, page, permissions, views } from "./Stores.js";
     return (f === undefined) ? true : (f.visibility === undefined ? true : f.visibility)
   }
 
+  function fieldType(columnName) {
+    let f = fields.find(field => field.fieldName === columnName.toLowerCase());
+    return (f === undefined) ? "text" : (f.type === undefined ? "text" : f.type)
+  }
+
 </script>
 
 <main>
@@ -99,7 +104,7 @@ import { dbN, page, permissions, views } from "./Stores.js";
       <tr>
         {#if includeField(column)} 
           <td class="label">{titleCase(column)}</td>
-          <td><input type="text" name="{column}" class="field" value={Object.values(qresult)[index]} /> </td>
+          <td><input type="{fieldType(column)}" name="{column}" class="field" value={Object.values(qresult)[index]} /> </td>
         {/if}
       </tr>
     {/each}
