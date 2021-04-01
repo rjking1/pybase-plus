@@ -16,7 +16,7 @@
     p = pageDetails()
     viewName = p.viewName
     v = viewDetail($views, viewName)
-    viewIsEditable = isAllowedTo($permissions, viewName + "_edit")
+    viewIsEditable = (v.to_view !== '') && isAllowedTo($permissions, viewName + "_edit")
     doListMembers()
   });
 
