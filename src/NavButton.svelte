@@ -1,4 +1,6 @@
 <script>
+import { goBack } from './pageStack.js';
+
   import { loggedIn, page } from './Stores.js'
 
   export let name
@@ -6,6 +8,8 @@
   function doLoginCheck() {
     if($loggedIn == "false"){
       $page = "login"
+    } else if (name = 'back') {
+      $page = goBack()
     } else {
       $page = name
     }

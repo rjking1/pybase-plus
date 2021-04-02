@@ -27,7 +27,7 @@
     }
     fields.push({"fieldName":"id","visibility":false})
     console.log(fields)
-    let sql = v.get_sql
+    let sql = v.get_sql.replace('%d', p.id)
     qresult = await doFetch($dbN, sql);
   }
 
@@ -100,7 +100,7 @@ function exportTableToCSV(filename) {
   {#if viewIsEditable}
     <button on:click={addRow}>+ Add</button>
   {/if}
-  {#if qresult}
+  {#if qresult && qresult.length > 0}
     <table>
       <tr>
         <th><input id="idCheckAll" type="checkbox" unchecked on:click={doCheckAll} /></th>

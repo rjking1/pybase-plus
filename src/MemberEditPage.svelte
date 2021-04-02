@@ -2,7 +2,7 @@
 
 import { onMount } from "svelte";
 import { doFetch, isAllowedTo, titleCase, viewDetail } from "./Common.js";
-import { goBack, pageDetails } from "./pageStack.js";
+import { goBack, gotoPage, pageDetails } from "./pageStack.js";
 import { dbN, page, permissions, views } from "./Stores.js";
 
   let p;
@@ -14,6 +14,7 @@ import { dbN, page, permissions, views } from "./Stores.js";
   let qresult;
   let viewName;
   let entityName;
+  let qsubviews;
 
   onMount(async () => {
     p = pageDetails()
@@ -40,6 +41,7 @@ import { dbN, page, permissions, views } from "./Stores.js";
       );
     }
     qresult = result[0];
+    console.log(qresult)
     entityName = qresult.NAME || qresult.name || ''
 
     viewIsDeletable = isAllowedTo($permissions, viewName + "_delete")
@@ -47,6 +49,9 @@ import { dbN, page, permissions, views } from "./Stores.js";
     cols = []
     Object.keys(qresult).forEach(col => { if (includeField(col)) { cols.push(col) } } )
     console.log(cols)
+
+    qsubviews = JSON.parse(v.subviews);
+    console.log(qsubviews)
   });
 
   function doCancel() {
@@ -85,6 +90,11 @@ import { dbN, page, permissions, views } from "./Stores.js";
     $page = goBack();
   }
 
+  function subviewClick(link) {
+    console.log(link)
+    $page = gotoPage('members', link, p.id)
+  }
+
   function includeField(columnName) {
     let f = fields.find(field => field.fieldName === columnName.toLowerCase());
     return (f === undefined) ? true : (f.visibility === undefined ? true : f.visibility)
@@ -100,6 +110,7 @@ import { dbN, page, permissions, views } from "./Stores.js";
 <main>
   <h3>{entityName}</h3>
   {#if qresult}
+    <table>
     {#each Object.keys(qresult) as column, index}
       <tr>
         {#if includeField(column)} 
@@ -108,6 +119,12 @@ import { dbN, page, permissions, views } from "./Stores.js";
         {/if}
       </tr>
     {/each}
+    </table>
+    {#if qsubviews}
+    {#each Object.keys(qsubviews) as subview, index}
+      <p on:click="{subviewClick(Object.values(qsubviews)[index])}">{titleCase(subview)}</p><br>
+    {/each}
+    {/if}
   {/if}
   <button disabled={!viewIsDeletable} on:click={doDelete}>❌ Delete</button>&nbsp;&nbsp;
   <button on:click={doCancel}>❎ Cancel</button>&nbsp;&nbsp;
