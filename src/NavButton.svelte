@@ -1,5 +1,5 @@
 <script>
-import { goBack } from './pageStack.js';
+import { canGoBack, goBack } from './pageStack.js';
 
   import { loggedIn, page } from './Stores.js'
 
@@ -8,8 +8,10 @@ import { goBack } from './pageStack.js';
   function doLoginCheck() {
     if($loggedIn == "false"){
       $page = "login"
-    } else if (name = 'back') {
-      $page = goBack()
+    } else if (name == 'back') {
+      if (canGoBack()) {
+        $page = goBack() 
+      }
     } else {
       $page = name
     }

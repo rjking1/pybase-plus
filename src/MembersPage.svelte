@@ -10,6 +10,7 @@
   let fields = [];
   let viewIsEditable = false;
   let viewName
+  let entityName
   let qresult = null;
 
   onMount(async () => {
@@ -17,6 +18,7 @@
     viewName = p.viewName
     v = viewDetail($views, viewName)
     viewIsEditable = (v.to_view !== '') && isAllowedTo($permissions, viewName + "_edit")
+    entityName = titleCase(viewName) || '' 
     doListMembers()
   });
 
@@ -73,7 +75,7 @@ function exportTableToCSV(filename) {
   }
 
   function addRow() {
-    $page = gotoPage("memberEdit", v.to_view, 0)  // should this be .to_view + '_add'
+    $page = gotoPage("memberEdit", v.to_view, 0, {"member_id": p.id})  // id  = 0 :: add with parent id passed
   }
 
   function doCheckAll() {
@@ -89,7 +91,7 @@ function exportTableToCSV(filename) {
 </script>
 
 <main>
-  <h3>{viewName}</h3>
+  <h3>{entityName}</h3>
   <!-- <select id="id_view" bind:value={viewName} on:change={doListMembers}>
     {#each $views as view}
       <option value={view.name}>{view.name}</option>

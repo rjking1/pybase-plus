@@ -18,6 +18,7 @@ import { dbN, page, permissions, views } from "./Stores.js";
 
   onMount(async () => {
     p = pageDetails()
+    console.log(p)
     viewName = p.viewName
     v = viewDetail($views, viewName)
 
@@ -33,6 +34,11 @@ import { dbN, page, permissions, views } from "./Stores.js";
         $dbN,
         "select myQuery.* from (select 1) as ignoreMe left join (select * from " + p.viewName + "s where false ) as myQuery on true"  // note must have passed member and not member_add
       );
+      console.log("orig ", result[0]) // all values will be null
+      //update with fk passed in which will become the parent record for the new child
+      //result[0][p.fk.keys[0]] = p.fk.values[0]
+      Object.assign(result[0], p.fk)
+      console.log("updated ", result[0])
     } else {
       result = await doFetch(
         $dbN,
@@ -42,7 +48,7 @@ import { dbN, page, permissions, views } from "./Stores.js";
     }
     qresult = result[0];
     console.log(qresult)
-    entityName = qresult.NAME || qresult.name || ''
+    entityName = qresult.NAME || qresult.name || titleCase(viewName)
 
     viewIsDeletable = isAllowedTo($permissions, viewName + "_delete")
 
@@ -122,7 +128,7 @@ import { dbN, page, permissions, views } from "./Stores.js";
     </table>
     {#if qsubviews}
     {#each Object.keys(qsubviews) as subview, index}
-      <p on:click="{subviewClick(Object.values(qsubviews)[index])}">{titleCase(subview)}</p><br>
+      <div class="link" on:click="{subviewClick(Object.values(qsubviews)[index])}">{titleCase(subview)}</div><br>
     {/each}
     {/if}
   {/if}
@@ -134,4 +140,5 @@ import { dbN, page, permissions, views } from "./Stores.js";
 <style>
   .label { padding-right: 15px;}
   input { font-weight: bold; width: 300px; }
+  .link { text-decoration-line: underline; color: rgb(48, 48, 192); cursor: pointer;}
 </style>
