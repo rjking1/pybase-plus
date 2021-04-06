@@ -17,7 +17,7 @@
     p = pageDetails()
     viewName = p.viewName
     v = viewDetail($views, viewName)
-    viewIsEditable = (v.to_view !== '') && isAllowedTo($permissions, viewName + "_edit")
+    viewIsEditable = (v.to_view !== '') && isAllowedTo($permissions, viewName + "_edit")   // need to handle v.to_view being null (=undefined?)
     entityName = titleCase(viewName) || '' 
     doListMembers()
   });
@@ -71,11 +71,16 @@ function exportTableToCSV(filename) {
   }
 
   function editId(anID) {
-    $page = gotoPage("memberEdit", v.to_view, anID)
+    $page = gotoPage("memberEdit", v.to_view, anID)  // edit a record doesn't need to pass FK
   }
 
   function addRow() {
-    $page = gotoPage("memberEdit", v.to_view, 0, {"member_id": p.id})  // id  = 0 :: add with parent id passed
+    const fkObj = {}
+    if(viewName.includes('$')) {
+      const fkName = viewName.replace(/\$.*/, '_id')
+      fkObj[fkName] = p.id
+    }
+    $page = gotoPage("memberEdit", v.to_view, 0, fkObj)  // 0 => add.  parent id is passed as well. todo: extract field name from view if contains $ eg 'member' from member$receipts and append '_id'
   }
 
   function doCheckAll() {
