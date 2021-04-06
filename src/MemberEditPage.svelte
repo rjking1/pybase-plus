@@ -7,14 +7,15 @@ import { dbN, page, permissions, views } from "./Stores.js";
 
   let p;
   let v;
-  let fields = [];
+  let fields = [];  // special cases of visibiity, type etc
   let viewIsDeletable = false;
-  let cols;
+  let cols;   // all columns from the view that are going to be displayed
   let result;
   let qresult;
   let viewName;
   let entityName;
   let qsubviews;
+  let fkeys;   // eg member_id: qresult (id and name columns)
 
   onMount(async () => {
     p = pageDetails()
@@ -27,18 +28,18 @@ import { dbN, page, permissions, views } from "./Stores.js";
       fields = []
     }
     fields.push({"fieldName":"id","visibility":false})
-    console.log(fields)
+    // console.log(fields)
 
     if (p.id == 0) { 
       result = await doFetch(
         $dbN,
         "select myQuery.* from (select 1) as ignoreMe left join (select * from " + p.viewName + "s where false ) as myQuery on true"  // note must have passed member and not member_add
       );
-      console.log("orig ", result[0]) // all values will be null
+      // console.log("orig ", result[0]) // all values will be null
       //update with fk passed in which will become the parent record for the new child
       //result[0][p.fk.keys[0]] = p.fk.values[0]
       Object.assign(result[0], p.fk)
-      console.log("updated ", result[0])
+      // console.log("updated ", result[0])
     } else {
       result = await doFetch(
         $dbN,
@@ -47,17 +48,28 @@ import { dbN, page, permissions, views } from "./Stores.js";
       );
     }
     qresult = result[0];
-    console.log(qresult)
+    // console.log(qresult)
     entityName = qresult.NAME || qresult.name || titleCase(viewName)
 
     viewIsDeletable = isAllowedTo($permissions, viewName + "_delete")
 
     cols = []
     Object.keys(qresult).forEach(col => { if (includeField(col)) { cols.push(col) } } )
-    console.log(cols)
+    // console.log(cols)
+
+    fkeys = {}
+    Object.keys(qresult).forEach(async col => { 
+      if (fieldType(col) === "lookup") { 
+        fkeys[col] = await doFetch(
+          $dbN,
+          lookupFieldSql(col)
+        );
+      } 
+    } );
+    // console.log(fkeys);
 
     qsubviews = JSON.parse(v.subviews);
-    console.log(qsubviews)
+    // console.log(qsubviews)
   });
 
   function doCancel() {
@@ -111,6 +123,11 @@ import { dbN, page, permissions, views } from "./Stores.js";
     return (f === undefined) ? "text" : (f.type === undefined ? "text" : f.type)
   }
 
+  function lookupFieldSql(columnName) {
+    let f = fields.find(field => field.fieldName === columnName.toLowerCase());
+    return f.sql;
+  }
+
 </script>
 
 <main>
@@ -121,7 +138,19 @@ import { dbN, page, permissions, views } from "./Stores.js";
       <tr>
         {#if includeField(column)} 
           <td class="label">{titleCase(column)}</td>
-          <td><input type="{fieldType(column)}" name="{column}" class="field" value={Object.values(qresult)[index]} /> </td>
+          <td>
+            {#if fieldType(column) !== "lookup"}
+              <input type="{fieldType(column)}" name="{column}" class="field" value={Object.values(qresult)[index]} /> 
+            {:else}
+              <select class="field" value={Object.values(qresult)[index]}>
+                {#if column in fkeys}
+                  {#each fkeys[column] as fkey}
+                    <option value={fkey.id}>{fkey.name}</option>
+                  {/each}
+                {/if}
+              </select>
+            {/if}
+          </td>
         {/if}
       </tr>
     {/each}
