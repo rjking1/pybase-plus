@@ -17,7 +17,7 @@
     p = pageDetails()
     viewName = p.viewName
     v = viewDetail($views, viewName)
-    viewIsEditable = (v.to_view !== '') && isAllowedTo($permissions, viewName + "_edit")   // need to handle v.to_view being null (=undefined?)
+    viewIsEditable = (!!v.to_view) && isAllowedTo($permissions, viewName + "_edit")   // handle v.to_view being null (=undefined?) or '' (empty string)
     entityName = titleCase(viewName) || '' 
     doListMembers()
   });
