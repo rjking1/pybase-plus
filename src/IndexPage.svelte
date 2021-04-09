@@ -10,7 +10,7 @@ import { dbN, page, permissions } from "./Stores.js";
   onMount(async () => {
     views = await doFetch(
       $dbN,
-      "select id, name from py_views where incl_in_index='Y' and not name like 'PY_%' order by name"
+      "select id, name from py_views where incl_in_index='Y' order by name" //  and not name like 'PY_%'
     );
   });
 

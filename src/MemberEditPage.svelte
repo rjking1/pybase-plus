@@ -139,7 +139,9 @@ import { dbN, page, permissions, views } from "./Stores.js";
         {#if includeField(column)} 
           <td class="label">{titleCase(column)}</td>
           <td>
-            {#if fieldType(column) !== "lookup"}
+            {#if fieldType(column) === "textarea"}
+              <textarea name="{column}" class="field">{Object.values(qresult)[index]}</textarea> 
+            {:else if fieldType(column) !== "lookup"}
               <input type="{fieldType(column)}" name="{column}" class="field" value={Object.values(qresult)[index]} /> 
             {:else}
               <select class="field" value={Object.values(qresult)[index]}>
@@ -169,5 +171,6 @@ import { dbN, page, permissions, views } from "./Stores.js";
 <style>
   .label { padding-right: 15px;}
   input { font-weight: bold; width: 300px; }
+  textarea { height:100px; width: 300px; }
   .link { text-decoration-line: underline; color: rgb(48, 48, 192); cursor: pointer;}
 </style>

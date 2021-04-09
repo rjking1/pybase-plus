@@ -32,7 +32,7 @@
       $permissions["tables_prefix"] = qresult[1]["val"] 
       console.log($permissions);
 
-      $views = await doFetch($dbN, "select id, name, to_view, get_sql, put_sql, fields, subviews from py_views where name not like 'py_%'")
+      $views = await doFetch($dbN, "select id, name, to_view, get_sql, put_sql, fields, subviews from py_views") //  where name not like 'py_%'
       console.log($views)
     }
   }
