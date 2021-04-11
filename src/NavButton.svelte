@@ -1,6 +1,5 @@
 <script>
 import { canGoBack, goBack } from './pageStack.js';
-
   import { loggedIn, page } from './Stores.js'
 
   export let name

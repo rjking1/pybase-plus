@@ -5,9 +5,8 @@
     import { doFetch, logToLogs } from './common.js'
 
 	import { onMount } from 'svelte'
-import { permissions } from './Stores.js';
+import { dbN, permissions } from './Stores.js';
 
-	let db = 'art25285_hut'
 	let sql = "select * from members where NAME = 'Richard' and News_Email = 'Y'"
 	let viewName = "News Email"
 	let templateName = 'Welcome email'
@@ -25,28 +24,27 @@ import { permissions } from './Stores.js';
   	let templates = []
 
   	onMount(async () => {
-    	views = await doFetch(db, "select id, name from py_views where incl_in_index='Y' and not name like 'PY_%' order by name")
-    	templates = await doFetch(db, "select id, name from py_templates where class='email' order by name")
+    	views = await doFetch($dbN, "select id, name from py_views where incl_in_index='Y' and not name like 'PY_%' order by name")
+    	templates = await doFetch($dbN, "select id, name from py_templates where class='email' order by name")
   	})
 	
 	//fetch('https://www.artspace7.com.au/dsql/json_helper_get.php?db=art25285_rides2&sql=select%20*%20from%20bikes')
 
 	async function doQuery() {
-		result = await doFetch(db, sql)
+		result = await doFetch($dbN, sql)
 		// console.log(result)
 	}
 
 	async function doView() {
-		let rows = await doFetch(db, "SELECT get_sql FROM py_views WHERE name = '" + viewName + "'")
+		let rows = await doFetch($dbN, "SELECT get_sql FROM py_views WHERE name = '" + viewName + "'")
 		sql = rows[0]["get_sql"]
-		result = await doFetch(db, sql)
+		result = await doFetch($dbN, sql)
 		// console.log(result)
 	}
 
 	async function doLoadtemplate() {
-		let rows = await doFetch(db, "SELECT contents FROM py_templates WHERE name = '" + templateName + "'")
+		let rows = await doFetch($dbN, "SELECT contents FROM py_templates WHERE name = '" + templateName + "'")
 		template_contents = rows[0]["contents"]
-		// template_contents = await doFetch(db, sql)
 	}
 
 	async function doSend() {
@@ -74,7 +72,7 @@ import { permissions } from './Stores.js';
 				}).then(
 					message => {
 						console.log(row["EMAIL"], message)
-						logToLogs(db, $permissions.u_id, $permissions.u_name, "emailed " + row["EMAIL"] + " subject " + subject + " response " + message) 
+						logToLogs($dbN, $permissions.u_id, $permissions.u_name, "emailed " + row["EMAIL"] + " subject " + subject + " response " + message) 
 					}
 				); 
 			}
@@ -89,8 +87,7 @@ import { permissions } from './Stores.js';
 </style>
 
 
-<label>db</label><input bind:value={db} />
-<label>sql</label><input bind:value={sql} />
+<label>SQL</label><input bind:value={sql} />
 <button type="submit" on:click={doQuery}>SQL Query</button>
 
 <label>View</label>

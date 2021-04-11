@@ -4,7 +4,7 @@
 	import { onMount } from "svelte";
 	import { dbN, permissions } from "./Stores.js";
 
-	let sql = "select * from members where lastname = 'King'";
+	let sql = "select * from py_logs where description not like 'Select%' order by date_time desc limit 50" // "select * from members where lastname = 'King'";
 	let result = undefined;
 
 	//fetch('https://www.artspace7.com.au/dsql/json_helper_get.php?db=art25285_rides2&sql=select%20*%20from%20bikes')

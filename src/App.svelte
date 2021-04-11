@@ -1,13 +1,14 @@
 <script>
-  import { society, page } from './Stores.js'
+  import { society, page, permissions } from './Stores.js'
 
   import NavButton from './NavButton.svelte'
-
   import LoginPage from './LoginPage.svelte'
   import IndexPage from './IndexPage.svelte'
   import MembersPage from './MembersPage.svelte'
   import MemberEditPage from './MemberEditPage.svelte'
   import EmailPage from './EmailPage.svelte'
+  import QueryPage from './QueryPage.svelte'
+import { isAllowedTo } from './Common.js';
 
   const pageMap = {
     login: LoginPage,
@@ -15,6 +16,7 @@
     members: MembersPage,
     memberEdit: MemberEditPage,
     email: EmailPage,
+    query: QueryPage,
   }
 
 </script>
@@ -27,8 +29,9 @@
   <NavButton  name="index">Home</NavButton>
   <NavButton  name="back">Back</NavButton>
   <!-- <NavButton  name="members">Members</NavButton>
-  <NavButton  name="memberEdit">Member Edit</NavButton>
-  <NavButton  name="email">Email</NavButton> -->
+  <NavButton  name="memberEdit">Member Edit</NavButton> --> 
+  <NavButton  name="email">Email</NavButton> 
+  <NavButton  name="query" class="{$permissions.cap==='D' ? 'dev' : 'nondev'}">Query</NavButton>
 </nav>
 
 <main>
@@ -43,8 +46,13 @@
   main {
     padding: 10px;
   }
+
+  .dev {display:flex}
+  .nondev {
+    display:none;
+  }
   nav {
-    display: flex;
+    /* display: flex; */
     align-items: center;
     background-color: cornflowerblue;
     padding: 10px;
