@@ -22,14 +22,12 @@ import { dbN, page, permissions } from "./Stores.js";
 
 <main>
   {#if views}
-    <ul>
       {#each views as view}
         {#if isAllowedTo($permissions, view.name)}
         <button disabled={!isAllowedTo($permissions, view.name)} on:click={viewClick(view.name)}> ▸ {view.name}</button>
         <br>
         {/if}
       {/each}
-    </ul>
   {/if}
 </main>
 

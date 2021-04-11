@@ -40,13 +40,13 @@
 
 <main>
   <label>Database</label>
-  <input bind:value={db} />
+  <input id="db" bind:value={db} />
 
   <label>User name</label>
-  <input bind:value={username} />
+  <input id="user" bind:value={username} />
 
   <label>Password</label>
-  <input type="password" bind:value={password} />
+  <input id="password" type="password" bind:value={password} />
 
   <button type="button" on:click={doLogin}>Login</button>
 </main>
