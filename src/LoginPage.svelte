@@ -1,5 +1,6 @@
 <script>
   import { doFetch } from "./Common.js";
+import { gotoPage } from "./pageStack.js";
   import { society, page, dbN, loggedIn, permissions, views } from "./Stores.js";
 
   // import { onMount } from "svelte";
@@ -25,7 +26,7 @@
       $permissions = { u_id: qresult[0]["id"], u_name: qresult[0]["user_name"], cap: qresult[0]["def_capab"], ex: qresult[0]["exceptions"] };
       $dbN = db_base + db;
       $loggedIn = "true";
-      $page = 'index'
+      // $page = 'index'
 
       qresult = await doFetch($dbN, "select val from py_named_values where id like 'sys.society.%' order by id")
       $society = qresult[0]["val"] 
@@ -34,21 +35,25 @@
 
       $views = await doFetch($dbN, "select id, name, to_view, get_sql, put_sql, fields, subviews from py_views") //  where name not like 'py_%'
       console.log($views)
+
+      $page = gotoPage("index")
     }
   }
 </script>
 
 <main>
-  <label>Database</label>
-  <input id="db" bind:value={db} />
+  <form on:submit|preventDefault={doLogin}>
+    <label>Database</label>
+    <input id="db" bind:value={db} />
 
-  <label>User name</label>
-  <input id="user" bind:value={username} />
+    <label>User name</label>
+    <input id="user" bind:value={username} autofocus />
 
-  <label>Password</label>
-  <input id="password" type="password" bind:value={password} />
+    <label>Password</label>
+    <input id="password" type="password" bind:value={password} />
 
-  <button type="button" on:click={doLogin}>Login</button>
+    <button type="submit">Login</button>
+  </form>
 </main>
 
 <style>

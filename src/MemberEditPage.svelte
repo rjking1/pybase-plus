@@ -158,9 +158,11 @@ import { dbN, page, permissions, views } from "./Stores.js";
     {/each}
     </table>
     {#if qsubviews}
-    {#each Object.keys(qsubviews) as subview, index}
-      <div class="link" on:click="{subviewClick(Object.values(qsubviews)[index])}">{titleCase(subview)}</div><br>
-    {/each}
+      {#if p.id != 0} 
+        {#each Object.keys(qsubviews) as subview, index}
+          <div class="link" on:click="{subviewClick(Object.values(qsubviews)[index])}">{titleCase(subview)}</div><br>
+        {/each}
+      {/if}
     {/if}
   {/if}
   <button disabled={!viewIsDeletable} on:click={doDelete}>❌ Delete</button>&nbsp;&nbsp;

@@ -30,8 +30,10 @@ import { isAllowedTo } from './Common.js';
   <NavButton  name="back">Back</NavButton>
   <!-- <NavButton  name="members">Members</NavButton>
   <NavButton  name="memberEdit">Member Edit</NavButton> --> 
+  {#if $permissions.cap === 'D'}
   <NavButton  name="email">Email</NavButton> 
-  <NavButton  name="query" class="{$permissions.cap==='D' ? 'dev' : 'nondev'}">Query</NavButton>
+  <NavButton  name="query">Query</NavButton>
+  {/if}
 </nav>
 
 <main>
@@ -47,10 +49,6 @@ import { isAllowedTo } from './Common.js';
     padding: 10px;
   }
 
-  .dev {display:flex}
-  .nondev {
-    display:none;
-  }
   nav {
     /* display: flex; */
     align-items: center;
