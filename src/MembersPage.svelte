@@ -12,6 +12,7 @@
   let viewName
   let entityName
   let qresult = null;
+  let aresult = null;
 
   onMount(async () => {
     p = pageDetails()
@@ -20,6 +21,7 @@
     viewIsEditable = (!!v.to_view) && isAllowedTo($permissions, viewName + "_edit")   // handle v.to_view being null (=undefined?) or '' (empty string)
     entityName = titleCase(viewName) || '' 
     doListMembers()
+    doGetActions()
   });
 
   async function doListMembers() {
@@ -31,6 +33,10 @@
     console.log(fields)
     let sql = v.get_sql.replace('%d', p.id)
     qresult = await doFetch($dbN, sql);
+  }
+
+  async function doGetActions() {
+    aresult = await doFetch($dbN, "select * from py_actions where view_id=" + v.id);
   }
 
 function downloadCSV(csv, filename) {
@@ -48,12 +54,11 @@ function downloadCSV(csv, filename) {
 function exportTableToCSV(filename) {
     let csv = [];
     let rows = document.querySelectorAll("table tr");
-    
     for (let i = 0; i < rows.length; i++) {
         let row = []
         let cols = rows[i].querySelectorAll("td, th");
         
-        for (let j = 0; j < cols.length; j++) 
+        for (let j = 0; j < cols.length; j++)    //todo: check: are we puttng checkbox out -- skip!
             row.push(cols[j].innerText);
         
         csv.push(row.join(","));        
@@ -67,7 +72,24 @@ function exportTableToCSV(filename) {
   }
 
   function gotoEmail() {
-    $page = "email"   // tooo: make an action
+    $page = "email"   // todo: make an action
+  }
+
+  async function doAction(action_type, script) {
+    let ids = []
+    let cboxes = Array.from(document.getElementsByClassName("checkable"))
+    cboxes.forEach((cbox, index) => {
+      if(cbox.checked) {
+        // console.log(qresult[index])
+        ids.push( qresult[index]['ID'])
+      } 
+    })
+    // console.log('ids=', ids)
+
+    if(action_type == 'exec_sql') {
+      await doFetch($dbN, script.replace('%d', ids.join(',')))
+      doListMembers()
+    }
   }
 
   function editId(anID) {
@@ -85,7 +107,7 @@ function exportTableToCSV(filename) {
 
   function doCheckAll() {
     let cboxes = Array.from(document.getElementsByClassName("checkable"))
-      cboxes.forEach((cbox) => cbox.checked = document.getElementById("idCheckAll").checked)
+    cboxes.forEach((cbox) => cbox.checked = document.getElementById("idCheckAll").checked)
   }
 
   function includeField(columnName) {
@@ -97,12 +119,6 @@ function exportTableToCSV(filename) {
 
 <main>
   <h3>{entityName}</h3>
-  <!-- <select id="id_view" bind:value={viewName} on:change={doListMembers}>
-    {#each $views as view}
-      <option value={view.name}>{view.name}</option>
-    {/each}
-  </select>
-  <button type="button" on:click={doListMembers}>List</button> -->
 
   {#if viewIsEditable}
     <button on:click={addRow}>+ Add</button>
@@ -133,19 +149,19 @@ function exportTableToCSV(filename) {
           {/each}
         </tr>
       {/each}
-
-      <!-- <tr class="new">
-        {#each newRow as column}
-          <td contenteditable="true" bind:innerHTML={column} />
-        {/each}
-        <button on:click={addRow}>+</button>
-	    </tr> -->
     </table>
 
     <br>
     <button id="saveToCsv" on:click={saveToXL}>Save to CSV file</button>
     {#if isAllowedTo($permissions, 'email')}
       <button on:click={gotoEmail}>Email...</button>
+    {/if}
+    {#if aresult}
+      {#each aresult as row}
+        {#if isAllowedTo($permissions, "action_" + row.NAME)}
+          <button on:click={doAction(row.ACTION_TYPE, row.SCRIPT)}>{row.NAME}</button>
+        {/if}
+      {/each}
     {/if}
   {/if}
 </main>
