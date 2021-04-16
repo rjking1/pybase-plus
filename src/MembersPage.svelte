@@ -61,7 +61,7 @@ function exportTableToCSV(filename) {
         for (let j = 1; j < cols.length; j++)    //todo: check: are we puttng checkbox out -- skip!
             row.push(cols[j].innerText);
         
-        csv.push(row.join(","));        
+        csv.push(row.join());        
     }
 
     downloadCSV(csv.join("\n"), filename);
@@ -75,22 +75,26 @@ function exportTableToCSV(filename) {
     $page = "email"   // todo: make an action
   }
 
-  async function doAction(action_type, script) {
+  async function doAction(action_name, action_type, script) {
     let ids = []
+    let names = []
     let cboxes = Array.from(document.getElementsByClassName("checkable"))
     cboxes.forEach((cbox, index) => {
       if(cbox.checked) {
         // console.log(qresult[index])
         ids.push( qresult[index]['ID'])
+        names.push( qresult[index]['NAME'])
       } 
     })
     // console.log('ids=', ids)
+    console.log('names=', names)
 
     if(ids.length == 0) {
-      window.alert('Please select one or more members')
+      window.alert('Please select one or more rows')
     } else {
       if(action_type == 'exec_sql') {
-        await doFetch($dbN, script.replace('%d', ids.join(',')))
+        let audit_text = viewName + ': ' + action_name + ": " + '"' + names.join()+ '"' + " by " + $permissions.u_name
+        await doFetch($dbN, script.replace('%d', ids.join()), audit_text)
         doListMembers()
       }
     }
@@ -163,7 +167,7 @@ function exportTableToCSV(filename) {
     {#if aresult}
       {#each aresult as row}
         {#if isAllowedTo($permissions, "action_" + row.NAME)}
-          <button on:click={doAction(row.ACTION_TYPE, row.SCRIPT)}>{row.NAME}</button>
+          <button on:click={doAction(row.NAME, row.ACTION_TYPE, row.SCRIPT)}>{row.NAME}</button>
         {/if}
       {/each}
     {/if}

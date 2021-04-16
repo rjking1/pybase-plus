@@ -2,7 +2,7 @@
 	<script src="https://smtpjs.com/v3/smtp.js"></script>
 </svelte:head>
 <script>
-    import { doFetch, logToLogs } from './common.js'
+    import { doFetch, writeAuditText } from './common.js'
 
 	import { onMount } from 'svelte'
 import { dbN, permissions } from './Stores.js';
@@ -72,7 +72,7 @@ import { dbN, permissions } from './Stores.js';
 				}).then(
 					message => {
 						console.log(row["EMAIL"], message)
-						logToLogs($dbN, $permissions.u_id, $permissions.u_name, "emailed " + row["EMAIL"] + " subject " + subject + " response " + message) 
+						writeAuditText($dbN, $permissions.u_id, $permissions.u_name, "emailed " + row["EMAIL"] + " subject " + subject + " response " + message) 
 					}
 				); 
 			}

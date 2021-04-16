@@ -1,6 +1,7 @@
 <script>
 
 import { onMount } from "svelte";
+import { get_store_value } from "svelte/internal";
 import { doFetch, isAllowedTo, titleCase, viewDetail } from "./Common.js";
 import { goBack, gotoPage, pageDetails } from "./pageStack.js";
 import { dbN, page, permissions, views } from "./Stores.js";
@@ -44,15 +45,18 @@ import { dbN, page, permissions, views } from "./Stores.js";
       result = await doFetch(
         $dbN,
         v.get_sql.replace('%d', p.id)
-        // "select * from " + p.viewName + "s where id = " + p.id  // todo: fix - not real purpose of viewname --- query using <get_sql> 
       );
     }
     qresult = result[0];
     // console.log(qresult)
-    entityName = qresult.NAME || qresult.name || titleCase(viewName)
+
+    // console.log("audit_template=", v.audit_template)
+    // console.log("audit_template value=", qresult[v.audit_template])
+    entityName = qresult[v.audit_template] || qresult.NAME || qresult.name || titleCase(viewName)
 
     viewIsDeletable = isAllowedTo($permissions, viewName + "_delete")
 
+    // cols is all columns in view
     cols = []
     Object.keys(qresult).forEach(col => { if (includeField(col)) { cols.push(col) } } )
     // console.log(cols)
@@ -77,30 +81,51 @@ import { dbN, page, permissions, views } from "./Stores.js";
   }
 
   async function doDelete() {
-    if(window.confirm('Delete ' + viewName + '?')) {
-      result = await doFetch( $dbN, "delete from " + p.viewName + "s where id=" + p.id );
+    if(window.confirm('Delete ' + entityName + " from " + viewName + 's?')) {
+      let audit_text = p.viewName + ' "' + entityName + '" deleted by ' + $permissions.u_name
+      result = await doFetch( $dbN, "delete from " + p.viewName + "s where id=" + p.id, audit_text );
       console.log(result)
       $page = goBack();
     }
   }
 
   async function doUpdate() {
-    let sql = "replace into " + p.viewName + "s (id," + cols.join() + ") values ("  // could have (p.id == 0 ? "insert" : "replace") + " into " + ...
-    let vals = []
-    vals.push(p.id)
+    // // build dictionary of colName: value, ...
+    // let labels = Array.from( document.getElementsByClassName("label") )
+    // let fields = Array.from( document.getElementsByClassName("field") )
+    // let dict = fields.reduce(function(dict, field, index) {
+    //   dict[labels[index].value] = field.value;
+    //   return dict;
+    // }, {})
+    // console.log("dict=", dict)
+
+    let sql = (p.id == 0 ? "insert" : "replace") + " into " + p.viewName + "s (id," + cols.join() + ") values ("
+    let vals = [p.id]
     let fields = Array.from( document.getElementsByClassName("field") )
     fields.forEach(field => {
       if(field.value.trim() == '') {
         vals.push( "NULL" )
       } else {
-        vals.push( "'" + field.value + "'" )
+        vals.push( "'" + field.value.replaceAll("'", "''") + "'" )
       }
     });
     sql = sql + vals.join() + ')'
-
     console.log(sql)
-    result = await doFetch( $dbN, sql );
+
+    // need to get entityName for Add case (but may  have changed in an update case as well)
+    const entityCol = v.audit_template || "name" || "NAME" || "ID"
+    cols.forEach((col, index) => {
+      if(col.toLowerCase() == entityCol) {
+        console.log(fields, index, fields[index], fields[index].value)
+        entityName = fields[index].value
+      }
+    })
+    let audit_text = p.viewName + ' "' + entityName + '" ' + (p.id == 0 ? "added" : "updated") + " by " + $permissions.u_name
+    console.log(audit_text)
+    
+    result = await doFetch( $dbN, sql, audit_text );
     console.log(result)
+    
     if('error' in result[0]){
       window.alert(result[0].error)
     }

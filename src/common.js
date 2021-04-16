@@ -9,10 +9,13 @@
 //   return await resp.json()
 // }
 
-export async function doFetch(db, sql) {
+export async function doFetch(db, sql, auditText) {
   let formData = new FormData()
   formData.append('db', db)
-  formData.append('sql', encodeURI(sql))  // encodeURIComponent
+  formData.append('sql', encodeURI(sql)) 
+  if (auditText) {
+    formData.append('audit_text', auditText)
+  }
   //formData.append('noenc', 'true') 
 
   let resp = await fetch(
@@ -63,9 +66,10 @@ function setSqlParams(sql, params) {
   
 }
 
-export async function logToLogs(db, user_id, user_name, message) {
+export async function writeAuditText(db, user_id, user_name, auditText) {
   // todo: change to logging user_name one day
   await doFetch(db,
-    "insert into py_logs (user_id, description) values (" + user_id + ", '" + message + "')"
+    "insert into py_logs (user_id, description) values (" + user_id + ", '" + auditText.replaceAll("'", "''") + "')"
+    // don't add auditText as that is what we are inserting withu\out any SQL
   )
 }
