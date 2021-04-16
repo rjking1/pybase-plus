@@ -85,7 +85,7 @@ import { dbN, page, permissions, views } from "./Stores.js";
   }
 
   async function doUpdate() {
-    let sql = "replace into " + p.viewName + "s (id," + cols.join() + ") values ("
+    let sql = "replace into " + p.viewName + "s (id," + cols.join() + ") values ("  // could have (p.id == 0 ? "insert" : "replace") + " into " + ...
     let vals = []
     vals.push(p.id)
     let fields = Array.from( document.getElementsByClassName("field") )

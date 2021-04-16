@@ -58,7 +58,7 @@ function exportTableToCSV(filename) {
         let row = []
         let cols = rows[i].querySelectorAll("td, th");
         
-        for (let j = 0; j < cols.length; j++)    //todo: check: are we puttng checkbox out -- skip!
+        for (let j = 1; j < cols.length; j++)    //todo: check: are we puttng checkbox out -- skip!
             row.push(cols[j].innerText);
         
         csv.push(row.join(","));        
@@ -86,9 +86,13 @@ function exportTableToCSV(filename) {
     })
     // console.log('ids=', ids)
 
-    if(action_type == 'exec_sql') {
-      await doFetch($dbN, script.replace('%d', ids.join(',')))
-      doListMembers()
+    if(ids.length == 0) {
+      window.alert('Please select one or more members')
+    } else {
+      if(action_type == 'exec_sql') {
+        await doFetch($dbN, script.replace('%d', ids.join(',')))
+        doListMembers()
+      }
     }
   }
 
