@@ -11,8 +11,9 @@ function mysql_die($error = "unknown")
 
 $db =  $_POST["db"];
 $sql = $_POST["sql"];
-// $hdr = !isset($_POST["nohdr"]);
-// $enc = !isset($_POST["noenc"]);
+//$audit_text = $_POST["audit_text"];
+//$hdr = !isset($_POST["nohdr"]);
+//$enc = !isset($_POST["noenc"]);
 
 header('Content-Type: application/json');
 header("Access-Control-Allow-Origin: *");
