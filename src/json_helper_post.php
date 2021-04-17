@@ -25,9 +25,7 @@ mysql_set_charset('utf8');
 mysql_select_db( $db, $con ) or mysql_die( mysql_error() );
 
 $sql = rawurldecode( $sql );    // raw.. does not change + to space
-error_log('1.' . $sql);
-//$audit_text = stripslashes( $audit_text );
-//error_log('2.' . $audit_text);
+// error_log('1.' . $sql);
 
 $result = mysql_query( $sql, $con ) or mysql_die( mysql_error() );  
 
@@ -52,14 +50,14 @@ mysql_free_result($result);
 
 // log audit_text if supplied else SQL if not a select
 if( isset( $_POST["audit_text"] ) ) {
-    $result = mysql_query( "insert into py_logs (user_id, description) values (0, '" . $_POST["audit_text"] . "')", $con ) or mysql_die( mysql_error() );
+    $result = mysql_query( "insert into py_logs (user_id, description, `sql_`) values (0, '" . $_POST["audit_text"] . "','" . addslashes($sql) . "')", $con ) or mysql_die( mysql_error() );
     mysql_free_result($result); 
 }
 else if( strtolower( substr( $sql, 0, 19 ) ) == "insert into py_logs" ) {
 	// do nothing as have already recorded special message into audit log
 }
 else if( strtolower( substr( $sql, 0, 7 ) ) != "select " ) {
-    $result = mysql_query( "insert into py_logs (user_id, description) values (0, '" . addslashes($sql) . "')", $con ) or mysql_die( mysql_error() );
+    $result = mysql_query( "insert into py_logs (user_id, `sql_`) values (0, '" . addslashes($sql) . "')", $con ) or mysql_die( mysql_error() );
     mysql_free_result($result); 
 }
 
