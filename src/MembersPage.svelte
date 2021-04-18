@@ -78,7 +78,7 @@ function exportTableToCSV(filename) {
   async function doAction(action_name, action_type, script) {
     let ids = []
     let names = []
-    let cboxes = Array.from(document.getElementsByClassName("checkable"))
+    let cboxes = Array.from(document.getElementsByClassName("checkrow"))
     cboxes.forEach((cbox, index) => {
       if(cbox.checked) {
         // console.log(qresult[index])
@@ -114,7 +114,7 @@ function exportTableToCSV(filename) {
   }
 
   function doCheckAll() {
-    let cboxes = Array.from(document.getElementsByClassName("checkable"))
+    let cboxes = Array.from(document.getElementsByClassName("checkrow"))
     cboxes.forEach((cbox) => cbox.checked = document.getElementById("idCheckAll").checked)
   }
 
@@ -145,9 +145,9 @@ function exportTableToCSV(filename) {
       {#each qresult as row}
         <tr>
           <td>
-            <input class="checkable" type="checkbox" unchecked /> 
+            <input class="checkrow" type="checkbox" unchecked /> 
             {#if viewIsEditable}
-              <button on:click={editId(Object.values(row)[0])}>✎</button>
+              <button class="editrow" on:click={editId(Object.values(row)[0])}>✎</button>
             {/if}
           </td>
           {#each Object.values(row) as cell, index}
