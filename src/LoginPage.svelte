@@ -1,18 +1,16 @@
 <script>
-  import { doFetch, writeAuditText } from "./Common.js";
+import { doFetch, writeAuditText } from "./Common.js";
 import { gotoPage } from "./pageStack.js";
-  import { society, page, dbN, loggedIn, permissions, views } from "./Stores.js";
-
-  // import { onMount } from "svelte";
+import { society, page, dbName, dbN, loggedIn, permissions, views } from "./Stores.js";
 
   const db_base = "art25285_"
-  let db = "hut";
+  // let db = "";
   let username = "";
   let password = "";
 
   async function doLogin() {
     let qresult = await doFetch(
-      db_base + db,
+      db_base + $dbName,
       "select u.id, u.user_name, def_capab, exceptions from py_roles r join py_users u on r.id=u.role_id where upper(u.user_name)='" +
         username.toUpperCase() +
         "' and u.password='" +
@@ -24,7 +22,7 @@ import { gotoPage } from "./pageStack.js";
       alert("Invalid user name or password")
     } else {
       $permissions = { u_id: qresult[0]["id"], u_name: qresult[0]["user_name"], cap: qresult[0]["def_capab"], ex: qresult[0]["exceptions"] };
-      $dbN = db_base + db;
+      $dbN = db_base + $dbName;
       $loggedIn = "true";
 
       qresult = await doFetch($dbN, "select val from py_named_values where id like 'sys.society.%' order by id")
@@ -45,13 +43,13 @@ import { gotoPage } from "./pageStack.js";
 <main>
   <form on:submit|preventDefault={doLogin}>
     <label>Database</label>
-    <input id="db" bind:value={db} />
+    <input id="db" bind:value={$dbName} required />
 
     <label>User name</label>
-    <input id="user" bind:value={username} autofocus />
+    <input id="user" bind:value={username} autofocus required />
 
     <label>Password</label>
-    <input id="password" type="password" bind:value={password} />
+    <input id="password" type="password" bind:value={password} required />
 
     <button type="submit">Login</button>
   </form>

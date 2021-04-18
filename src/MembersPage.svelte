@@ -36,7 +36,7 @@
   }
 
   async function doGetActions() {
-    aresult = await doFetch($dbN, "select * from py_actions where view_id=" + v.id);
+    aresult = await doFetch($dbN, "select * from py_actions where view_id=" + v.id);   // optimization..load all actions at login time
   }
 
 function downloadCSV(csv, filename) {
@@ -58,7 +58,7 @@ function exportTableToCSV(filename) {
         let row = []
         let cols = rows[i].querySelectorAll("td, th");
         
-        for (let j = 1; j < cols.length; j++)    //todo: check: are we puttng checkbox out -- skip!
+        for (let j = 1; j < cols.length; j++) // skip first col to avoid writing checkbox and edit button
             row.push(cols[j].innerText);
         
         csv.push(row.join());        
@@ -67,13 +67,19 @@ function exportTableToCSV(filename) {
     downloadCSV(csv.join("\n"), filename);
 }
 
-  function saveToXL() {
-    exportTableToCSV("pybase.csv")  // can we gen a file name from selected list?
-  }
+var sanitizeName = function(name) {
+  // to make valid filename
+  name = name.replace(/\s+/gi, '-');           // Replace white space with dash
+  return name.replace(/[^a-zA-Z0-9\-]/gi, ''); // Strip any special charactere
+};
 
-  function gotoEmail() {
-    $page = "email"   // todo: make an action
-  }
+function saveToCsv() {
+  exportTableToCSV(sanitizeName(entityName) + ".csv")
+}
+
+function gotoEmail() {
+  $page = "email"   // todo: make an action
+}
 
   async function doAction(action_name, action_type, script) {
     let ids = []
@@ -160,7 +166,7 @@ function exportTableToCSV(filename) {
     </table>
 
     <br>
-    <button id="saveToCsv" on:click={saveToXL}>Save to CSV file</button>
+    <button id="saveToCsv" on:click={saveToCsv}>Save to CSV file</button>
     {#if isAllowedTo($permissions, 'email')}
       <button on:click={gotoEmail}>Email...</button>
     {/if}
