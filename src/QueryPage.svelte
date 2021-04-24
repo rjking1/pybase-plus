@@ -1,23 +1,43 @@
 <script>
 	import { doFetch } from "./Common.js";
 
-	import { onMount } from "svelte";
-	import { dbN, permissions } from "./Stores.js";
+	// import { onMount } from "svelte";
+	import { dbN, dbName } from "./Stores.js";
 
+	let backupToFile = $dbName;
+	let restoreToDB = 'test';
 	let sql = "select * from py_logs where description not like 'Select%' order by date_time desc limit 50" // "select * from members where lastname = 'King'";
 	let result = undefined;
 
+	// the following will work but is a post frm within pybase now
 	//fetch('https://www.artspace7.com.au/dsql/json_helper_get.php?db=art25285_rides2&sql=select%20*%20from%20bikes')
+
+	async function doBackup() {
+		return await fetch("https://www.artspace7.com.au/dsql/burest.php?func=b&db=" + $dbName + "&filename=" + backupToFile);
+	}
+
+	async function doRestore() {
+		return await fetch("https://www.artspace7.com.au/dsql/burest.php?func=r&db=" + restoreToDB + "&filename=" + backupToFile);
+	}
 
 	async function doQuery() {
 		result = await doFetch($dbN, sql);
-		// console.log(result)
 	}
 
 </script>
 
-<label>SQL</label><input bind:value={sql} />
-<button type="submit" on:click={doQuery}>Query</button>
+<button id="restore" on:click="{doBackup}">Backup</button>
+database <input id="bu_db" class="short" value={$dbName} readonly /> 
+to file <input id="bu_file" class="short" bind:value={backupToFile} /> 
+<br>
+<button id="backup" on:click="{doRestore}">Restore</button>
+file <input id="rest_file" class="short" bind:value={backupToFile} /> 
+to database <input id="rest_db" class="short" bind:value={restoreToDB} /> 
+<hr>
+<label>SQL</label>
+<textarea>{sql}</textarea>
+<br>
+<button id="query" on:click="{doQuery}">Query</button>
 
 {#if result}
 	<table>
@@ -42,11 +62,14 @@
 {/if}
 
 <style>
+	.short {
+		width: 300px;
+	}
 	input {
 		width: 60%;
 	}
 	textarea {
-		width: 60%;
+		width: 90%;
 		height: 20%;
 	}
 </style>

@@ -27,7 +27,7 @@ import { society, page, dbName, dbN, loggedIn, permissions, views } from "./Stor
 
       qresult = await doFetch($dbN, "select val from py_named_values where id like 'sys.society.%' order by id")
       $society = qresult[0]["val"] 
-      $permissions["tables_prefix"] = qresult[1]["val"] 
+      // $permissions["tables_prefix"] = qresult[1]["val"] // for the future and need to add to all databases
       console.log($permissions);
 
       $views = await doFetch($dbN, "select id, name, to_view, get_sql, put_sql, fields, subviews, audit_template from py_views") //  where name not like 'py_%'
@@ -51,7 +51,7 @@ import { society, page, dbName, dbN, loggedIn, permissions, views } from "./Stor
     <label>Password</label>
     <input id="password" type="password" bind:value={password} required />
 
-    <button type="submit">Login</button>
+    <button id="login" type="submit">Login</button>
   </form>
 </main>
 

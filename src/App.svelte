@@ -1,5 +1,5 @@
 <script>
-  import { society, page, permissions } from './Stores.js'
+  import { dbName, society, page, permissions } from './Stores.js'
 
   import NavButton from './NavButton.svelte'
   import LoginPage from './LoginPage.svelte'
@@ -8,7 +8,6 @@
   import MemberEditPage from './MemberEditPage.svelte'
   import EmailPage from './EmailPage.svelte'
   import QueryPage from './QueryPage.svelte'
-import { isAllowedTo } from './Common.js';
 
   const pageMap = {
     login: LoginPage,
@@ -23,7 +22,7 @@ import { isAllowedTo } from './Common.js';
 
 <!-- =============== HTML =============== -->
 
-<nav>
+<nav class=sticky>
   <h1>{$society}</h1>
   <NavButton  name="login">Login</NavButton>
   <NavButton  name="index">Home</NavButton>
@@ -32,8 +31,9 @@ import { isAllowedTo } from './Common.js';
   <NavButton  name="memberEdit">Member Edit</NavButton> --> 
   {#if $permissions.cap === 'D'}
   <NavButton  name="email">Email</NavButton> 
-  <NavButton  name="query">Query</NavButton>
+  <NavButton  name="query">Database</NavButton>
   {/if}
+  <h4>{$dbName} {$permissions.u_name}</h4>
 </nav>
 
 <main>
@@ -56,6 +56,14 @@ import { isAllowedTo } from './Common.js';
     padding: 10px;
   }
 
+  .sticky {
+  position: sticky;
+  top: 0;
+  /* width: 100%; */
+  }
+
   h1 {color:aliceblue; padding-right: 10px;}
+
+  h4 {text-align: right;}
 </style>
 
