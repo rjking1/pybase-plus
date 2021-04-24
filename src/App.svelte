@@ -24,7 +24,7 @@
 
 <nav class=sticky>
   <h1>{$society}</h1>
-  <NavButton  name="login">Login</NavButton>
+  <NavButton  name="login">Sign in</NavButton>
   <NavButton  name="index">Home</NavButton>
   <NavButton  name="back">Back</NavButton>
   <!-- <NavButton  name="members">Members</NavButton>
@@ -64,6 +64,6 @@
 
   h1 {color:aliceblue; padding-right: 10px;}
 
-  h4 {text-align: right;}
+  h4 {text-align: right; font-size: 70%;}
 </style>
 

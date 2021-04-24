@@ -13,24 +13,40 @@
 	//fetch('https://www.artspace7.com.au/dsql/json_helper_get.php?db=art25285_rides2&sql=select%20*%20from%20bikes')
 
 	async function doBackup() {
-		return await fetch("https://www.artspace7.com.au/dsql/burest.php?func=b&db=" + $dbName + "&filename=" + backupToFile);
+		return await getFetch($dbName, backupToFile, 'b');
 	}
 
 	async function doRestore() {
-		return await fetch("https://www.artspace7.com.au/dsql/burest.php?func=r&db=" + restoreToDB + "&filename=" + backupToFile);
+		return await getFetch(restoreToDB, backupToFile, 'r');
 	}
 
 	async function doQuery() {
 		result = await doFetch($dbN, sql);
 	}
 
+	async function getFetch(db, filename, func) {
+		let formData = new FormData()
+		formData.append('db', db)
+		formData.append('filename', filename) 
+		formData.append('func', func)
+
+		return await fetch(
+			`https://www.artspace7.com.au/dsql/burest.php`,
+			{
+			method: 'POST',
+			body: formData,
+			},
+		)
+	}
+
+
 </script>
 
-<button id="restore" on:click="{doBackup}">Backup</button>
+<button id="backup" on:click="{doBackup}">Backup</button>
 database <input id="bu_db" class="short" value={$dbName} readonly /> 
 to file <input id="bu_file" class="short" bind:value={backupToFile} /> 
 <br>
-<button id="backup" on:click="{doRestore}">Restore</button>
+<button id="restore" on:click="{doRestore}">Restore</button>
 file <input id="rest_file" class="short" bind:value={backupToFile} /> 
 to database <input id="rest_db" class="short" bind:value={restoreToDB} /> 
 <hr>
