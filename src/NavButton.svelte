@@ -1,22 +1,25 @@
 <script>
-import { canGoBack, goBack } from './pageStack.js';
-  import { loggedIn, page } from './Stores.js'
+  import { canGoBack, goBack } from "./pageStack.js";
+  import { loggedIn, page } from "./Stores.js";
 
-  export let name
+  export let name;
 
   function doLoginCheck() {
-    if($loggedIn == "false"){
-      $page = "login"
-    } else if (name == 'back') {
+    if ($loggedIn == "false") {
+      $page = "login";
+    } else if (name == "back") {
       if (canGoBack()) {
-        $page = goBack() 
+        $page = goBack();
       }
     } else {
-      $page = name
+      $page = name;
     }
   }
-
 </script>
+
+<button class:active={$page === name} on:click={doLoginCheck}>
+  <slot />
+</button>
 
 <style>
   button {
@@ -33,7 +36,3 @@ import { canGoBack, goBack } from './pageStack.js';
     display: inline;
   }
 </style>
-
-<button class:active={$page === name} on:click={doLoginCheck}>
-  <slot />
-</button>

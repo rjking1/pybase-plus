@@ -6,6 +6,8 @@ import { doFetch, isAllowedTo, titleCase, viewDetail } from "./Common.js";
 import { goBack, gotoPage, pageDetails } from "./pageStack.js";
 import { dbN, page, permissions, views } from "./Stores.js";
 
+// import QuillEditor from "./QuillEditor.svelte"
+
   let p;
   let v;
   let fields = [];  // special cases of visibiity, type etc
@@ -164,6 +166,9 @@ import { dbN, page, permissions, views } from "./Stores.js";
         {#if includeField(column)} 
           <td class="label">{titleCase(column)}</td>
           <td>
+            <!-- {#if fieldType(column) === "richtext"}
+              <QuillEditor class="quilleditor" value={Object.values(qresult)[index]}/>
+            {:else  -->
             {#if fieldType(column) === "textarea"}
               <textarea name="{column}" class="field">{Object.values(qresult)[index]}</textarea> 
             {:else if fieldType(column) !== "lookup"}
