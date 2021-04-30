@@ -1,12 +1,14 @@
 <script>
 
 import { onMount } from "svelte";
-import { get_store_value } from "svelte/internal";
 import { doFetch, isAllowedTo, titleCase, viewDetail } from "./Common.js";
 import { goBack, gotoPage, pageDetails } from "./pageStack.js";
 import { dbN, page, permissions, views } from "./Stores.js";
+// https://github.com/fuzzthink/cl-editor
+import Editor from "cl-editor/src/Editor.svelte";
 
-// import QuillEditor from "./QuillEditor.svelte"
+  let html
+  let editor
 
   let p;
   let v;
@@ -71,6 +73,9 @@ import { dbN, page, permissions, views } from "./Stores.js";
           lookupFieldSql(col)
         );
       } 
+      if (fieldType(col) === "richtext") {
+        html = qresult[col]
+      }
     } );
     // console.log(fkeys);
 
@@ -103,11 +108,13 @@ import { dbN, page, permissions, views } from "./Stores.js";
 
     let sql = (p.id == 0 ? "insert" : "replace") + " into " + p.viewName + "s (id," + cols.join() + ") values ("
     let vals = [p.id]
-    let fields = Array.from( document.getElementsByClassName("field") )
+    let fields = Array.from( document.querySelectorAll(".field, .cl") )
     fields.forEach(field => {
-      if(field.value.trim() == '') {
+      if (field.classList.contains("cl")) {
+        vals.push("'" + html.replaceAll("'", "''") + "'")
+      } else if(field.value.trim() == '') {
         vals.push( "NULL" )
-      } else {
+      } else  {
         vals.push( "'" + field.value.replaceAll("'", "''") + "'" )
       }
     });
@@ -166,10 +173,10 @@ import { dbN, page, permissions, views } from "./Stores.js";
         {#if includeField(column)} 
           <td class="label">{titleCase(column)}</td>
           <td>
-            <!-- {#if fieldType(column) === "richtext"}
-              <QuillEditor class="quilleditor" value={Object.values(qresult)[index]}/>
-            {:else  -->
-            {#if fieldType(column) === "textarea"}
+            {#if fieldType(column) === "richtext" }
+              <!-- class = cl -->
+              <Editor { html } on:change = { (evt) => html = evt.detail } />
+            {:else if fieldType(column) === "textarea"}
               <textarea name="{column}" class="field">{Object.values(qresult)[index]}</textarea> 
             {:else if fieldType(column) !== "lookup"}
               <input type="{fieldType(column)}" name="{column}" class="field" value={Object.values(qresult)[index]} /> 
@@ -198,6 +205,7 @@ import { dbN, page, permissions, views } from "./Stores.js";
   <button disabled={!viewIsDeletable} on:click={doDelete}>❌ Delete</button>&nbsp;&nbsp;
   <button on:click={doCancel}>❎ Cancel</button>&nbsp;&nbsp;
   <button on:click={doUpdate}>✅ Update</button>
+  <div id="editor1" display=none></div>
 </main>
 
 <style>
