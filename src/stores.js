@@ -5,6 +5,7 @@ export const loggedIn = writable("false")
 export const permissions = writable("")
 export const society = writable("PyBase")
 export const views = writable("")
+export const emailDetails = writable("")
 
 let db_local = localStorage.getItem('pybase_db')
 export const dbName = writable(db_local || 'test')
