@@ -7,7 +7,7 @@
   import Editor from "cl-editor/src/Editor.svelte";
 
   let html;
-  let editor;
+  // let editor;
 
   let p;
   let v;
@@ -249,7 +249,6 @@
   >&nbsp;&nbsp;
   <button on:click={doCancel}>❎ Cancel</button>&nbsp;&nbsp;
   <button on:click={doUpdate}>✅ Update</button>
-  <div id="editor1" display="none" />
 </main>
 
 <style>
