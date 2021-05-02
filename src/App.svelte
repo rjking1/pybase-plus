@@ -22,7 +22,7 @@
 
 <!-- =============== HTML =============== -->
 
-<nav class=sticky>
+<nav class=xsticky>
   <h1>{$society}</h1>
   <NavButton  name="login">Sign in</NavButton>
   <NavButton  name="index">Home</NavButton>

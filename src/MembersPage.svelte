@@ -10,6 +10,7 @@
   } from "./Common.js";
   import { dbN, page, permissions, views, emailDetails } from "./Stores.js";
   import { gotoPage, pageDetails } from "./pageStack.js";
+  import { clickHook } from "./sortable.js";
 
   let p;
   let v;
@@ -170,6 +171,10 @@
   }
 </script>
 
+<!-- <svelte:head>
+  <script src=",/sortable.js"></script>
+</svelte:head> -->
+
 <main>
   <h3>{entityName}</h3>
 
@@ -177,40 +182,50 @@
     <button on:click={addRow}>+ Add</button>
   {/if}
   {#if qresult && qresult.length > 0}
-    <table>
-      <tr>
-        <th
-          ><input
-            id="idCheckAll"
-            type="checkbox"
-            unchecked
-            on:click={doCheckAll}
-          /></th
-        >
-        {#each Object.keys(qresult[0]) as column}
-          {#if includeField(column)}
-            <th>{titleCase(column)}</th>
-          {/if}
-        {/each}
-      </tr>
-
-      {#each qresult as row}
+    <table class="sortable">
+      <thead>
         <tr>
-          <td>
-            <input class="checkrow" type="checkbox" unchecked />
-            {#if viewIsEditable}
-              <button class="editrow" on:click={editId(Object.values(row)[0])}
-                >✎</button
-              >
-            {/if}
-          </td>
-          {#each Object.values(row) as cell, index}
-            {#if includeField(Object.keys(qresult[0])[index])}
-              <td class="cell" contenteditable="false" bind:innerHTML={cell} />
+          <th class="sticky">
+            <input
+              id="idCheckAll"
+              type="checkbox"
+              unchecked
+              on:click={doCheckAll}
+            />
+          </th>
+          {#each Object.keys(qresult[0]) as column}
+            {#if includeField(column)}
+              <th class="sticky" on:click={clickHook}>{titleCase(column)}</th>
             {/if}
           {/each}
         </tr>
-      {/each}
+      </thead>
+      <tbody>
+        {#each qresult as row}
+          <tr>
+            <td>
+              <input class="checkrow" type="checkbox" unchecked />
+              {#if viewIsEditable}
+                <button
+                  class="editrow"
+                  on:click={editId(Object.values(row)[0])}
+                >
+                  ✎
+                </button>
+              {/if}
+            </td>
+            {#each Object.values(row) as cell, index}
+              {#if includeField(Object.keys(qresult[0])[index])}
+                <td
+                  class="cell"
+                  contenteditable="false"
+                  bind:innerHTML={cell}
+                />
+              {/if}
+            {/each}
+          </tr>
+        {/each}
+      </tbody>
     </table>
 
     <br />
@@ -222,8 +237,8 @@
       {#each aresult as row}
         {#if isAllowedTo($permissions, "action_" + row.NAME)}
           <button on:click={doAction(row.NAME, row.ACTION_TYPE, row.SCRIPT)}
-            >{row.NAME}</button
-          >
+            >{row.NAME}
+          </button>
         {/if}
       {/each}
     {/if}
@@ -231,15 +246,90 @@
 </main>
 
 <style>
-  tr:nth-child(even) {
+  /* tr:nth-child(even) {
     background: rgb(229, 233, 218);
   }
   tr:nth-child(odd) {
     background: #fff;
-  }
+  } */
 
-  .cell {
+  /* .cell {
     padding-left: 5px;
     padding-right: 5px;
+  } */
+
+  .sortable {
+  border-spacing: 0;
+}
+
+.sortable tbody tr:nth-child(odd) {
+  background: #e4e4e4;
+}
+
+.sortable td,
+.sortable th {
+  padding: 5px;
+}
+
+/* .sortable td:first-child,
+.sortable th:first-child {
+  border-top-left-radius: 4px;
+}
+
+.sortable td:last-child,
+.sortable th:last-child {
+  border-top-right-radius: 4px;
+} */
+
+.sortable th {
+  background: #808080;
+  color: #fff;
+  cursor: pointer;
+  font-weight: normal;
+  text-align: left;
+  text-transform: capitalize;
+  vertical-align: baseline;
+  /* white-space: nowrap; */
+}
+
+/* .sortable th:hover {
+  color: #000;
+}
+
+.sortable th:hover::after {
+  color: inherit;
+  font-size: 1.2em;
+  content: ' \025B8';
+}
+
+.sortable th::after {
+  font-size: 1.2em;
+  color: transparent;
+  content: ' \025B8';
+} */
+
+/* .sortable th.dir-d {
+  color: #000;
+} */
+
+.sortable th.dir-d::after {
+  color: inherit;
+  content: ' \025BE';
+}
+
+/* .sortable th.dir-u {
+  color: #000;
+} */
+
+.sortable th.dir-u::after {
+  color: inherit;
+  content: ' \025B4';
+}
+
+.sticky {
+  position: sticky;
+  top: 0;
   }
+
+
 </style>
