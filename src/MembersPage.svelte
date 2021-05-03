@@ -247,12 +247,12 @@
 </main>
 
 <style>
-  /* tr:nth-child(even) {
+  tr:nth-child(even) {
     background: rgb(229, 233, 218);
   }
   tr:nth-child(odd) {
     background: #fff;
-  } */
+  }
 
   /* .cell {
     padding-left: 5px;
@@ -263,9 +263,9 @@
   border-spacing: 0;
 }
 
-.sortable tbody tr:nth-child(odd) {
+/* .sortable tbody tr:nth-child(odd) {
   background: #e4e4e4;
-}
+} */
 
 .sortable td,
 .sortable th {
@@ -283,8 +283,8 @@
 } */
 
 .sortable th {
-  background: #808080;
-  color: #fff;
+  background: #5c4dff;
+  color: rgb(255, 255, 255);
   cursor: pointer;
   font-weight: normal;
   text-align: left;
@@ -293,11 +293,11 @@
   /* white-space: nowrap; */
 }
 
-/* .sortable th:hover {
-  color: #000;
+.sortable th:hover {
+  color: rgb(255, 255, 0);
 }
 
-.sortable th:hover::after {
+/* .sortable th:hover::after {
   color: inherit;
   font-size: 1.2em;
   content: ' \025B8';
