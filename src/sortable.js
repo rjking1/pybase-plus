@@ -49,6 +49,10 @@
 
   function reClassify(element, dir) {
     element.className = element.className.replace(regex_dir, '') + dir
+
+    element.innerText = element.innerText.replace('▲', '');
+    element.innerText = element.innerText.replace('▼', '');
+    element.innerText = element.innerText + (dir == up_class ? "▲" : dir == down_class ? "▼" : '');
   }
 
   function getValue(element) {

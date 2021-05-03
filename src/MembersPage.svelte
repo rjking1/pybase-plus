@@ -169,10 +169,11 @@
       ? true
       : f.visibility;
   }
+
 </script>
 
 <!-- <svelte:head>
-  <script src=",/sortable.js"></script>
+  <script src="./sortable.js"></script>
 </svelte:head> -->
 
 <main>
@@ -312,24 +313,23 @@
   color: #000;
 } */
 
-.sortable th.dir-d::after {
+/* .sortable th.dir-d::after {
   color: inherit;
   content: ' \025BE';
-}
+} */
 
 /* .sortable th.dir-u {
   color: #000;
 } */
 
-.sortable th.dir-u::after {
+/* .sortable th.dir-u::after {
   color: inherit;
   content: ' \025B4';
-}
+} */
 
 .sticky {
   position: sticky;
   top: 0;
   }
-
 
 </style>
