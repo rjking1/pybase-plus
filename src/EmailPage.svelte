@@ -84,11 +84,10 @@
 </svelte:head>
 
 <main>
-  <p><b>Email</b></p>
   <table>
     <tr>
       <td>To:</td>
-      <td min-width="300px">
+      <td>
         {#each $emailDetails as emailDetail}
           <span style="background-color: rgb(251, 213, 181);">{emailDetail.NAME}</span>
           <span style="background-color: rgb(251, 243, 199);">{emailDetail.EMAIL}</span>
@@ -114,17 +113,18 @@
   <button on:click={doLoadtemplate}>Load</button>
   <br />
   <Editor {html} bind:this={editor} on:change={(evt) => (html = evt.detail)} />
-  <label>Attachment</label><input bind:value={attachments} />
+  <label>Attachment:</label><input bind:value={attachments} />
   <br />
   <button type="submit" on:click={doSend}> Send Emails </button>
 </main>
 
 <style>
   input {
-    width: 60%;
+    width: 400px;
   }
+  /*
   textarea {
     width: 60%;
     height: 20%;
-  }
+  } */
 </style>
