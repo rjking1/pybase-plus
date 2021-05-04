@@ -1,6 +1,6 @@
 <script>
   import { onMount } from "svelte";
-
+  import Filter from "./Filter.svelte";
   import {
     doFetch,
     isAllowedTo,
@@ -183,7 +183,8 @@
     <button on:click={addRow}>+ Add</button>
   {/if}
   {#if qresult && qresult.length > 0}
-    <table class="sortable">
+    <Filter />
+    <table class="sortable filterable">
       <thead>
         <tr>
           <th class="sticky">
@@ -250,9 +251,10 @@
   tr:nth-child(even) {
     background: rgb(229, 233, 218);
   }
+  
   tr:nth-child(odd) {
     background: #fff;
-  }
+  } 
 
   /* .cell {
     padding-left: 5px;
@@ -265,7 +267,7 @@
 
 /* .sortable tbody tr:nth-child(odd) {
   background: #e4e4e4;
-} */
+}  */
 
 .sortable td,
 .sortable th {
