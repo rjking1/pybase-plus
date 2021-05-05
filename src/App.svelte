@@ -23,7 +23,16 @@
 <!-- =============== HTML =============== -->
 
 <nav class=xsticky>
-  <h1>{$society}</h1>
+  <h1>
+    <span style="text-align:left;">
+      {$society}
+    </span>
+    <span style="float:right; font-size: medium;">
+      {#if $permissions.u_name}
+      DB: {$dbName}<br>{$permissions.u_name} 
+      {/if}
+    </span>
+</h1>
   <NavButton  name="login">Sign in</NavButton>
   <NavButton  name="index">Home</NavButton>
   <NavButton  name="back">Back</NavButton>
@@ -33,7 +42,6 @@
   <NavButton  name="email">Email</NavButton> 
   <NavButton  name="query">Database</NavButton>
   {/if}
-  <h4>{$dbName} {$permissions.u_name}</h4>
 </nav>
 
 <main>

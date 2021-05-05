@@ -6,7 +6,7 @@
 
 	let backupToFile = $dbName;
 	let restoreToDB = 'test';
-	let sql = "select * from py_logs where description not like 'Select%' order by date_time desc limit 50" // "select * from members where lastname = 'King'";
+	let sql = "select * from py_logs order by date_time desc limit 50";
 	let result = undefined;
 
 	// the following will work but is a post frm within pybase now
@@ -43,7 +43,7 @@
 </script>
 
 <button id="backup" on:click="{doBackup}">Backup</button>
-database <input id="bu_db" class="short" value={$dbName} readonly /> 
+database <input id="bu_db" class="short" value={$dbName} /> 
 to file <input id="bu_file" class="short" bind:value={backupToFile} /> 
 <br>
 <button id="restore" on:click="{doRestore}">Restore</button>

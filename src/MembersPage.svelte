@@ -152,11 +152,25 @@
     $page = gotoPage("memberEdit", v.to_view, 0, fkObj); // 0 => add.  parent id is passed as well. todo: extract field name from view if contains $ eg 'member' from member$receipts and append '_id'
   }
 
-  function doCheckAll() {
+  function doCheckAll2() {
     let cboxes = Array.from(document.getElementsByClassName("checkrow"));
-    cboxes.forEach(
-      (cbox) => (cbox.checked = document.getElementById("idCheckAll").checked)
-    );
+    cboxes.forEach((cbox) => {
+      cbox.checked = document.getElementById("idCheckAll").checked;
+    });
+  }
+
+  function doCheckAll() {
+    const table = document.getElementsByClassName("filterable");
+    const rows = table[0].getElementsByTagName("tr");   // todo: first table ??!!
+
+    // Loop through all table rows, and check/uncheck only those that are visible
+    for (let i = 1; i < rows.length; i++) { // skip header row
+      let row = rows[i];
+      if(row.style.display != "none") {
+        let firstCell = row.getElementsByTagName("td")[0]; // get first cell on row
+        firstCell.getElementsByClassName("checkrow")[0].checked = document.getElementById("idCheckAll").checked;
+      }
+    }
   }
 
   function includeField(columnName) {
