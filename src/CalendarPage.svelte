@@ -14,29 +14,26 @@
   import interactionPlugin from "@fullcalendar/interaction"; // needed for dateClick
 
   let options = {
-    dateClick: handleDateClick,
-    droppable: true,
+    // droppable: true,
     editable: true,
-    selectable: true,
-    select: handleSelect,
+    // selectable: true,
+    // dateClick: handleDateClick,
+    // select: handleSelect,
     eventClick: handleEventClick,
-    events: [
-      // initial event data
-      // { title: "New Event", start: new Date() },
-    ],
+    events: [],
     initialView: "dayGridMonth",
     plugins: [dayGridPlugin, interactionPlugin],
     headerToolbar: {
       left: "prev,next today",
       center: "title",
-      right: "dayGridMonth",
+      // right: "dayGridMonth",
     },
     height: "600px", //'auto',
     weekends: true,
   };
 
   let calendarComponentRef;
-  
+
   let p;
   let v;
   let fields = [];
@@ -59,7 +56,7 @@
     // doGetActions();
   });
 
-    async function doListMembers() {
+  async function doListMembers() {
     fields = JSON.parse(v.fields);
     if (fields === null) {
       fields = [];
@@ -80,22 +77,33 @@
   }
 
   function addToCalendar() {
-    qresult.forEach(row => {
-      let ev = { title: row.name, start: row.from_date, end: row.to_date, allDay: true, editable: true };
+    qresult.forEach((row) => {
+      let ev = {
+        id: row.id,
+        title: row.name,
+        start: row.from_date,
+        end: addDays(row.to_date, 1),
+        allDay: true,
+        editable: false,
+        color: row.colour,
+      };
       myAddEvent(ev);
     });
   }
 
   function myAddEvent(event) {
     const { events } = options;
-    const calendarEvents = [
-      ...events,
-      event
-    ];
+    const calendarEvents = [...events, event];
     options = {
       ...options,
       events: calendarEvents,
-    };  
+    };
+  }
+
+  function addDays(date, days) {
+    let result = new Date(date);
+    result.setDate(result.getDate() + days);
+    return result;
   }
 
   function handleSelect(event) {
@@ -104,7 +112,7 @@
     const calendarEvents = [
       ...events,
       {
-        title: "New Event 2",
+        title: "New Event",
         start: event.start,
         end: event.end,
         allDay: event.allDay,
@@ -117,33 +125,39 @@
   }
 
   function handleDateClick(event) {
-    if (confirm("Would you like to add an event to " + event.dateStr + " ?")) {
-      const { events } = options;
-      const calendarEvents = [
-        ...events,
-        {
-          title: "New Event",
-          start: event.date,
-          allDay: event.allDay,
-        },
-      ];
-      options = {
-        ...options,
-        events: calendarEvents,
-      };
-    }
+    // if (confirm("Would you like to add an event ?")) {
+    // }
+    //   const { events } = options;
+    //   const calendarEvents = [
+    //     ...events,
+    //     {
+    //       title: "New Event",
+    //       start: event.date,
+    //       allDay: event.allDay,
+    //     },
+    //   ];
+    //   options = {
+    //     ...options,
+    //     events: calendarEvents,
+    //   };
+    // }
   }
 
   function handleEventClick(info) {
-    // see https://fullcalendar.io/docs/event-object 
-    alert(info.event.title);
+    // see https://fullcalendar.io/docs/event-object
+    // alert(info.event.id);
+    $page = gotoPage("memberEdit", v.to_view, info.event.id, 0);
+  }
+
+  function addEvent() {
+    $page = gotoPage("memberEdit", v.to_view, 0, 0);
   }
 </script>
 
+<button on:click={addEvent}>+ Add</button>
 <div class="demo-app">
-  <div class="demo-app-top">
-    <!-- <button on:click={addEvent}>Add +</button> -->
-  </div>
+  <!-- <div class="demo-app-top">
+  </div> -->
 
   <!-- <div>
     <Draggable {eventData} class="draggable">
