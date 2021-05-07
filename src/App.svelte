@@ -8,12 +8,14 @@
   import MemberEditPage from './MemberEditPage.svelte'
   import EmailPage from './EmailPage.svelte'
   import QueryPage from './QueryPage.svelte'
+  import CalendarPage from './CalendarPage.svelte'
 
   const pageMap = {
     login: LoginPage,
     index: IndexPage,
     members: MembersPage,
     memberEdit: MemberEditPage,
+    calendar: CalendarPage,
     email: EmailPage,
     query: QueryPage,
   }
@@ -37,7 +39,8 @@
   <NavButton  name="index">Home</NavButton>
   <NavButton  name="back">Back</NavButton>
   <!-- <NavButton  name="members">Members</NavButton>
-  <NavButton  name="memberEdit">Member Edit</NavButton> --> 
+  <NavButton  name="memberEdit">Member Edit</NavButton> 
+  <NavButton  name="calendar">Calendar</NavButton> --> 
   {#if $permissions.cap === 'D'}
   <NavButton  name="email">Email</NavButton> 
   <NavButton  name="query">Database</NavButton>
