@@ -11,8 +11,9 @@
   } from "./Common.js";
   import FullCalendar, { Draggable } from "svelte-fullcalendar";
   import dayGridPlugin from "@fullcalendar/daygrid";
-  import interactionPlugin from "@fullcalendar/interaction"; // needed for dateClick
+  import interactionPlugin from "@fullcalendar/interaction"; // needed for dateClick ??
 
+  let eventDesc = '';
   let options = {
     // droppable: true,
     editable: true,
@@ -26,10 +27,22 @@
     headerToolbar: {
       left: "prev,next today",
       center: "title",
-      // right: "dayGridMonth",
+      right: "today prev,next",
     },
     height: "600px", //'auto',
     weekends: true,
+    eventMouseEnter: function(info) {
+      eventDesc = info.event.extendedProps.description;
+    },
+    eventMouseLeave: function(info) {
+      eventDesc = '';''
+    },
+    // var tooltip = new Tooltip(info.el, {
+    //   title: info.event.extendedProps.description,
+    //   placement: 'top',
+    //   trigger: 'hover',
+    //   container: 'body'
+    // });
   };
 
   let calendarComponentRef;
@@ -82,10 +95,12 @@
         id: row.id,
         title: row.name,
         start: row.from_date,
-        end: addDays(row.to_date, 1),
+        end: addDays(row.to_date, 1),  // todo default to start_date + 1 if not in result row
         allDay: true,
         editable: false,
         color: row.colour,
+        // extended prop
+        description: row.description,
       };
       myAddEvent(ev);
     });
@@ -155,7 +170,7 @@
 </script>
 
 <button on:click={addEvent}>+ Add</button>
-<div class="demo-app">
+<div class="xdemo-app">
   <!-- <div class="demo-app-top">
   </div> -->
 
@@ -165,9 +180,12 @@
     </Draggable>
   </div> -->
 
-  <div class="demo-app-calendar">
+  <div class="xdemo-app-calendar">
     <FullCalendar bind:this={calendarComponentRef} {options} />
   </div>
+  {#if eventDesc}
+  <p>Description: {eventDesc}</p>
+  {/if}
 </div>
 
 <style>
