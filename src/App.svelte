@@ -9,6 +9,7 @@
   import EmailPage from './EmailPage.svelte'
   import QueryPage from './QueryPage.svelte'
   import CalendarPage from './CalendarPage.svelte'
+  import ChartPage from './ChartPage.svelte'
 
   const pageMap = {
     login: LoginPage,
@@ -16,6 +17,7 @@
     members: MembersPage,
     memberEdit: MemberEditPage,
     calendar: CalendarPage,
+    chart: ChartPage,
     email: EmailPage,
     query: QueryPage,
   }

@@ -67,11 +67,11 @@
     viewIsEditable =
       !!v.to_view && isAllowedTo($permissions, viewName + "_edit"); // handle v.to_view being null (=undefined?) or '' (empty string)
     entityName = titleCase(viewName) || "";
-    doListMembers();
+    doListEvents();
     // doGetActions();
   });
 
-  async function doListMembers() {
+  async function doListEvents() {
     fields = JSON.parse(v.fields);
     if (fields === null) {
       fields = [];

@@ -52,7 +52,7 @@
 
       $views = await doFetch(
         $dbN,
-        "select id, name, to_view, get_sql, put_sql, fields, subviews, audit_template from py_views"
+        "select id, name, formDesc, to_view, get_sql, put_sql, fields, subviews, audit_template from py_views"
       ); //  where name not like 'py_%'
       console.log($views);
 
