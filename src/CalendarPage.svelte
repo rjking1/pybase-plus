@@ -12,8 +12,9 @@
   import FullCalendar, { Draggable } from "svelte-fullcalendar";
   import dayGridPlugin from "@fullcalendar/daygrid";
   import interactionPlugin from "@fullcalendar/interaction"; // needed for dateClick ??
+  import { RRule } from "rrule";
 
-  let eventDesc = '';
+  let eventDesc = "";
   let options = {
     // droppable: true,
     editable: true,
@@ -25,17 +26,18 @@
     initialView: "dayGridMonth",
     plugins: [dayGridPlugin, interactionPlugin],
     headerToolbar: {
-      left: "prev,next today",
+      left: "today",
       center: "title",
-      right: "today prev,next",
+      right: "prev,next",
     },
     height: "600px", //'auto',
     weekends: true,
-    eventMouseEnter: function(info) {
+    eventMouseEnter: function (info) {
       eventDesc = info.event.extendedProps.description;
     },
-    eventMouseLeave: function(info) {
-      eventDesc = '';''
+    eventMouseLeave: function (info) {
+      eventDesc = "";
+      ("");
     },
     // var tooltip = new Tooltip(info.el, {
     //   title: info.event.extendedProps.description,
@@ -91,18 +93,30 @@
 
   function addToCalendar() {
     qresult.forEach((row) => {
+      // console.log(row.from_date);
       let ev = {
         id: row.id,
         title: row.name,
         start: row.from_date,
-        end: addDays(row.to_date, 1),  // todo default to start_date + 1 if not in result row
+        end: addDays(row.to_date, 1), // todo default to start_date + 1 if not in result row
         allDay: true,
         editable: false,
         color: row.colour,
         // extended prop
         description: row.description,
       };
-      myAddEvent(ev);
+
+      if (!row.rrule) {
+        myAddEvent(ev);
+      } else {
+        // add repeating events
+        let rule = RRule.fromText(row.rrule);
+        rule.all().forEach((d, index) => {
+          ev.start = d.toISOString().replace(/T.*/, "");
+          ev.end = addDays(d, 1).toISOString().replace(/T.*/, "");
+          myAddEvent({ ...ev });
+        });
+      }
     });
   }
 
@@ -184,7 +198,7 @@
     <FullCalendar bind:this={calendarComponentRef} {options} />
   </div>
   {#if eventDesc}
-  <p>Description: {eventDesc}</p>
+    <p>Description: {eventDesc}</p>
   {/if}
 </div>
 
