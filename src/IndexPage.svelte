@@ -22,6 +22,7 @@
         break;
       case "!heatmap":
       case "!chart bar":
+      case "!chart dots":
         $page = gotoPage("chart", name, 0);
         break;
       default:

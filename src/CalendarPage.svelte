@@ -12,7 +12,7 @@
   import FullCalendar, { Draggable } from "svelte-fullcalendar";
   import dayGridPlugin from "@fullcalendar/daygrid";
   import interactionPlugin from "@fullcalendar/interaction"; // needed for dateClick ??
-  import { RRule } from "rrule";
+  import { RRule } from "rrule"; 
 
   let eventDesc = "";
   let options = {
