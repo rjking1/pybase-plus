@@ -80,29 +80,43 @@
     });
 
     options = {
-    chart: {
-      type: "bar",
-    },
-    series: [
-      {
-        name: "km",
-        data: y1,
+      chart: {
+        type: "bar",
       },
-      {
-        name: "m",
-        data: y2,
+      series: [
+        {
+          name: "km",
+          data: y1,
+        },
+        {
+          name: "m",
+          data: y2,
+        },
+      ],
+      xaxis: {
+        categories: x,
       },
-    ],
-    xaxis: {
-      categories: x,
-    },
-  };
+      yaxis: [
+        {
+          title: {
+            text: "km",
+          },
+        },
+        {
+          opposite: true,
+          title: {
+            text: "m",
+          },
+        },
+      ],
+    };
   }
-
 </script>
 
 <h4>Chart</h4>
 
 {#if options}
-<div use:chart={options} />
+  <div style="min-width: 400px max-width: 1000px">
+    <div use:chart={options} />
+  </div>
 {/if}
