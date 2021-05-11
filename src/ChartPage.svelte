@@ -175,17 +175,28 @@
     let v = {};
     data.forEach((item) => {
       let mo = '.'+ Object.values(item)[0] + '.';
-      // console.log(mo)
       let month = mo.substr(6,2);
+      let day = mo.substr(9,2);
       let km = parseFloat(Object.values(item)[1]);
-      if(!v[month]) { v[month] = [] }
-      v[month].push(km);
+      if(!v[month]) { v[month] = {} }
+      v[month][day] = km;  // accum?
     });
-    // console.log(v);
+    console.log(v);
 
     let series = [];
     for (let i = 12; i > 0; i--) {
-      series.push({ name: i, data: v[i.toString().padStart(2,0)] });
+      let mm = i.toString().padStart(2,0); 
+      let days = []
+      for(let d = 1; d < 32; d++ ) {
+        let dd = d.toString().padStart(2,0);
+        // console.log(mm, dd, v[mm])
+        if(dd in v[mm]) { 
+          days.push(v[mm][dd]);
+        } else {
+          days.push(0);
+        }
+      }
+      series.push({ name: i, data: days });
     }
     // console.log(series)
 
