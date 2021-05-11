@@ -57,7 +57,7 @@
       doBarChart();
     }
     if (v.formDesc == "!chart dots") {
-      // doDotChart();
+      doDotChart();
     }
     if (v.formDesc == "!heatmap") {
       // doHeatmap();
@@ -83,6 +83,7 @@
       chart: {
         type: "bar",
       },
+      dataLabels: { position: "top", enabled: false, offsetY: 30 },
       series: [
         {
           name: "km",
@@ -111,12 +112,59 @@
       ],
     };
   }
+
+  function doDotChart() {
+    let dates = [];
+    let pts = {};
+    pts["2021"] = [];
+    pts["2020"] = [];
+    pts["2019"] = [];
+    pts["2018"] = [];
+    data.forEach((item) => {
+      // item=row
+      console.log(item);
+      // we don't care what the col names are
+      // first is usually date on x axis
+      // second+ are y values
+      let yr = Object.values(item)[0];
+      let pt = new Array();
+      pt.push(parseFloat(Object.values(item)[1]));
+      pt.push(parseFloat(Object.values(item)[2]));
+      pts[yr].push(pt);
+    });
+    // console.log(pts)
+
+    options = {
+      chart: {
+        type: "scatter",
+        zoom: {
+            enabled: true,
+            type: 'xy'
+          }
+      },
+      //dataLabels: { position: "top", enabled: false, offsetY: 30 },
+      series: [
+        {
+          name: "2021",
+          data: pts["2021"],
+        },
+                {
+          name: "2020",
+          data: pts["2020"],
+        },
+                {
+          name: "2019",
+          data: pts["2019"],
+        },
+      ],
+    };
+  }
 </script>
 
 <h4>Chart</h4>
 
 {#if options}
-  <div style="min-width: 400px max-width: 1000px">
+  <div style="max-width: 1000px">
     <div use:chart={options} />
   </div>
 {/if}
