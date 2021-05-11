@@ -60,7 +60,7 @@
       doDotChart();
     }
     if (v.formDesc == "!heatmap") {
-      // doHeatmap();
+      doHeatmap();
     }
   }
 
@@ -70,7 +70,7 @@
     let y2 = [];
     data.forEach((item) => {
       // item=row
-      console.log(item);
+      // console.log(item);
       // we don't care what the col names are
       // first is usually date on x axis
       // second+ are y values
@@ -114,7 +114,6 @@
   }
 
   function doDotChart() {
-    let dates = [];
     let pts = {};
     pts["2021"] = [];
     pts["2020"] = [];
@@ -122,11 +121,11 @@
     pts["2018"] = [];
     data.forEach((item) => {
       // item=row
-      console.log(item);
+      // console.log(item);
       // we don't care what the col names are
       // first is usually date on x axis
       // second+ are y values
-      let yr = Object.values(item)[0];
+      let yr = Object.values(item)[0]; // should we do .year() here
       let pt = new Array();
       pt.push(parseFloat(Object.values(item)[1]));
       pt.push(parseFloat(Object.values(item)[2]));
@@ -138,25 +137,71 @@
       chart: {
         type: "scatter",
         zoom: {
-            enabled: true,
-            type: 'xy'
-          }
+          enabled: true,
+          type: "xy",
+        },
       },
       //dataLabels: { position: "top", enabled: false, offsetY: 30 },
       series: [
         {
-          name: "2021",
-          data: pts["2021"],
-        },
-                {
-          name: "2020",
-          data: pts["2020"],
-        },
-                {
           name: "2019",
           data: pts["2019"],
         },
+        {
+          name: "2020",
+          data: pts["2020"],
+        },
+        {
+          name: "2021",
+          data: pts["2021"],
+        },
       ],
+      xaxis: {
+        tickAmount: 10,
+        title: {
+          text: "km",
+        },
+      },
+      yaxis: {
+        tickAmount: 10,
+        title: {
+          text: "m",
+        },
+      },
+    };
+  }
+
+  function doHeatmap() {
+    let v = {};
+    data.forEach((item) => {
+      let mo = '.'+ Object.values(item)[0] + '.';
+      // console.log(mo)
+      let month = mo.substr(6,2);
+      let km = parseFloat(Object.values(item)[1]);
+      if(!v[month]) { v[month] = [] }
+      v[month].push(km);
+    });
+    // console.log(v);
+
+    let series = [];
+    for (let i = 12; i > 0; i--) {
+      series.push({ name: i, data: v[i.toString().padStart(2,0)] });
+    }
+    // console.log(series)
+
+    options = {
+      series: series,
+      chart: {
+        height: 350,
+        type: "heatmap",
+      },
+      dataLabels: {
+        enabled: false,
+      },
+      colors: ["#008FFB"],
+      title: {
+        text: "HeatMap",
+      },
     };
   }
 </script>
