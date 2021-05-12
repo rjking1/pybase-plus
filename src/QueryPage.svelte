@@ -50,8 +50,9 @@ to file <input id="bu_file" class="short" bind:value={backupToFile} />
 file <input id="rest_file" class="short" bind:value={backupToFile} /> 
 to database <input id="rest_db" class="short" bind:value={restoreToDB} /> 
 <hr>
-<label>SQL</label>
-<textarea>{sql}</textarea>
+SQL<br>
+<textarea bind:value={sql}></textarea>
+
 <br>
 <button id="query" on:click="{doQuery}">Query</button>
 
