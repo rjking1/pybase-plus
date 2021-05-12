@@ -173,32 +173,33 @@
 
   function doHeatmap() {
     let v = {};
+    let firstMonth = true;
+    let monthStart = 1;
     data.forEach((item) => {
-      let mo = '.'+ Object.values(item)[0] + '.';
-      let month = mo.substr(6,2);
-      let day = mo.substr(9,2);
+      let dt = "." + Object.values(item)[0] + ".";
+      let month = parseInt(dt.substr(6, 2));
+      if (firstMonth) {
+        firstMonth = false;
+        monthStart = month;
+      }
+      let day = parseInt(dt.substr(9, 2));
       let km = parseFloat(Object.values(item)[1]);
-      if(!v[month]) { v[month] = {} }
-      v[month][day] = km;  // accum?
+      if (!v[month]) {
+        v[month] = new Array(31).fill(0);
+      }
+      v[month][day-1] = km;
     });
     console.log(v);
 
+    // assumes sql query result is ascending (and only 11 months so get clear separation)
     let series = [];
-    for (let i = 12; i > 0; i--) {
-      let mm = i.toString().padStart(2,0); 
-      let days = []
-      for(let d = 1; d < 32; d++ ) {
-        let dd = d.toString().padStart(2,0);
-        // console.log(mm, dd, v[mm])
-        if(dd in v[mm]) { 
-          days.push(v[mm][dd]);
-        } else {
-          days.push(0);
-        }
+    let i = monthStart - 1;
+    for (let count = 0; count < 12; count++) {
+      series.push({ name: i.toString(), data: v[i] });
+      if (--i < 1) {
+        i = 12;
       }
-      series.push({ name: i, data: days });
     }
-    // console.log(series)
 
     options = {
       series: series,
@@ -211,7 +212,7 @@
       },
       colors: ["#008FFB"],
       title: {
-        text: "HeatMap",
+        text: "Km HeatMap",
       },
     };
   }
