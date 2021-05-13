@@ -7,7 +7,6 @@
     isAllowedTo,
     titleCase,
     viewDetail,
-    writeAuditText,
   } from "./Common.js";
 
   import { chart } from "svelte-apexcharts";
@@ -19,15 +18,6 @@
   let viewName;
   let entityName;
   let data = null;
-  let aresult = null;
-
-  let dates = null;
-  let dots = null;
-  let heatmapDataKms = null;
-  let heatmapDataAlt = null;
-  let heatmapColorsKms;
-  let heatmapColorsAlt;
-
   let options = null;
 
   // a lot of this should go into common as membersPage and CalendarPage have thee 3 functions in common
@@ -192,7 +182,6 @@
       }
       v[month][day - 1] = km;
     });
-    console.log(v);
 
     // assumes sql query result is ascending (and only 11 months so get clear separation)
     let series = [];

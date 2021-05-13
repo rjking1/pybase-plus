@@ -24,3 +24,7 @@ export function goBack() {
 export function pageDetails() {
   return stack[stack.length - 1]
 }
+
+export function clearPageHistory() {
+  stack.length = 0;
+}

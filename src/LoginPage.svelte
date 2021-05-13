@@ -63,7 +63,7 @@
         $permissions.u_name + " logged in"
       );
 
-      $page = gotoPage("index");
+      $page = gotoPage("index", "index");
     }
   }
 </script>

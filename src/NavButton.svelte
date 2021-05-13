@@ -1,5 +1,10 @@
 <script>
-  import { canGoBack, goBack } from "./pageStack.js";
+  import {
+    canGoBack,
+    clearPageHistory,
+    goBack,
+    gotoPage,
+  } from "./pageStack.js";
   import { loggedIn, page } from "./Stores.js";
 
   export let name;
@@ -11,6 +16,9 @@
       if (canGoBack()) {
         $page = goBack();
       }
+    } else if (name == "index") {
+      clearPageHistory();
+      $page = gotoPage("index", "index");
     } else {
       $page = name;
     }
