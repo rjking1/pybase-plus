@@ -59,8 +59,11 @@
     if (v.formDesc == "!chart dots") {
       doDotChart();
     }
-    if (v.formDesc == "!heatmap") {
+    if (v.formDesc == "!chart heatmap") {
       doHeatmap();
+    }
+    if (v.formDesc == "!chart treemap" || v.formDesc == "!chart pie") {
+      doTreemap();
     }
   }
 
@@ -187,7 +190,7 @@
       if (!v[month]) {
         v[month] = new Array(31).fill(0);
       }
-      v[month][day-1] = km;
+      v[month][day - 1] = km;
     });
     console.log(v);
 
@@ -213,6 +216,29 @@
       colors: ["#008FFB"],
       title: {
         text: "Km HeatMap",
+      },
+    };
+  }
+
+  function doTreemap() {
+    let series = [];
+    data.forEach((row) => {
+      series.push({
+        x: Object.values(row)[0],
+        y: parseFloat(Object.values(row)[1]),
+      });
+    });
+    options = {
+      series: [{data:series}],
+      chart: {
+        height: 500,
+        type: "treemap",
+      },
+      legend: {
+        show: false,
+      },
+      title: {
+        text: "Treemap",
       },
     };
   }

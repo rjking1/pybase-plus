@@ -20,9 +20,11 @@
       case "!calendar":
         $page = gotoPage("calendar", name, 0);
         break;
-      case "!heatmap":
-      case "!chart bar":
-      case "!chart dots":
+        case "!chart bar":
+        case "!chart dots":
+        case "!chart heatmap":
+        case "!chart treemap":
+        case "!chart pie":
         $page = gotoPage("chart", name, 0);
         break;
       default:
