@@ -11,7 +11,8 @@
   } from "./Common.js";
   import FullCalendar from "svelte-fullcalendar";
   import dayGridPlugin from "@fullcalendar/daygrid";
-  // import interactionPlugin from "@fullcalendar/interaction"; // needed for dateClick ??
+  // import interactionPlugin from "@fullcalendar/interaction"; // needed for dateClick 
+  // there is a @fullcalendar/rrule plugin but i cannot make it work
   import { RRule } from "rrule"; 
 
   let eventDesc = "";
@@ -88,8 +89,6 @@
       let ev = {
         id: row.id,
         title: row.name,
-        start: row.from_date,
-        end: addDays(row.to_date, 1), // todo default to start_date + 1 if not in result row
         allDay: true,
         editable: false,
         color: row.colour,
@@ -98,10 +97,16 @@
       };
 
       if (!row.rrule) {
+        ev.start= row.from_date;
+        ev.end= addDays(row.to_date, 1); // todo default to start_date + 1 if not in result row
         myAddEvent(ev);
       } else {
         // add repeating events
         let rule = RRule.fromText(row.rrule);
+        // any way to set seq start date? dtstart
+        // let s = rule.toString();
+        // s=s+"\nDTSTART:" + row.from_date;
+        // rule=RRule.fromString(s);
         rule.all().forEach((d, index) => {
           ev.start = d.toISOString().replace(/T.*/, "");
           ev.end = addDays(d, 1).toISOString().replace(/T.*/, "");
