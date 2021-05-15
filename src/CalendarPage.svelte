@@ -9,22 +9,18 @@
     viewDetail,
     writeAuditText,
   } from "./Common.js";
-  import FullCalendar, { Draggable } from "svelte-fullcalendar";
+  import FullCalendar from "svelte-fullcalendar";
   import dayGridPlugin from "@fullcalendar/daygrid";
-  import interactionPlugin from "@fullcalendar/interaction"; // needed for dateClick ??
+  // import interactionPlugin from "@fullcalendar/interaction"; // needed for dateClick ??
   import { RRule } from "rrule"; 
 
   let eventDesc = "";
   let options = {
-    // droppable: true,
     editable: true,
-    // selectable: true,
-    // dateClick: handleDateClick,
-    // select: handleSelect,
     eventClick: handleEventClick,
     events: [],
     initialView: "dayGridMonth",
-    plugins: [dayGridPlugin, interactionPlugin],
+    plugins: [dayGridPlugin],
     headerToolbar: {
       left: "today",
       center: "title",
@@ -39,22 +35,16 @@
       eventDesc = "";
       ("");
     },
-    // var tooltip = new Tooltip(info.el, {
-    //   title: info.event.extendedProps.description,
-    //   placement: 'top',
-    //   trigger: 'hover',
-    //   container: 'body'
-    // });
   };
 
-  let calendarComponentRef;
+  // let calendarComponentRef;
 
   let p;
   let v;
   let fields = [];
-  let viewIsEditable = false;
+  // let viewIsEditable = false;
   let viewName;
-  let entityName;
+  // let entityName;
   let qresult = null;
   let aresult = null;
 
@@ -63,10 +53,11 @@
     p = pageDetails();
     viewName = p.viewName;
     v = viewDetail($views, viewName);
+    console.log(v)
     // todo fix to_view for events table
-    viewIsEditable =
-      !!v.to_view && isAllowedTo($permissions, viewName + "_edit"); // handle v.to_view being null (=undefined?) or '' (empty string)
-    entityName = titleCase(viewName) || "";
+    // viewIsEditable =
+      // !!v.to_view && isAllowedTo($permissions, viewName + "_edit"); // handle v.to_view being null (=undefined?) or '' (empty string)
+    // entityName = titleCase(viewName) || "";
     doListEvents();
     // doGetActions();
   });
@@ -184,47 +175,8 @@
 </script>
 
 <button on:click={addEvent}>+ Add</button>
-<div class="xdemo-app">
-  <!-- <div class="demo-app-top">
-  </div> -->
-
-  <!-- <div>
-    <Draggable {eventData} class="draggable">
-      Drag me in Week or Day view!
-    </Draggable>
-  </div> -->
-
-  <div class="xdemo-app-calendar">
-    <FullCalendar bind:this={calendarComponentRef} {options} />
-  </div>
+    <FullCalendar {options} />
   {#if eventDesc}
     <p>Description: {eventDesc}</p>
   {/if}
-</div>
 
-<style>
-  .demo-app {
-    width: 100vw;
-    height: 100vh;
-    font-family: Arial, Helvetica Neue, Helvetica, sans-serif;
-    font-size: 14px;
-  }
-
-  .demo-app-top {
-    margin: 0 0 3em;
-  }
-
-  .demo-app-calendar {
-    margin: 0 auto;
-    max-width: 1000px;
-  }
-
-  /* :global(.draggable) {
-    color: white;
-    background: #3788d8;
-    width: fit-content;
-    padding: 1rem;
-    margin: 1rem;
-    cursor: pointer;
-  } */
-</style>

@@ -113,7 +113,7 @@
   <button on:click={doLoadtemplate}>Load</button>
   <br />
   <Editor {html} bind:this={editor} on:change={(evt) => (html = evt.detail)} />
-  <label>Attachment:</label><input bind:value={attachments} />
+  Attachment: <input bind:value={attachments} />
   <br />
   <button type="submit" on:click={doSend}> Send Emails </button>
 </main>

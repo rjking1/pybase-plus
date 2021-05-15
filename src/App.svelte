@@ -42,9 +42,9 @@
   <NavButton  name="back">Back</NavButton>
   <!-- <NavButton  name="members">Members</NavButton>
   <NavButton  name="memberEdit">Member Edit</NavButton> 
-  <NavButton  name="calendar">Calendar</NavButton> --> 
+  <NavButton  name="calendar">Calendar</NavButton> 
+  <NavButton  name="email">Email</NavButton> --> 
   {#if $permissions.cap === 'D'}
-  <NavButton  name="email">Email</NavButton> 
   <NavButton  name="query">Database</NavButton>
   {/if}
 </nav>
@@ -69,14 +69,6 @@
     padding: 10px;
   }
 
-  .sticky {
-  position: sticky;
-  top: 0;
-  /* width: 100%; */
-  }
-
   h1 {color:aliceblue; padding-right: 10px;}
-
-  h4 {text-align: right; font-size: 70%;}
 </style>
 

@@ -70,13 +70,13 @@
 
 <main>
   <form on:submit|preventDefault={doLogin}>
-    <label>Database</label>
+    <label for="db">Database</label>
     <input id="db" bind:value={$dbName} required />
 
-    <label>User name</label>
-    <input id="user" bind:value={username} autofocus required />
+    <label for= "user">User name</label>
+    <input id="user" bind:value={username} required />
 
-    <label>Password</label>
+    <label for="password">Password</label>
     <input id="password" type="password" bind:value={password} required />
 
     <button id="login" type="submit">Login</button>

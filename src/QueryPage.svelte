@@ -42,18 +42,16 @@
 
 </script>
 
-<button id="backup" on:click="{doBackup}">Backup</button>
 database <input id="bu_db" class="short" value={$dbName} /> 
 to file <input id="bu_file" class="short" bind:value={backupToFile} /> 
+<button id="backup" on:click="{doBackup}">Backup</button>
 <br>
-<button id="restore" on:click="{doRestore}">Restore</button>
 file <input id="rest_file" class="short" bind:value={backupToFile} /> 
 to database <input id="rest_db" class="short" bind:value={restoreToDB} /> 
+<button id="restore" on:click="{doRestore}">Restore</button>
 <hr>
 SQL<br>
 <textarea bind:value={sql}></textarea>
-
-<br>
 <button id="query" on:click="{doQuery}">Query</button>
 
 {#if result}
