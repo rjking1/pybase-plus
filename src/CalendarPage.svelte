@@ -11,9 +11,9 @@
   } from "./Common.js";
   import FullCalendar from "svelte-fullcalendar";
   import dayGridPlugin from "@fullcalendar/daygrid";
-  // import interactionPlugin from "@fullcalendar/interaction"; // needed for dateClick 
+  // import interactionPlugin from "@fullcalendar/interaction"; // needed for dateClick
   // there is a @fullcalendar/rrule plugin but i cannot make it work
-  import { RRule } from "rrule"; 
+  import { RRule } from "rrule";
 
   let eventDesc = "";
   let options = {
@@ -54,10 +54,10 @@
     p = pageDetails();
     viewName = p.viewName;
     v = viewDetail($views, viewName);
-    console.log(v)
+    // console.log(v);
     // todo fix to_view for events table
     // viewIsEditable =
-      // !!v.to_view && isAllowedTo($permissions, viewName + "_edit"); // handle v.to_view being null (=undefined?) or '' (empty string)
+    // !!v.to_view && isAllowedTo($permissions, viewName + "_edit"); // handle v.to_view being null (=undefined?) or '' (empty string)
     // entityName = titleCase(viewName) || "";
     doListEvents();
     // doGetActions();
@@ -97,16 +97,17 @@
       };
 
       if (!row.rrule) {
-        ev.start= row.from_date;
-        ev.end= addDays(row.to_date, 1); // todo default to start_date + 1 if not in result row
+        ev.start = row.from_date;
+        ev.end = addDays(row.to_date, 1); // todo default to start_date + 1 if not in result row
         myAddEvent(ev);
       } else {
         // add repeating events
         let rule = RRule.fromText(row.rrule);
-        // any way to set seq start date? dtstart
-        // let s = rule.toString();
-        // s=s+"\nDTSTART:" + row.from_date;
-        // rule=RRule.fromString(s);
+        // set seq start date -- tricky; as there seems to be no way to set DTSTART in the "English-like" text form
+        let s = rule.toString();
+        s = "DTSTART:" + row.from_date.replace(/\-/g, "") + "T000000Z\n" + s;
+        // console.log(s);
+        rule = RRule.fromString(s);
         rule.all().forEach((d, index) => {
           ev.start = d.toISOString().replace(/T.*/, "");
           ev.end = addDays(d, 1).toISOString().replace(/T.*/, "");
@@ -180,8 +181,7 @@
 </script>
 
 <button on:click={addEvent}>+ Add</button>
-    <FullCalendar {options} />
-  {#if eventDesc}
-    <p>Description: {eventDesc}</p>
-  {/if}
-
+<FullCalendar {options} />
+{#if eventDesc}
+  <p>Description: {eventDesc}</p>
+{/if}

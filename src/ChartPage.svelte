@@ -16,7 +16,7 @@
   let fields = [];
   let viewIsEditable = false;
   let viewName;
-  // let entityName;
+  let entityName;
   let data = null;
   let options = null;
 
@@ -28,7 +28,7 @@
     console.log(v);
     // viewIsEditable =
       // !!v.to_view && isAllowedTo($permissions, viewName + "_edit"); // handle v.to_view being null (=undefined?) or '' (empty string)
-    // entityName = titleCase(viewName) || "";
+    entityName = titleCase(viewName) || "";
     doChart();
     // doGetActions();
   });
@@ -226,14 +226,11 @@
       legend: {
         show: false,
       },
-      title: {
-        text: "Treemap",
-      },
     };
   }
 </script>
 
-<h4>Chart</h4>
+<h3>{entityName}</h3>
 
 {#if options}
   <div style="max-width: 1000px">
