@@ -51,7 +51,7 @@ to database <input id="rest_db" class="short" bind:value={restoreToDB} />
 <button id="restore" on:click="{doRestore}">Restore</button>
 <hr>
 SQL<br>
-<textarea bind:value={sql}></textarea>
+<textarea id="sql" bind:value={sql}></textarea>
 <button id="query" on:click="{doQuery}">Query</button>
 
 {#if result}

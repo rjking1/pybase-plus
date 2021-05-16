@@ -207,9 +207,8 @@
                 <!-- class = cl -->
                 <Editor {html} on:change={(evt) => (html = evt.detail)} />
               {:else if fieldType(column) === "textarea"}
-                <textarea name={column} class="field">
-                  {Object.values(qresult)[index]}
-                </textarea>
+                <!-- keep next line on one line -->
+                <textarea name={column} class="field">{Object.values(qresult)[index]}</textarea>
               {:else if fieldType(column) !== "lookup"}
                 <input
                   type={fieldType(column)}
