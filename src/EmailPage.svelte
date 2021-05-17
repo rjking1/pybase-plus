@@ -7,9 +7,9 @@
   let editor;  // needed to call setHtml()
   let templateName = "Welcome email";
 
-  let sender = "no-reply@ftgas.com.au";
-  let subject = '';
-  let html = "Choose a template";
+  let sender = "no-reply@ftgas.com.au";  // todo: nothing but keep in local storage; prevent emailing if empty
+  let subject = ''; // prevent email until filled in
+  let html = "Choose a template"; // todo: use placeholder and prevent email until loaded
     // '<html>\nHi !name\nPASTE HERE\n...<a href="www.artspace7.com.au/pybase/plus/hut/news/test.pdf">Newsletter.pdf</a>\n</html>';
   let attachments = ""; // "https://artspace7.com.au/pybase/hut/news/test.pdf";
   // let encrypted = "";  // should use this to avoid having artspace login details in here
@@ -37,10 +37,11 @@
   }
 
   async function doSend() {
+    // todo: disable Email button
     if (attachments != "") {
       atts = [
         {
-          name: "newsletter.pdf",
+          name: "newsletter.pdf",   // todo:fix
           path: attachments,
         },
       ];
@@ -74,6 +75,8 @@
           );
         });
         // todo: add delay
+
+        // todo: add progress indication
       }
     });
   }
@@ -84,6 +87,7 @@
 </svelte:head>
 
 <main>
+  <!-- todo: expand/collapse email addresses -->
   <table>
     <tr>
       <td>To:</td>
