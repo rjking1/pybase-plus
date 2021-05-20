@@ -102,11 +102,11 @@
         // console.log(qresult[index])
         ids.push(qresult[index]["ID"]);
         names.push(qresult[index]["NAME"]);
-        if (action_type == "email") {
+        if ((action_type == "email") && qresult[index]["EMAIL"]) {
           emails.push({
             NAME: qresult[index]["NAME"],
             EMAIL: qresult[index]["EMAIL"],
-          }); // or just push undefined if col does not exist?
+          }); // todo: or just push undefined if col does not exist?
         }
       }
     });
@@ -127,7 +127,7 @@
           '"' +
           " by " +
           $permissions.u_name;
-        await doFetch($dbN, script.replace("%d", ids.join()), audit_text);
+        await doFetch($dbN, script.replace("%d", ids.join()), audit_text);  // todo: doco: unlike before use in (%d) rather than =%d
         doListMembers();
       }
       if (action_type == "email") {

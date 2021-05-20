@@ -12,7 +12,6 @@
   } from "./Stores.js";
 
   const db_base = "art25285_";
-  // let db = "";
   let username = "";
   let password = "";
   let qresult;
@@ -77,7 +76,7 @@
     <input id="user" bind:value={username} required />
 
     <label for="password">Password</label>
-    <input id="password" type="password" bind:value={password} required />
+    <input id="password" type="password" bind:value={password} required autocomplete />
 
     <button id="login" type="submit">Login</button>
   </form>

@@ -22,11 +22,16 @@
     query: QueryPage,
   }
 
+  const urlParams = new URLSearchParams(window.location.search);
+  if(urlParams.has('db')) {
+    $dbName = urlParams.get("db");
+  }
+
 </script>
 
 <!-- =============== HTML =============== -->
 
-<nav class=xsticky>
+<nav>
   <h1>
     <span style="text-align:left;">
       {$society}
@@ -36,7 +41,7 @@
       DB: {$dbName}<br>{$permissions.u_name} 
       {/if}
     </span>
-</h1>
+  </h1>
   <NavButton  name="login">Sign in</NavButton>
   <NavButton  name="index">Home</NavButton>
   <NavButton  name="back">Back</NavButton>
