@@ -43,7 +43,7 @@
     editor.setHtml(html);
   }
 
-  async function doSend() {
+  function doSend() {
     sending = true; // disable Email button
     if (attachments != "") {
       atts = [
@@ -78,10 +78,10 @@
             "emailed " + email + " subject " + subject + " response " + message
           );
         });
-        setTimeout(() => {
-          // bump progress bar after delay
-          progress.set((index + 1) / emailCount);
-        }, delayBetweenSendingEmails);
+        progress.set((index + 1) / emailCount);
+        // setTimeout(() => {
+        //   // bump progress bar after delay
+        // }, delayBetweenSendingEmails);
       }
     });
   }
@@ -90,7 +90,7 @@
     duration: 400,
     easing: cubicOut,
   });
-  
+
 </script>
 
 <svelte:head>
