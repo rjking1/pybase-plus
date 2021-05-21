@@ -11,8 +11,9 @@
   let editor; // needed to call setHtml()
   let templateName = "Welcome email";
 
-  let sender = "heather@artspace7.com.au"; // "no-reply@ftgas.com.au"; // todo: nothing but keep in local storage; prevent emailing if empty
+  let sender = "shirley.dougan@bigpond.com"; // "no-reply@ftgas.com.au"; // todo: nothing but keep in local storage; prevent emailing if empty
   let subject = ""; // prevent email until filled in
+  let bcc = "";
   let html = "Choose a template"; // todo: use placeholder and prevent email until loaded
   // '<html>\nHi !name\nPASTE HERE\n...<a href="www.artspace7.com.au/pybase/plus/hut/news/test.pdf">Newsletter.pdf</a>\n</html>';
   let attachments = ""; // "https://artspace7.com.au/pybase/hut/news/test.pdf";
@@ -46,10 +47,11 @@
     editor.setHtml(html);
   }
 
-  async function sendEmail(from, to, subject, message) {
+  async function sendEmail(from, to, bcc, subject, message) {
     let formData = new FormData();
     formData.append("from", from);
     formData.append("to", to);
+    formData.append("bcc", bcc);
     formData.append("subject", subject);
     formData.append("message", message);
     // formData.append('attachments', func)
@@ -82,9 +84,9 @@
       console.log("sending:" + email);
       const contents =
         "<html>" +
-        html.replace("!name", name).replace("!index", index) +
+        html.replace("!name", name).replace("!index", index + 1) +
         "</html>";
-      let resp = await sendEmail(sender, email, subject, contents);
+      let resp = await sendEmail(sender, email, bcc, subject, contents);
       console.log("sent to:" + email + " response: " + resp);
       writeAuditText(
         $dbN,
@@ -131,6 +133,10 @@
           {/each}
         </details>
       </td>
+    </tr>
+    <tr>
+      <td>Bcc:</td>
+      <td><input bind:value={bcc} /> </td>
     </tr>
     <tr>
       <td>From:</td>
