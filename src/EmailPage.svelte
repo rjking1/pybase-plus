@@ -3,7 +3,9 @@
   import { onMount } from "svelte";
   import { tweened } from "svelte/motion";
   import { cubicOut } from "svelte/easing";
-  import { dbN, permissions, emailDetails } from "./Stores.js";
+  import { dbN, page, permissions, emailDetails } from "./Stores.js";
+  import { gotoPage } from "./pageStack.js";
+
   import Editor from "cl-editor/src/Editor.svelte";
 
   let editor; // needed to call setHtml()
@@ -20,6 +22,7 @@
   let result = null;
   let emailCount = 0;
   let sending = false;
+  $: emailNumber = 0;
 
   const delayBetweenSendingEmails = 1000; // ms
 
@@ -43,7 +46,21 @@
     editor.setHtml(html);
   }
 
-  function doSend() {
+  async function sendEmail(from, to, subject, message) {
+    let formData = new FormData();
+    formData.append("from", from);
+    formData.append("to", to);
+    formData.append("subject", subject);
+    formData.append("message", message);
+    // formData.append('attachments', func)
+
+    return await fetch(`https://www.artspace7.com.au/dsql/emailer.php`, {
+      method: "POST",
+      body: formData,
+    });
+  }
+
+  async function doSend() {
     sending = true; // disable Email button
     if (attachments != "") {
       atts = [
@@ -53,44 +70,42 @@
         },
       ];
     }
-    result.forEach((row, index) => {
-      const name = row["NAME"];
-      const email = row["EMAIL"];
-      if (email) {
-        console.log("sending:" + email);
-        const contents = "<html>" + html.replace("!name", name) + "</html>";
-        // todo: encrypt credentials
-        Email.send({
-          Host: "mail.artspace7.com.au",
-          Username: "art25285",
-          Password: "ear724gni",
-          To: email,
-          From: sender,
-          Subject: subject,
-          Body: contents,
-          Attachments: atts,
-        }).then((message) => {
-          console.log(email, message);
-          writeAuditText(
-            $dbN,
-            $permissions.u_id,
-            $permissions.u_name,
-            "emailed " + email + " subject " + subject + " response " + message
-          );
-        });
-        progress.set((index + 1) / emailCount);
-        // setTimeout(() => {
-        //   // bump progress bar after delay
-        // }, delayBetweenSendingEmails);
-      }
-    });
+    for (let r = 0; r < result.length; r++) {
+      await f(result[r], r);
+    }
   }
 
-  const progress = tweened(0, {
-    duration: 400,
-    easing: cubicOut,
-  });
+  async function f(row, index) {
+    const name = row["NAME"];
+    const email = row["EMAIL"];
+    if (email) {
+      console.log("sending:" + email);
+      const contents =
+        "<html>" +
+        html.replace("!name", name).replace("!index", index) +
+        "</html>";
+      let resp = await sendEmail(sender, email, subject, contents);
+      console.log("sent to:" + email + " response: " + resp);
+      writeAuditText(
+        $dbN,
+        $permissions.u_id,
+        $permissions.u_name,
+        "emailed " + email + " subject " + subject + " response " + resp
+      );
+      emailNumber = index + 1;
 
+      // setTimeout(() => {
+      //   // bump progress bar after delay
+      //   emailNumber = index + 1;
+      //   // progress.set((index + 1) / emailCount);
+      // }, delayBetweenSendingEmails);
+    }
+  }
+
+  // const progress = tweened(0, {
+  //   duration: 400,
+  //   easing: cubicOut,
+  // });
 </script>
 
 <svelte:head>
@@ -98,52 +113,52 @@
 </svelte:head>
 
 <main>
-  <form>
-    <table>
-      <tr>
-        <td>To:</td>
-        <td>
-          <details>
-            <summary>{emailCount} recipients</summary>
-            {#each $emailDetails as emailDetail}
-              <span style="background-color: rgb(251, 213, 181);"
-                >{emailDetail.NAME}</span
-              >
-              <span style="background-color: rgb(251, 243, 199);"
-                >{emailDetail.EMAIL}</span
-              >
-              <span> &nbsp; </span>
-            {/each}
-          </details>
-        </td>
-      </tr>
-      <tr>
-        <td>From:</td>
-        <td><input bind:value={sender} required /> </td>
-      </tr>
-      <tr>
-        <td>Subject: </td>
-        <td><input bind:value={subject} required /> </td>
-      </tr>
-    </table>
-    Template
-    <select id="id_template" bind:value={templateName}>
-      {#each templates as template}
-        <option value={template.name}>{template.name}</option>
-      {/each}
-    </select>
-    <button disabled={sending} on:click={doLoadtemplate}>Load</button>
-    <br />
-    <Editor
-      {html}
-      bind:this={editor}
-      on:change={(evt) => (html = evt.detail)}
-    />
-    Attachment: <input bind:value={attachments} />
-    <br />
-    <button type="submit" on:click={doSend}> Send Emails </button>
-  </form>
-  <progress value={$progress} />
+  <!-- <form> -->
+  <table>
+    <tr>
+      <td>To:</td>
+      <td>
+        <details>
+          <summary>{emailCount} recipients</summary>
+          {#each $emailDetails as emailDetail}
+            <span style="background-color: rgb(251, 213, 181);"
+              >{emailDetail.NAME}</span
+            >
+            <span style="background-color: rgb(251, 243, 199);"
+              >{emailDetail.EMAIL}</span
+            >
+            <span> &nbsp; </span>
+          {/each}
+        </details>
+      </td>
+    </tr>
+    <tr>
+      <td>From:</td>
+      <td><input bind:value={sender} required /> </td>
+    </tr>
+    <tr>
+      <td>Subject: </td>
+      <td><input bind:value={subject} required /> </td>
+    </tr>
+  </table>
+  Template
+  <select id="id_template" bind:value={templateName}>
+    {#each templates as template}
+      <option value={template.name}>{template.name}</option>
+    {/each}
+  </select>
+  <button on:click={doLoadtemplate}>Load</button>
+  <br />
+  <Editor {html} bind:this={editor} on:change={(evt) => (html = evt.detail)} />
+  Attachment: <input bind:value={attachments} />
+  <br />
+  <button disabled={sending} on:click={doSend}> Send Emails </button>
+  <!-- <button on:click={$page = gotoPage("index")}> Close </button> -->
+  <br />
+  Sent <span style="background-color: rgb(251, 213, 181);">{emailNumber}</span>
+  of <span style="background-color: rgb(251, 243, 199);">{emailCount}</span>
+  <!-- </form> -->
+  <!-- <progress value={emailNumber/emailCount} /> -->
 </main>
 
 <style>
