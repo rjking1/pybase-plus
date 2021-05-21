@@ -104,8 +104,9 @@
         names.push(qresult[index]["NAME"]);
         if ((action_type == "email") && qresult[index]["EMAIL"]) {
           emails.push({
-            NAME: qresult[index]["NAME"],
-            EMAIL: qresult[index]["EMAIL"],
+            no: qresult[index]["No"],
+            name: qresult[index]["NAME"],
+            email: qresult[index]["EMAIL"],
           }); // todo: or just push undefined if col does not exist?
         }
       }
