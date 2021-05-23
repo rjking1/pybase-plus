@@ -11,12 +11,6 @@
   let links = null;
 
   onMount(async () => {
-    // views = await doFetch(
-    //   $dbN,
-    //   //todo: can't this use $views?
-    //   "select id, name, formdesc from py_views where incl_in_index='Y' order by name" //  and not name like 'PY_%'
-    // );
-
     await doGetLinks() 
   });
 

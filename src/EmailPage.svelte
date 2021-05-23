@@ -1,22 +1,18 @@
 <script>
   import { doFetch, writeAuditText } from "./common.js";
   import { onMount } from "svelte";
-  // import { tweened } from "svelte/motion";
-  // import { cubicOut } from "svelte/easing";
   import { dbN, permissions, emailDetails } from "./Stores.js";
-  // import { gotoPage } from "./pageStack.js";
 
   import Editor from "cl-editor/src/Editor.svelte";
 
   let editor; // needed to call setHtml()
   let templateName = "Welcome email";
 
-  let sender = "shirley.dougan@bigpond.com"; // "no-reply@ftgas.com.au"; // todo: nothing but keep in local storage; prevent emailing if empty
+  let sender = "heather@artspace7.com.au";
+  let replyTo = "shirley.dougan@bigpond.com";
   let subject = ""; // prevent email until filled in
   let bcc = "heather@artspace7.com.au";
   let html = "Choose a template"; // todo: use placeholder and prevent email until loaded
-  // let attachments = ""; // "https://artspace7.com.au/pybase/hut/news/test.pdf";
-  // let atts = undefined;
 
   let result = null;
   let emailCount = 0;
@@ -44,14 +40,14 @@
   }
 
   // move this fn to utls
-  async function sendEmail(from, to, bcc, subject, message) {
+  async function sendEmail(from, to, replyTo, bcc, subject, message) {
     let formData = new FormData();
     formData.append("from", from);
     formData.append("to", to);
+    // formData.append("replyTo", replyTo);  -- need to change emailer.php 
     formData.append("bcc", bcc);
     formData.append("subject", subject);
     formData.append("message", message);
-    // formData.append('attachments', func)
 
     return await fetch(`https://www.artspace7.com.au/dsql/emailer.php`, {
       method: "POST",
@@ -61,14 +57,6 @@
 
   async function doSendAll() {
     sending = true; // disable Email button
-    // if (attachments != "") {
-    //   atts = [
-    //     {
-    //       name: attachments, // todo:fix
-    //       path: attachments,
-    //     },
-    //   ];
-    // }
     for (let r = 0; r < result.length; r++) {
       await doSendEmail(result[r], r);
     }
@@ -87,7 +75,7 @@
         .replace("!name", name)
         .replace("!index", index + 1) +
         "</html>";
-      let resp = await sendEmail(sender, email, bcc, subject, contents);
+      let resp = await sendEmail(sender, email, replyTo, bcc, subject, contents);
       console.log("sent to:" + email + " response: " + resp.statusText);
       writeAuditText(
         $dbN,
@@ -129,6 +117,10 @@
       <td><input bind:value={sender} required /> </td>
     </tr>
     <tr>
+      <td>Reply to:</td>
+      <td><input bind:value={replyTo} /> (leave blank to be the same as From)</td>
+    </tr>
+    <tr>
       <td>Subject: </td>
       <td><input bind:value={subject} required /> </td>
     </tr>
@@ -142,7 +134,6 @@
   <button on:click={doLoadtemplate}>Load</button>
   <br />
   <Editor {html} bind:this={editor} on:change={(evt) => (html = evt.detail)} />
-  <!-- Attachment: <input bind:value={attachments} /> -->
   <br />
   <button disabled={sending} on:click={doSendAll}> Send Emails </button>
   <br />

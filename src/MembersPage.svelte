@@ -137,6 +137,9 @@
         $emailDetails = emails;
         $page = gotoPage("email");
       }
+      if(action_type=="open_url") {
+        window.open(script, '_blank');  // script = url
+      }
     }
   }
 
