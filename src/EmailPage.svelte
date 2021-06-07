@@ -8,7 +8,7 @@
   let editor; // needed to call setHtml()
   let templateName = "Welcome email";
 
-  let sender = "heather@artspace7.com.au";
+  let sender = "heather@artspace7.com.au";  // to become membership@thehutgallery.com.au when we switch over to mail.thehut... in php
   let replyTo = "shirley.dougan@bigpond.com";
   let subject = ""; // prevent email until filled in
   let bcc = "heather@artspace7.com.au";
@@ -42,9 +42,9 @@
   // move this fn to utls
   async function sendEmail(from, to, replyTo, bcc, subject, message) {
     let formData = new FormData();
-    formData.append("from", from);
     formData.append("to", to);
-    // formData.append("replyTo", replyTo);  -- need to change emailer.php 
+    formData.append("from", from);
+    formData.append("reply_to", replyTo);  
     formData.append("bcc", bcc);
     formData.append("subject", subject);
     formData.append("message", message);
@@ -118,7 +118,7 @@
     </tr>
     <tr>
       <td>Reply to:</td>
-      <td><input bind:value={replyTo} /> (leave blank to be the same as From)</td>
+      <td><input bind:value={replyTo} /> </td>
     </tr>
     <tr>
       <td>Subject: </td>

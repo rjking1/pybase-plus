@@ -115,7 +115,7 @@
     // console.log("names=", names);
 
     if (ids.length == 0) {
-      window.alert("Please select one or more rows");
+      window.alert("Please select one or more rows"); //  if no %id in script then don't need to check !
     } else {
       if (action_type == "exec_sql") {
         let audit_text =
