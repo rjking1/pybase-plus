@@ -2,12 +2,7 @@
   import { onMount } from "svelte";
   import { dbN, page, permissions, views, emailDetails } from "./Stores.js";
   import { gotoPage, pageDetails } from "./pageStack.js";
-  import {
-    doFetch,
-    isAllowedTo,
-    titleCase,
-    viewDetail,
-  } from "./Common.js";
+  import { doFetch, isAllowedTo, titleCase, viewDetail } from "./Common.js";
 
   import { chart } from "svelte-apexcharts";
 
@@ -27,7 +22,7 @@
     v = viewDetail($views, viewName);
     console.log(v);
     // viewIsEditable =
-      // !!v.to_view && isAllowedTo($permissions, viewName + "_edit"); // handle v.to_view being null (=undefined?) or '' (empty string)
+    // !!v.to_view && isAllowedTo($permissions, viewName + "_edit"); // handle v.to_view being null (=undefined?) or '' (empty string)
     entityName = titleCase(viewName) || "";
     doChart();
     // doGetActions();
@@ -61,15 +56,14 @@
     let x = [];
     let y1 = [];
     let y2 = [];
-    data.forEach((item) => {
-      // item=row
-      // console.log(item);
+    data.forEach((row) => {
+      // console.log(row);
       // we don't care what the col names are
       // first is usually date on x axis
       // second+ are y values
-      x.push(Object.values(item)[0]);
-      y1.push(Object.values(item)[1]);
-      y2.push(Object.values(item)[2]);
+      x.push(Object.values(row)[0]);
+      y1.push(Object.values(row)[1]);
+      y2.push(Object.values(row)[2]);
     });
 
     options = {
@@ -108,23 +102,29 @@
 
   function doDotChart() {
     let pts = {};
-    pts["2021"] = [];
-    pts["2020"] = [];
-    pts["2019"] = [];
-    pts["2018"] = [];
-    data.forEach((item) => {
-      // item=row
-      // console.log(item);
+    data.forEach((row) => {
+      // console.log(row);
       // we don't care what the col names are
-      // first is usually date on x axis
-      // second+ are y values
-      let yr = Object.values(item)[0]; // should we do .year() here
+      // first is the series label - group by this
+      // 2nd colis the x axis value,3rd col is y axis value
+      let yr = Object.values(row)[0];
       let pt = new Array();
-      pt.push(parseFloat(Object.values(item)[1]));
-      pt.push(parseFloat(Object.values(item)[2]));
+      pt.push(parseFloat(Object.values(row)[1]));
+      pt.push(parseFloat(Object.values(row)[2]));
+      if (!(yr in pts)) {
+        pts[yr] = [];
+      }
       pts[yr].push(pt);
     });
-    // console.log(pts)
+    console.log(pts);
+
+    let series = [];
+    Object.keys(pts).forEach((yr) => {
+      series.push({
+        name: yr,
+        data: pts[yr],
+      });
+    });
 
     options = {
       chart: {
@@ -135,20 +135,7 @@
         },
       },
       //dataLabels: { position: "top", enabled: false, offsetY: 30 },
-      series: [
-        {
-          name: "2019",
-          data: pts["2019"],
-        },
-        {
-          name: "2020",
-          data: pts["2020"],
-        },
-        {
-          name: "2021",
-          data: pts["2021"],
-        },
-      ],
+      series: series,
       xaxis: {
         tickAmount: 10,
         title: {
@@ -168,15 +155,15 @@
     let v = {};
     let firstMonth = true;
     let monthStart = 1;
-    data.forEach((item) => {
-      let dt = "." + Object.values(item)[0] + ".";
+    data.forEach((row) => {
+      let dt = "." + Object.values(row)[0] + ".";
       let month = parseInt(dt.substr(6, 2));
       if (firstMonth) {
         firstMonth = false;
         monthStart = month;
       }
       let day = parseInt(dt.substr(9, 2));
-      let km = parseFloat(Object.values(item)[1]);
+      let km = parseFloat(Object.values(row)[1]);
       if (!v[month]) {
         v[month] = new Array(31).fill(0);
       }
@@ -218,7 +205,7 @@
       });
     });
     options = {
-      series: [{data:series}],
+      series: [{ data: series }],
       chart: {
         height: 500,
         type: "treemap",
