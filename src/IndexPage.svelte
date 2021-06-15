@@ -49,9 +49,18 @@
 <main>
   {#if links}
     {#each links as view}
-      {#if isAllowedTo($permissions, view.name)}
+      {#if isAllowedTo($permissions, view.name) && !view.name.startsWith("py_")}
         <button
-          disabled={!isAllowedTo($permissions, view.name)}
+          on:click={viewClick(view.name, view.formdesc)}
+        >
+          ▸ {view.name}</button
+        >
+        <br />
+      {/if}
+    {/each}
+    {#each links as view}
+      {#if isAllowedTo($permissions, view.name) && view.name.startsWith("py_")}
+        <button
           on:click={viewClick(view.name, view.formdesc)}
         >
           ▸ {view.name}</button
@@ -63,4 +72,5 @@
 </main>
 
 <style>
+
 </style>
