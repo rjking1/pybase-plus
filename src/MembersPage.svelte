@@ -128,6 +128,7 @@
           '"' +
           " by " +
           $permissions.u_name;
+        console.log(script.replace("%d", ids.join()));
         await doFetch($dbN, script.replace("%d", ids.join()), audit_text);  // todo: doco: unlike before use in (%d) rather than =%d
         doListMembers();
       }
