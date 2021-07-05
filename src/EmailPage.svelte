@@ -49,7 +49,7 @@
     formData.append("subject", subject);
     formData.append("message", message);
 
-    return await fetch(`https://www.artspace7.com.au/dsql/emailer.php`, {
+    return await fetch(`https://www.artspace7.com.au/dsql/emailer3.php`, {
       method: "POST",
       body: formData,
     });
@@ -69,12 +69,10 @@
     if (email) {
       console.log("sending:" + email);
       const contents =
-        "<html>" +
         html
         .replace("!number", no)
         .replace("!name", name)
-        .replace("!index", index + 1) +
-        "</html>";
+        .replace("!index", index + 1);
       let resp = await sendEmail(sender, email, replyTo, bcc, subject, contents);
       console.log("sent to:" + email + " response: " + resp.statusText);
       writeAuditText(
