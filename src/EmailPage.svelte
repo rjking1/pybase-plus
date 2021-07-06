@@ -38,7 +38,7 @@
     html = rows[0]["contents"];
     editor.setHtml(html);
 
-    if(subject = "") {
+    if(subject == "") {
       subject = templateName;
     }
   }
