@@ -8,8 +8,8 @@
   let editor; // needed to call setHtml()
   let templateName = "Welcome email";
 
-  let sender = "heather@artspace7.com.au";  // to become membership@thehutgallery.com.au when we switch over to mail.thehut... in php
-  let replyTo = "shirley.dougan@bigpond.com";
+  let sender = "Heather <heather@artspace7.com.au>"; // to become membership@thehutgallery.com.au when we switch over to mail.thehut... in php
+  let replyTo = "Shirley <shirley.dougan@bigpond.com>";
   let subject = ""; // prevent email until filled in
   let bcc = "heather@artspace7.com.au";
   let html = "Choose a template"; // todo: use placeholder and prevent email until loaded
@@ -37,6 +37,10 @@
     );
     html = rows[0]["contents"];
     editor.setHtml(html);
+
+    if(subject = "") {
+      subject = templateName;
+    }
   }
 
   // move this fn to utls
@@ -44,7 +48,7 @@
     let formData = new FormData();
     formData.append("to", to);
     formData.append("from", from);
-    formData.append("reply_to", replyTo);  
+    formData.append("reply_to", replyTo);
     formData.append("bcc", bcc);
     formData.append("subject", subject);
     formData.append("message", message);
@@ -65,26 +69,36 @@
   async function doSendEmail(row, index) {
     const no = row["no"];
     const name = row["name"];
-    const email = row["email"];
+    const email = row["name"] + " <" + row["email"] + ">";
     if (email) {
       console.log("sending:" + email);
-      const contents =
-        html
+      const contents = html
         .replace("!number", no)
         .replace("!name", name)
         .replace("!index", index + 1);
-      let resp = await sendEmail(sender, email, replyTo, bcc, subject, contents);
+      let resp = await sendEmail(
+        sender,
+        email,
+        replyTo,
+        bcc,
+        subject,
+        contents
+      );
       console.log("sent to:" + email + " response: " + resp.statusText);
       writeAuditText(
         $dbN,
         $permissions.u_id,
         $permissions.u_name,
-        "emailed " + email + " subject " + subject + " response " + resp.statusText
+        "emailed " +
+          email +
+          " subject " +
+          subject +
+          " response " +
+          resp.statusText
       );
       emailNumber = index + 1;
     }
   }
-
 </script>
 
 <main>
@@ -98,6 +112,7 @@
             <span style="background-color: rgb(251, 213, 181);"
               >{emailDetail.name}</span
             >
+            &nbsp
             <span style="background-color: rgb(251, 243, 199);"
               >{emailDetail.email}</span
             >
@@ -138,7 +153,7 @@
   Sent <span style="background-color: rgb(251, 213, 181);">{emailNumber}</span>
   of <span style="background-color: rgb(251, 243, 199);">{emailCount}</span>
   {#if emailCount > 0}
-  <progress value={emailNumber/emailCount} />
+    <progress value={emailNumber / emailCount} />
   {/if}
 </main>
 
