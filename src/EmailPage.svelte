@@ -8,8 +8,8 @@
   let editor; // needed to call setHtml()
   let templateName = "Welcome email";
 
-  let sender = "Heather <heather@artspace7.com.au>"; // to become membership@thehutgallery.com.au when we switch over to mail.thehut... in php
-  let replyTo = "Shirley <shirley.dougan@bigpond.com>";
+  let sender = "Heather King <membership@thehutgallery.com.au>";
+  let replyTo = "Shirley Dougan <info@thehutgallery.com.au>";   // todo make a drop down
   let subject = ""; // prevent email until filled in
   let bcc = "heather@artspace7.com.au";
   let html = "Choose a template"; // todo: use placeholder and prevent email until loaded
@@ -53,7 +53,7 @@
     formData.append("subject", subject);
     formData.append("message", message);
 
-    return await fetch(`https://www.artspace7.com.au/dsql/emailer3.php`, {
+    return await fetch(`https://thehutgallery.com.au/dsql/emailer3.php`, {
       method: "POST",
       body: formData,
     });
