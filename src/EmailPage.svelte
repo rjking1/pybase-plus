@@ -9,7 +9,7 @@
   let templateName = "Welcome email";
 
   let sender = "Heather King <membership@thehutgallery.com.au>";
-  let replyTo = "Shirley Dougan <info@thehutgallery.com.au>";   // todo make a drop down
+  let replyTo = "Shirley Dougan <info@thehutgallery.com.au>"; // todo make a drop down
   let subject = ""; // prevent email until filled in
   let bcc = "heather@artspace7.com.au";
   let html = "Choose a template"; // todo: use placeholder and prevent email until loaded
@@ -20,6 +20,8 @@
   $: emailNumber = 0;
 
   let templates = [];
+  let froms = [];
+  let replyTos = [];
 
   onMount(async () => {
     result = $emailDetails; // todo: tidy
@@ -28,6 +30,16 @@
       $dbN,
       "select id, name from py_templates where class='email' order by name"
     );
+    froms = await doFetch(
+      $dbN,
+      "select distinct value_ from py_logs where key_ = 'email.from' "
+    );    
+    console.log(froms);
+    replyTos = await doFetch(
+      $dbN,
+      "select distinct value_ from py_logs where key_ = 'email.replyTo' "
+    );
+    console.log(replyTos);
   });
 
   async function doLoadtemplate() {
@@ -38,7 +50,7 @@
     html = rows[0]["contents"];
     editor.setHtml(html);
 
-    if(subject == "") {
+    if (subject == "") {
       subject = templateName;
     }
   }
@@ -61,6 +73,30 @@
 
   async function doSendAll() {
     sending = true; // disable Email button
+    writeAuditText(
+      $dbN,
+      $permissions.u_id,
+      $permissions.u_name,
+      "",
+      "email.from",
+      sender
+    );
+    writeAuditText(
+      $dbN,
+      $permissions.u_id,
+      $permissions.u_name,
+      "",
+      "email.replyTo",
+      replyTo
+    );
+    writeAuditText(
+      $dbN,
+      $permissions.u_id,
+      $permissions.u_name,
+      "",
+      "email.subject",
+      subject
+    );
     for (let r = 0; r < result.length; r++) {
       await doSendEmail(result[r], r);
     }
@@ -89,12 +125,8 @@
         $dbN,
         $permissions.u_id,
         $permissions.u_name,
-        "emailed " +
-          email +
-          " subject " +
-          subject +
-          " response " +
-          resp.statusText
+        "emailed: " + email + " subject: " + subject,
+        "email.to", email
       );
       emailNumber = index + 1;
     }
@@ -127,24 +159,40 @@
     </tr>
     <tr>
       <td>From:</td>
-      <td><input bind:value={sender} required /> </td>
+      <td>
+        <select id="from" bind:value={sender}>
+          {#each froms as from}
+            <option value={from.value_}>{from.value_}</option>
+          {/each}
+        </select>  
+      </td>
     </tr>
     <tr>
       <td>Reply to:</td>
-      <td><input bind:value={replyTo} /> </td>
+      <td>
+        <select id="replyto" bind:value={replyTo}>
+          {#each replyTos as replyto}
+            <option value={replyto.value_}>{replyto.value_}</option>
+          {/each}
+        </select>
+      </td>
+    </tr>
+    <tr>
+      <td>Template:</td>
+      <td>  
+        <select id="id_template" bind:value={templateName}>
+          {#each templates as template}
+            <option value={template.name}>{template.name}</option>
+          {/each}
+        </select>
+        <button on:click={doLoadtemplate}>Load</button>
+      </td>
     </tr>
     <tr>
       <td>Subject: </td>
       <td><input bind:value={subject} required /> </td>
     </tr>
   </table>
-  Template
-  <select id="id_template" bind:value={templateName}>
-    {#each templates as template}
-      <option value={template.name}>{template.name}</option>
-    {/each}
-  </select>
-  <button on:click={doLoadtemplate}>Load</button>
   <br />
   <Editor {html} bind:this={editor} on:change={(evt) => (html = evt.detail)} />
   <br />

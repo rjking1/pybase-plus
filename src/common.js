@@ -12,7 +12,7 @@
 export async function doFetch(db, sql, auditText) {
   let formData = new FormData()
   formData.append('db', db)
-  formData.append('sql', encodeURI(sql)) 
+  formData.append('sql', encodeURI(sql))
   if (auditText) {
     formData.append('audit_text', auditText)
   }
@@ -39,7 +39,7 @@ export function titleCase(s) {
 }
 
 export function viewDetail(views, viewName) {
-    return views.find(view => view.name === viewName);
+  return views.find(view => view.name === viewName);
 }
 
 export function isAllowedTo(permissions, sFunc) {
@@ -58,18 +58,19 @@ export function isAllowedTo(permissions, sFunc) {
     return (!(permissions.ex.includes(sFunc)) && !(sFunc.startsWith('py_')))
       || (sFunc.startsWith('py_') && (permissions.ex.includes(sFunc)))
   }
-  
+
   return (permissions.ex.includes(sFunc))
 }
 
 function setSqlParams(sql, params) {
-  
+
 }
 
-export async function writeAuditText(db, user_id, user_name, auditText) {
+export async function writeAuditText(db, user_id, user_name, auditText, k = '', v = '') {
   // todo: change to logging user_name one day
   await doFetch(db,
-    "insert into py_logs (user_id, description) values (" + user_id + ", '" + auditText.replaceAll("'", "''") + "')"
-    // don't add auditText as that is what we are inserting withu\out any SQL
+    "insert into py_logs (user_id, description, key_, value_) values ("
+    + user_id + ",'" + auditText.replaceAll("'", "''") + "','" + k + "','" + v.replaceAll("'", "''") + "')"
+    // don't add auditText as that is what we are inserting with no SQL
   )
 }
