@@ -106,7 +106,7 @@
     <tr>
       <td>To:</td>
       <td>
-        <details>
+        <details open="true">
           <summary>{emailCount} recipients</summary>
           {#each $emailDetails as emailDetail}
             <span style="background-color: rgb(251, 213, 181);"

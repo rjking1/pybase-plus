@@ -97,9 +97,10 @@
     let names = [];
     let emails = [];
     let cboxes = Array.from(document.getElementsByClassName("checkrow"));
-    cboxes.forEach((cbox, index) => {
+    cboxes.forEach((cbox) => {
       if (cbox.checked) {
-        // console.log(qresult[index])
+        let index = cbox.getAttribute("data-index")
+        console.log(qresult[index])
         ids.push(qresult[index]["ID"]);
         names.push(qresult[index]["NAME"]);
         if ((action_type == "email") && qresult[index]["EMAIL"]) {
@@ -111,8 +112,9 @@
         }
       }
     });
-    // console.log('ids=', ids)
-    // console.log("names=", names);
+    console.log('ids=', ids);
+    console.log("names=", names);
+    console.log('emails=', emails);
 
     if (ids.length == 0) {
       window.alert("Please select one or more rows"); //  if no %id in script then don't need to check !
@@ -221,10 +223,10 @@
         </tr>
       </thead>
       <tbody>
-        {#each qresult as row}
+        {#each qresult as row, index}
           <tr>
             <td>
-              <input class="checkrow" type="checkbox" unchecked />
+              <input class="checkrow" type="checkbox" unchecked data-index={index} />
               {#if viewIsEditable}
                 <button
                   class="editrow"
