@@ -5,26 +5,28 @@
 	import { dbN, dbName } from "./Stores.js";
 
 	let backupToFile = $dbName;
+	let backupFromDB = $dbName;
 	let restoreToDB = 'test';
 	let sql = "select * from py_logs order by date_time desc limit 50";
 	let result = undefined;
+	let cmd = "";
 
 	// the following will work but is a post frm within pybase now
 	//fetch('https://www.artspace7.com.au/dsql/json_helper_get.php?db=art25285_rides2&sql=select%20*%20from%20bikes')
 
 	async function doBackup() {
-		return await getFetch($dbName, backupToFile, 'b');
+		cmd = await doBuRest(backupFromDB, backupToFile, 'b');
 	}
 
 	async function doRestore() {
-		return await getFetch(restoreToDB, backupToFile, 'r');
+		cmd = await doBuRest(restoreToDB, backupToFile, 'r');
 	}
 
 	async function doQuery() {
 		result = await doFetch($dbN, sql);
 	}
 
-	async function getFetch(db, filename, func) {
+	async function doBuRest(db, filename, func) {
 		let formData = new FormData()
 		formData.append('db', db)
 		formData.append('filename', filename) 
@@ -42,13 +44,15 @@
 
 </script>
 
-database <input id="bu_db" class="short" value={$dbName} /> 
+database <input id="bu_db" class="short" bind:value={backupFromDB} /> 
 to file <input id="bu_file" class="short" bind:value={backupToFile} /> 
 <button id="backup" on:click="{doBackup}">Backup</button>
 <br>
 file <input id="rest_file" class="short" bind:value={backupToFile} /> 
 to database <input id="rest_db" class="short" bind:value={restoreToDB} /> 
 <button id="restore" on:click="{doRestore}">Restore</button>
+<hr>
+{cmd}
 <hr>
 SQL<br>
 <textarea id="sql" bind:value={sql}></textarea>
