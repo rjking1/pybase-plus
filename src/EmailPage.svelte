@@ -4,14 +4,15 @@
   import { dbN, permissions, emailDetails } from "./Stores.js";
 
   import Editor from "cl-editor/src/Editor.svelte";
+  import { BCC_EMAIL, INFO_EMAIL, MEMBERSHIP_EMAIL } from "./config.js";
 
   let editor; // needed to call setHtml()
   let templateName = "Welcome email";
 
-  let sender = "Heather King <membership@thehutgallery.com.au>";
-  let replyTo = "Shirley Dougan <info@thehutgallery.com.au>"; // todo make a drop down
+  let sender = MEMBERSHIP_EMAIL;
+  let replyTo = INFO_EMAIL; // todo make a drop down using list=id
   let subject = ""; // prevent email until filled in
-  let bcc = "heather@artspace7.com.au";
+  let bcc = BCC_EMAIL;
   let html = "Choose a template"; // todo: use placeholder and prevent email until loaded
 
   let result = null;
@@ -33,7 +34,7 @@
     froms = await doFetch(
       $dbN,
       "select distinct value_ from py_logs where key_ = 'email.from' "
-    );    
+    );
     console.log(froms);
     replyTos = await doFetch(
       $dbN,
@@ -126,7 +127,8 @@
         $permissions.u_id,
         $permissions.u_name,
         "emailed: " + email + " subject: " + subject,
-        "email.to", email
+        "email.to",
+        email
       );
       emailNumber = index + 1;
     }
@@ -164,7 +166,7 @@
           {#each froms as from}
             <option value={from.value_}>{from.value_}</option>
           {/each}
-        </select>  
+        </select>
       </td>
     </tr>
     <tr>
@@ -179,7 +181,7 @@
     </tr>
     <tr>
       <td>Template:</td>
-      <td>  
+      <td>
         <select id="id_template" bind:value={templateName}>
           {#each templates as template}
             <option value={template.name}>{template.name}</option>

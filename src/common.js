@@ -1,10 +1,8 @@
+import { POST_PHP } from "./config.js"
 
 // export async function doFetchGet(db, sql) {
 //   let resp = await fetch(
-//     'https://www.artspace7.com.au/dsql/json_helper_get.php?db=' +
-//       db +
-//       '&sql=' +
-//       sql,
+//     GET_PHP + '?db=' + db + '&sql=' + sql,
 //   )
 //   return await resp.json()
 // }
@@ -19,7 +17,7 @@ export async function doFetch(db, sql, auditText) {
   //formData.append('noenc', 'true') 
 
   let resp = await fetch(
-    `https://www.artspace7.com.au/dsql/json_helper_post.php`,
+    POST_PHP,
     {
       method: 'POST',
       body: formData,
@@ -29,7 +27,6 @@ export async function doFetch(db, sql, auditText) {
   //console.log(j)
   return j
 }
-
 
 export function titleCase(s) {
   return s.toLowerCase()
