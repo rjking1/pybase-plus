@@ -13,11 +13,15 @@
   let cmd = "";
 
   async function doBackup() {
-    cmd = await doBuRest(backupFromDB, backupToFile, "b");
+    cmd = "Backing up...";
+    await doBuRest(backupFromDB, backupToFile, "b");
+    cmd = "Backed up";
   }
 
   async function doRestore() {
+    cmd = "Restoring...";
     cmd = await doBuRest(restoreToDB, backupToFile, "r");
+    cmd = "Restored";
   }
 
   async function doQuery() {
@@ -45,7 +49,7 @@ file <input id="rest_file" class="short" bind:value={backupToFile} />
 to database <input id="rest_db" class="short" bind:value={restoreToDB} />
 <button id="restore" on:click={doRestore}>Restore</button>
 <hr />
-{cmd}
+<div id=status>{cmd}</div>
 <hr />
 SQL<br />
 <textarea id="sql" bind:value={sql} />
