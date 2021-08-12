@@ -66,7 +66,7 @@
     formData.append("subject", subject);
     formData.append("message", message);
 
-    return await fetch(`https://thehutgallery.com.au/dsql/emailer3.php`, {
+    return await fetch(EMAILER_PHP, {
       method: "POST",
       body: formData,
     });
