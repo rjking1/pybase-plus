@@ -49,7 +49,9 @@ file <input id="rest_file" class="short" bind:value={backupToFile} />
 to database <input id="rest_db" class="short" bind:value={restoreToDB} />
 <button id="restore" on:click={doRestore}>Restore</button>
 <hr />
-<div id=status>{cmd}</div>
+<div id="status">
+  <span style="background-color: rgb(251, 243, 199);">{cmd}</span>
+</div>
 <hr />
 SQL<br />
 <textarea id="sql" bind:value={sql} />
