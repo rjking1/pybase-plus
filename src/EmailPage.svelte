@@ -1,10 +1,10 @@
 <script>
-  import { doFetch, writeAuditText } from "./common.js";
+  import { doFetch, writeAuditText } from "../../common/dbutils";
   import { onMount } from "svelte";
   import { dbN, permissions, emailDetails } from "./Stores.js";
 
   import Editor from "cl-editor/src/Editor.svelte";
-  import { BCC_EMAIL, INFO_EMAIL, MEMBERSHIP_EMAIL } from "./config.js";
+  import { BCC_EMAIL, INFO_EMAIL, MEMBERSHIP_EMAIL } from "../../common/config.js";
 
   let editor; // needed to call setHtml()
   let templateName = "Welcome email";

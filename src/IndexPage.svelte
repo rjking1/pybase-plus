@@ -1,7 +1,7 @@
 <script>
   import { onMount } from "svelte";
 
-  import { doFetch, isAllowedTo, titleCase, viewDetail } from "./Common.js";
+  import { doFetch, isAllowedTo, titleCase, viewDetail } from "../../common/dbutils";
   import { gotoPage, pageDetails } from "./pageStack.js";
   import { dbN, page, permissions, views } from "./Stores.js";
 

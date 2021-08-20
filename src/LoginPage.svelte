@@ -1,5 +1,5 @@
 <script>
-  import { doFetch, writeAuditText } from "./Common.js";
+  import { doFetch, writeAuditText } from "../../common/dbutils";
   import { gotoPage } from "./pageStack.js";
   import {
     society,
@@ -10,8 +10,8 @@
     permissions,
     views,
   } from "./Stores.js";
+  import {DB_PREFIX} from "../../common/config.js";
 
-  const db_base = "art25285_";
   let username = "";
   let password = "";
   let qresult;
@@ -20,7 +20,7 @@
     $dbName = $dbName.toLowerCase();
 
     qresult = await doFetch(
-      db_base + $dbName,
+      DB_PREFIX + $dbName,
       "select u.id, u.user_name, def_capab, exceptions from py_roles r join py_users u on r.id=u.role_id where upper(u.user_name)='" +
         username.toUpperCase() +
         "' and u.password='" +
@@ -38,7 +38,7 @@
         cap: qresult[0]["def_capab"],
         ex: qresult[0]["exceptions"],
       };
-      $dbN = db_base + $dbName;
+      $dbN = DB_PREFIX + $dbName;
       $loggedIn = "true";
 
       qresult = await doFetch(

@@ -2,7 +2,7 @@
   import { onMount } from "svelte";
   import { dbN, page, permissions, views, emailDetails } from "./Stores.js";
   import { gotoPage, pageDetails } from "./pageStack.js";
-  import { doFetch, isAllowedTo, titleCase, viewDetail } from "./Common.js";
+  import { doFetch, isAllowedTo, titleCase, viewDetail } from "../../common/dbutils";
 
   import { chart } from "svelte-apexcharts";
 

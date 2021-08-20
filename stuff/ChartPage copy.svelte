@@ -1,24 +1,18 @@
 <script>
   import { onMount } from "svelte";
-  import { dbN, page, permissions, views, emailDetails } from "./Stores.js";
-  import { gotoPage, pageDetails } from "./pageStack.js";
-  import {
-    doFetch,
-    isAllowedTo,
-    titleCase,
-    viewDetail,
-    writeAuditText,
-  } from "./Common.js";
+  import { dbN, views } from "./Stores.js";
+  import { pageDetails } from "./pageStack.js";
+  import { doFetch, viewDetail } from "../../common/dbutils";
   import Chart from "svelte-frappe-charts";
 
   let p;
   let v;
   let fields = [];
-  let viewIsEditable = false;
+  // let viewIsEditable = false;
   let viewName;
   // let entityName;
   let data = null;
-  let aresult = null;
+  // let aresult = null;
 
   let dates = null;
   let dots = null;
@@ -34,7 +28,7 @@
     v = viewDetail($views, viewName);
     console.log(v);
     // viewIsEditable =
-      // !!v.to_view && isAllowedTo($permissions, viewName + "_edit"); // handle v.to_view being null (=undefined?) or '' (empty string)
+    // !!v.to_view && isAllowedTo($permissions, viewName + "_edit"); // handle v.to_view being null (=undefined?) or '' (empty string)
     // entityName = titleCase(viewName) || "";
     doChart();
     // doGetActions();
@@ -79,8 +73,8 @@
     dates = {
       labels: x,
       datasets: [
-        { name: "Km",  values: y1, chartType: 'bar' }, // type only nec if multi-axis
-        { name: "Alt", values: y2, chartType: 'bar' }
+        { name: "Km", values: y1, chartType: "bar" }, // type only nec if multi-axis
+        { name: "Alt", values: y2, chartType: "bar" },
       ],
     };
   }
@@ -104,7 +98,7 @@
       labels: y1,
       datasets: [
         // { name: "Km",  values: y1, chartType: 'bar' }, // type only nec if multi-axis
-        { name: "Alt", values: y2 }
+        { name: "Alt", values: y2 },
       ],
     };
   }
@@ -138,7 +132,7 @@
     };
   }
 
-  let lineOptions = {hideLine: 1}
+  let lineOptions = { hideLine: 1 };
 </script>
 
 <h4>Chart</h4>
@@ -147,7 +141,7 @@
   <!-- height="150px" /> -->
 {/if}
 {#if dots}
-  <Chart data={dots} type="line" lineOptions={lineOptions}} />
+  <Chart data={dots} type="line" lineOptions="{lineOptions}}" />
   <!-- height="150px" /> -->
 {/if}
 

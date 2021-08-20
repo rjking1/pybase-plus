@@ -1,6 +1,6 @@
 <script>
-  import { BUREST_PHP } from "./config.js";
-  import { doFetch } from "./common.js";
+  import { BUREST_PHP } from "../../common/config.js";
+  import { doFetch } from "../../common/dbutils";
 
   // import { onMount } from "svelte";
   import { dbN, dbName } from "./Stores.js";

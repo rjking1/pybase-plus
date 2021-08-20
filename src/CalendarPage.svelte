@@ -8,7 +8,7 @@
     titleCase,
     viewDetail,
     writeAuditText,
-  } from "./Common.js";
+  } from "../../common/dbutils.js";
   import FullCalendar from "svelte-fullcalendar";
   import dayGridPlugin from "@fullcalendar/daygrid";
   // import interactionPlugin from "@fullcalendar/interaction"; // needed for dateClick

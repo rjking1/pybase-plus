@@ -7,7 +7,7 @@
     titleCase,
     viewDetail,
     writeAuditText,
-  } from "./Common.js";
+  } from "../../common/dbutils";
   import { dbN, page, permissions, views, emailDetails } from "./Stores.js";
   import { gotoPage, pageDetails } from "./pageStack.js";
   import { clickHook } from "./sortable.js";
