@@ -1,8 +1,6 @@
 <script>
-  import { BUREST_PHP } from "../../common/config.js";
-  import { doFetch } from "../../common/dbutils";
+  import { doFetch, doBuRest } from "../../common/dbutils";
 
-  // import { onMount } from "svelte";
   import { dbN, dbName } from "./Stores.js";
 
   let backupToFile = $dbName;
@@ -26,18 +24,6 @@
 
   async function doQuery() {
     result = await doFetch($dbN, sql);
-  }
-
-  async function doBuRest(db, filename, func) {
-    let formData = new FormData();
-    formData.append("db", db);
-    formData.append("filename", filename);
-    formData.append("func", func);
-
-    return await fetch(BUREST_PHP, {
-      method: "POST",
-      body: formData,
-    });
   }
 </script>
 
