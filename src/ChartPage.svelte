@@ -2,9 +2,8 @@
   import { onMount } from "svelte";
   import { dbN, page, permissions, views, emailDetails } from "./Stores.js";
   import { gotoPage, pageDetails } from "./pageStack.js";
-  import { doFetch, isAllowedTo, titleCase, viewDetail } from "../../common/dbutils";
-
-  import { chart } from "svelte-apexcharts";
+  import { doFetch, titleCase, viewDetail } from "../../common/dbutils";
+  import DataFrame from "dataframe-js";
 
   let p;
   let v;
@@ -53,51 +52,64 @@
   }
 
   function doBarChart() {
-    let x = [];
-    let y1 = [];
-    let y2 = [];
-    data.forEach((row) => {
-      // console.log(row);
-      // we don't care what the col names are
-      // first is usually date on x axis
-      // second+ are y values
-      x.push(Object.values(row)[0]);
-      y1.push(Object.values(row)[1]);
-      y2.push(Object.values(row)[2]);
-    });
+    let col_names = Object.keys(data[0]);
+    let df = new DataFrame(data, col_names);
 
-    options = {
-      chart: {
-        type: "bar",
-      },
-      dataLabels: { position: "top", enabled: false, offsetY: 30 },
-      series: [
-        {
-          name: "km",
-          data: y1,
-        },
-        {
-          name: "m",
-          data: y2,
-        },
-      ],
+    if (!col_names[0].startsWith("$")) {
+      col_names.splice(0, 0, "!c");
+      df = df.restructure(col_names);
+    }
+
+    if (!col_names[1].startsWith("_")) {
+      col_names.splice(1, 0, "!s");
+      df = df.restructure(col_names);
+    }
+
+    const series_col_name = col_names[1];
+    const series_values = df.distinct(series_col_name).toArray(series_col_name);
+
+    let traces = [];
+    let stacked = false;
+    for (const series_value of series_values) {
+      console.log(series_value);
+      const df_filt = df.filter(
+        (row) => row.get(series_col_name) == series_value
+      );
+      const x = df_filt.toArray(col_names[2]);
+      col_names.forEach((col, index) => {
+        if (index > 2) {
+          console.log(col);
+          console.log(df_filt.toArray(col));
+          stacked = col.endsWith("#"); // any
+          const series_type =
+            col.endsWith("_") || col.endsWith("$") ? "scatter" : "bar";
+          traces.push({
+            name: series_col_name != "!s" ? series_value + " " + col : col,
+            x: x,
+            y: df_filt.toArray(col),
+            type: series_type,
+            mode: "lines",
+            yaxis: col.endsWith("$") ? "y2" : "y",
+          });
+        }
+      });
+    }
+
+    const layout = {
+      title: "a chart", // title if chart_col_name == '!c' else chart,
       xaxis: {
-        categories: x,
+        title: "x",
       },
-      yaxis: [
-        {
-          title: {
-            text: "km",
-          },
-        },
-        {
-          opposite: true,
-          title: {
-            text: "m",
-          },
-        },
-      ],
+      yaxis: { title: "y", side: "left" },
+      yaxis2: { title: "y2", side: "right", overlaying: "y" },
+      barmode: stacked ? "relative" : "group",
     };
+
+    const options = {};
+
+    let plotDiv = document.getElementById("plotDiv");
+    // let Plot = new
+    Plotly.newPlot(plotDiv, traces, layout, options);
   }
 
   function doDotChart() {
@@ -219,8 +231,6 @@
 
 <h3>{entityName}</h3>
 
-{#if options}
-  <div style="max-width: 1000px">
-    <div use:chart={options} />
-  </div>
-{/if}
+<div id="plotly">
+  <div id="plotDiv"><!-- Plotly chart will be drawn inside this DIV --></div>
+</div>

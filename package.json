@@ -11,8 +11,8 @@
     "@fullcalendar/daygrid": "^5.6.0",
     "@rollup/plugin-commonjs": "^17.0.0",
     "@rollup/plugin-node-resolve": "^11.0.0",
-    "apexcharts": "^3.26.2",
     "cl-editor": "^2.2.0",
+    "dataframe-js": "^1.4.4",
     "postcss": "^8.2.14",
     "rollup": "^2.3.4",
     "rollup-plugin-css-only": "^3.1.0",
@@ -22,7 +22,6 @@
     "rollup-plugin-terser": "^7.0.0",
     "rrule": "^2.6.8",
     "svelte": "^3.0.0",
-    "svelte-apexcharts": "^1.0.2",
     "svelte-fullcalendar": "^1.1.0"
   },
   "dependencies": {
