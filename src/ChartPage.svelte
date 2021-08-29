@@ -11,7 +11,6 @@
   let viewIsEditable = false;
   let viewName;
   let entityName;
-  let data = null;
   let options = null;
 
   // a lot of this should go into common as membersPage and CalendarPage have thee 3 functions in common
@@ -34,11 +33,24 @@
     }
     fields.push({ fieldName: "id", visibility: false });
     // console.log(fields);
-    let sql = v.get_sql.replace("%d", p.id);
-    data = await doFetch($dbN, sql);
+
+    let sql_text = v.get_sql.replace("%d", p.id);
+    let [opts, ...sql] = sql_text.split(/\r?\n/);;
+    if (opts.startsWith("-- {")) {
+      opts = JSON.parse(opts.slice(3));
+      sql = sql.join("\n");
+    } else {
+      opts = {};
+      sql = sql_text;
+    }
+
+    console.log(opts);
+    console.log(sql);
+
+    let data = await doFetch($dbN, sql);
 
     if (v.formDesc == "!chart bar") {
-      doBarChart();
+      doBarChart(opts, data);
     }
     if (v.formDesc == "!chart dots") {
       doDotChart();
@@ -51,7 +63,7 @@
     }
   }
 
-  function doBarChart() {
+  function doBarChart(opts, data) {
     let col_names = Object.keys(data[0]);
     let df = new DataFrame(data, col_names);
 
@@ -87,13 +99,13 @@
         );
         df_filt = df_filt.filter(
           (row) => row.get(series_col_name) == series_value
-        ); // combine into 1 using .chain
+        ); // combine into 1 using .chain or .filter({charts_col_name: chart_value, series_col_name: series_value})
         const x = df_filt.toArray(col_names[2]);
         col_names.forEach((col, index) => {
           if (index > 2) {
             // console.log(col);
             // console.log(df_filt.toArray(col));
-            stacked = col.endsWith("#"); // any
+            stacked = stacked || col.endsWith("#"); // any
             const series_type =
               col.endsWith("_") || col.endsWith("$") ? "scatter" : "bar";
             traces.push({
@@ -109,11 +121,11 @@
       }
 
       const layout = {
-        title: charts_col_name == "!c" ? "title" : chart_value,
-        xaxis: { title: "x" },
-        yaxis: { title: "y", side: "left" },
-        yaxis2: { title: "y2", side: "right", overlaying: "y" },
-        barmode: stacked ? "relative" : "group",
+        title: charts_col_name == "!c" ? entityName : chart_value, // todo: allow opts.title?
+        xaxis: { title: opts.x },
+        yaxis: { title: opts.y1, side: "left" },
+        yaxis2: { title: opts.y2, side: "right", overlaying: "y" },
+        barmode: stacked ? "relative" : "group", // todo support opts.barmode
       };
 
       const options = {};
