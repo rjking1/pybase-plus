@@ -3,8 +3,8 @@
 
   import { dbN, dbName } from "./Stores.js";
 
-  let backupToFile = $dbName;
-  let backupFromDB = $dbName;
+  let backupToFile = $dbName; // todo split
+  let backupFromDB = $dbName; // ditto
   let restoreToDB = "test";
   let sql = "select * from py_logs order by date_time desc limit 50";
   let result = undefined;

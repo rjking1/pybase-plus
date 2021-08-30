@@ -10,17 +10,30 @@
     permissions,
     views,
   } from "./Stores.js";
-  import {DB_PREFIX} from "../../common/config.js";
+  import {ART7_DB_PREFIX, ART7_DSQL_URL, PYBASE_DB_PREFIX, PYBASE_DSQL_URL} from "../../common/config.js";
 
+  let server;
+  let dbprefix;
   let username = "";
   let password = "";
   let qresult;
 
   async function doLogin() {
     $dbName = $dbName.toLowerCase();
+    console.log($dbName);
+    let [db, server_abbrev] = $dbName.split(":"); // so for pybase, specify as nem:py
+    console.log(server);
+    console.log(db);
+    if(server_abbrev == "py") {
+      server = PYBASE_DSQL_URL;
+      dbprefix = PYBASE_DB_PREFIX;
+    } else {
+      server = ART7_DSQL_URL;
+      dbprefix = ART7_DB_PREFIX;
+    }
 
     qresult = await doFetch(
-      DB_PREFIX + $dbName,
+      {db: dbprefix + db, server: server},
       "select u.id, u.user_name, def_capab, exceptions from py_roles r join py_users u on r.id=u.role_id where upper(u.user_name)='" +
         username.toUpperCase() +
         "' and u.password='" +
@@ -38,7 +51,7 @@
         cap: qresult[0]["def_capab"],
         ex: qresult[0]["exceptions"],
       };
-      $dbN = DB_PREFIX + $dbName;
+      $dbN = {db: dbprefix + db, server: server};
       $loggedIn = "true";
 
       qresult = await doFetch(
