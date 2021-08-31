@@ -2,9 +2,8 @@
   import { onMount } from "svelte";
   import { dbN, page, permissions, views, emailDetails } from "./Stores.js";
   import { gotoPage, pageDetails } from "./pageStack.js";
-  import { doFetch, isAllowedTo, titleCase, viewDetail } from "../../common/dbutils";
-
-  import { chart } from "svelte-apexcharts";
+  import { doFetch, titleCase, viewDetail } from "../../common/dbutils";
+  import DataFrame from "dataframe-js";
 
   let p;
   let v;
@@ -12,7 +11,6 @@
   let viewIsEditable = false;
   let viewName;
   let entityName;
-  let data = null;
   let options = null;
 
   // a lot of this should go into common as membersPage and CalendarPage have thee 3 functions in common
@@ -34,12 +32,25 @@
       fields = [];
     }
     fields.push({ fieldName: "id", visibility: false });
-    console.log(fields);
-    let sql = v.get_sql.replace("%d", p.id);
-    data = await doFetch($dbN, sql);
+    // console.log(fields);
+
+    let sql_text = v.get_sql.replace("%d", p.id);
+    let [opts, ...sql] = sql_text.split(/\r?\n/);;
+    if (opts.startsWith("-- {")) {
+      opts = JSON.parse(opts.slice(3));
+      sql = sql.join("\n");
+    } else {
+      opts = {};
+      sql = sql_text;
+    }
+
+    console.log(opts);
+    console.log(sql);
+
+    let data = await doFetch($dbN, sql);
 
     if (v.formDesc == "!chart bar") {
-      doBarChart();
+      doBarChart(opts, data);
     }
     if (v.formDesc == "!chart dots") {
       doDotChart();
@@ -52,52 +63,78 @@
     }
   }
 
-  function doBarChart() {
-    let x = [];
-    let y1 = [];
-    let y2 = [];
-    data.forEach((row) => {
-      // console.log(row);
-      // we don't care what the col names are
-      // first is usually date on x axis
-      // second+ are y values
-      x.push(Object.values(row)[0]);
-      y1.push(Object.values(row)[1]);
-      y2.push(Object.values(row)[2]);
-    });
+  function doBarChart(opts, data) {
+    let col_names = Object.keys(data[0]);
+    let df = new DataFrame(data, col_names);
 
-    options = {
-      chart: {
-        type: "bar",
-      },
-      dataLabels: { position: "top", enabled: false, offsetY: 30 },
-      series: [
-        {
-          name: "km",
-          data: y1,
-        },
-        {
-          name: "m",
-          data: y2,
-        },
-      ],
-      xaxis: {
-        categories: x,
-      },
-      yaxis: [
-        {
-          title: {
-            text: "km",
-          },
-        },
-        {
-          opposite: true,
-          title: {
-            text: "m",
-          },
-        },
-      ],
-    };
+    if (!col_names[0].startsWith("$")) {
+      col_names.splice(0, 0, "!c");
+      // df = df.restructure(col_names);
+      df = df.withColumn("!c");
+    }
+
+    if (!col_names[1].startsWith("_")) {
+      col_names.splice(1, 0, "!s");
+      // df = df.restructure(col_names);
+      df = df.withColumn("!s");
+    }
+
+    // note col_names order is not nec same order as columns in df now
+    // console.log(col_names);
+    // df.show(5);
+
+    const charts_col_name = col_names[0];
+    const series_col_name = col_names[1];
+    const charts_values = df.distinct(charts_col_name).toArray(charts_col_name);
+    const series_values = df.distinct(series_col_name).toArray(series_col_name);
+
+    let chartIndex = 0;
+    for (const chart_value of charts_values) {
+      let traces = [];
+      let stacked = false;
+      for (const series_value of series_values) {
+        // console.log(series_value);
+        let df_filt = df.filter(
+          (row) => row.get(charts_col_name) == chart_value
+        );
+        df_filt = df_filt.filter(
+          (row) => row.get(series_col_name) == series_value
+        ); // combine into 1 using .chain or .filter({charts_col_name: chart_value, series_col_name: series_value})
+        const x = df_filt.toArray(col_names[2]);
+        col_names.forEach((col, index) => {
+          if (index > 2) {
+            // console.log(col);
+            // console.log(df_filt.toArray(col));
+            stacked = stacked || col.endsWith("#"); // any
+            const series_type =
+              col.endsWith("_") || col.endsWith("$") ? "scatter" : "bar";
+            traces.push({
+              name: series_col_name != "!s" ? series_value + " " + col : col,
+              x: x,
+              y: df_filt.toArray(col),
+              type: series_type,
+              mode: "lines",
+              yaxis: col.endsWith("$") ? "y2" : "y",
+            });
+          }
+        });
+      }
+
+      const layout = {
+        title: charts_col_name == "!c" ? entityName : chart_value, // todo: allow opts.title?
+        xaxis: { title: opts.x },
+        yaxis: { title: opts.y1, side: "left" },
+        yaxis2: { title: opts.y2, side: "right", overlaying: "y" },
+        barmode: stacked ? "relative" : "group", // todo support opts.barmode
+      };
+
+      const options = {};
+
+      let plotDiv = document.getElementById("plotDiv" + chartIndex);
+      // let Plot = new
+      Plotly.newPlot(plotDiv, traces, layout, options);
+      chartIndex++;
+    }
   }
 
   function doDotChart() {
@@ -116,7 +153,7 @@
       }
       pts[yr].push(pt);
     });
-    console.log(pts);
+    // console.log(pts);
 
     let series = [];
     Object.keys(pts).forEach((yr) => {
@@ -219,8 +256,11 @@
 
 <h3>{entityName}</h3>
 
-{#if options}
-  <div style="max-width: 1000px">
-    <div use:chart={options} />
-  </div>
-{/if}
+<div id="plotly">
+  <div id="plotDiv0" />
+  <div id="plotDiv1" />
+  <div id="plotDiv2" />
+  <div id="plotDiv3" />
+  <div id="plotDiv4" />
+  <div id="plotDiv5" />
+</div>

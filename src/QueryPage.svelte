@@ -3,8 +3,9 @@
 
   import { dbN, dbName } from "./Stores.js";
 
-  let backupToFile = $dbName;
-  let backupFromDB = $dbName;
+  let [db, server_abbrev] = $dbName.split(":");
+  let backupToFile = db;
+  let backupFromDB = db;
   let restoreToDB = "test";
   let sql = "select * from py_logs order by date_time desc limit 50";
   let result = undefined;
@@ -12,13 +13,13 @@
 
   async function doBackup() {
     cmd = "Backing up...";
-    await doBuRest(backupFromDB, backupToFile, "b");
+    await doBuRest($dbN.server, backupFromDB, backupToFile, "b");
     cmd = "Backed up";
   }
 
   async function doRestore() {
     cmd = "Restoring...";
-    cmd = await doBuRest(restoreToDB, backupToFile, "r");
+    cmd = await doBuRest($dbN.server, restoreToDB, backupToFile, "r");
     cmd = "Restored";
   }
 
