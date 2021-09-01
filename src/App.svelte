@@ -10,6 +10,7 @@
   import QueryPage from "./QueryPage.svelte";
   import CalendarPage from "./CalendarPage.svelte";
   import ChartPage from "./ChartPage.svelte";
+  import DashboardPage from "./DashboardPage.svelte";
 
   const pageMap = {
     login: LoginPage,
@@ -20,6 +21,7 @@
     chart: ChartPage,
     email: EmailPage,
     query: QueryPage,
+    dashboard: DashboardPage,
   };
 
   const urlParams = new URLSearchParams(window.location.search);
@@ -56,6 +58,7 @@
   <NavButton  name="email">Email</NavButton> -->
   {#if $permissions.cap === "D"}
     <NavButton name="query">Database</NavButton>
+    <NavButton name="dashboard">Dashboard</NavButton>
   {/if}
 </nav>
 
