@@ -34,7 +34,14 @@
   }
 
   async function doUpdateAll() {
-    let result = await doGetPrices();
+
+    const matches = document.querySelectorAll("[id^='sql']");
+    let sql = matches[0].dataset.sql // special function: reads data-sql attribute
+    console.log(sql); 
+    let result = await doGetResult(sql);
+    //   `select concat(p.regionid, "_price") as "key", rrp as "value" from DISPATCH__PRICE p 
+    //   where p.settlementdate >= (select max(settlementdate) from DISPATCH__PRICE)`
+    // );
     // console.log(result);
     for (let reg of regionNames) {
       addWidget("#" + reg + "_price", reg);
@@ -43,21 +50,20 @@
     }
 
     result = await doGetResult(
-      `select concat(p.regionid, "_price") as "key", rrp as "value" from DISPATCH__PRICE p 
-      where p.settlementdate >= (select max(settlementdate) from DISPATCH__PRICE)`
+      `select p.regionid as "Region", format(rrp, 2) as "RRP", format(clearedsupply,0) as "Demand",
+      format(dispatchablegeneration,0) as "Generation" ,
+      format(availablegeneration,0) as "Available"  
+      from DISPATCH__PRICE p join DISPATCH__REGIONSUM r
+      on p.settlementdate = r.settlementdate and p.regionid = r.regionid
+      where p.settlementdate >= (select max(settlementdate) from DISPATCH__PRICE) - interval 1 minute
+      and r.settlementdate >= (select max(settlementdate) from DISPATCH__PRICE) - interval 1 minute
+      order by 1`
     );
     addTableWidget("#t1", result);
   }
 
   function lookup(rows, key) {
     return rows.find((row) => row.key === key)["value"];
-  }
-
-  async function doGetPrices() {
-    const sql = `select concat(p.regionid, "_price") as "key", rrp as "value" from DISPATCH__PRICE p 
-      where p.settlementdate >= (select max(settlementdate) from DISPATCH__PRICE)
-    `;
-    return await doFetch($dbN, sql);
   }
 
   async function doGetResult(sql) {
