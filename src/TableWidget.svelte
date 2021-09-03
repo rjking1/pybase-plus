@@ -37,18 +37,23 @@
 <style>
   tr:nth-child(even) {
     background-color: rgb(233, 235, 222);
+    color: #000;
   }
 
   tr:nth-child(odd) {
     background: rgb(250, 250, 250);
+    color: #000;
   }
 
   table tr td {
     border-bottom: 1px solid #cecece;
   }
+  table th {
+    padding-left : 5px;
+    padding-right : 5px;
+  }
 
-  /* .cell {
-    padding-left: 5px;
-    padding-right: 5px;
-  } */
+  .cell {
+    padding: 5px;
+  }
 </style>

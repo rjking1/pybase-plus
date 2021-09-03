@@ -10,6 +10,7 @@
   import { dbN, page, permissions, views } from "./Stores.js";
   import Widget from "./Widget.svelte";
   import TableWidget from "./TableWidget.svelte";
+  import ChartWidget from "./ChartWidget.svelte";
 
   let p;
   let viewName;
@@ -37,7 +38,7 @@
 
     const matches = document.querySelectorAll("[id^='sql']");
     let sql = matches[0].dataset.sql // special function: reads data-sql attribute
-    console.log(sql); 
+    // console.log(sql); 
     let result = await doGetResult(sql);
     //   `select concat(p.regionid, "_price") as "key", rrp as "value" from DISPATCH__PRICE p 
     //   where p.settlementdate >= (select max(settlementdate) from DISPATCH__PRICE)`
@@ -49,17 +50,25 @@
       addWidget("#" + reg + "_price", "x");
     }
 
-    result = await doGetResult(
-      `select p.regionid as "Region", format(rrp, 2) as "RRP", format(clearedsupply,0) as "Demand",
-      format(dispatchablegeneration,0) as "Generation" ,
-      format(availablegeneration,0) as "Available"  
-      from DISPATCH__PRICE p join DISPATCH__REGIONSUM r
-      on p.settlementdate = r.settlementdate and p.regionid = r.regionid
-      where p.settlementdate >= (select max(settlementdate) from DISPATCH__PRICE) - interval 1 minute
-      and r.settlementdate >= (select max(settlementdate) from DISPATCH__PRICE) - interval 1 minute
-      order by 1`
-    );
+    sql = matches[1].dataset.sql // special function: reads data-sql attribute
+    // console.log(sql); 
+
+    result = await doGetResult(sql);
+    //   `select p.regionid as "Region", format(rrp, 2) as "RRP", format(clearedsupply,0) as "Demand",
+    //   format(dispatchablegeneration,0) as "Generation" ,
+    //   format(availablegeneration,0) as "Available"  
+    //   from DISPATCH__PRICE p join DISPATCH__REGIONSUM r
+    //   on p.settlementdate = r.settlementdate and p.regionid = r.regionid
+    //   where p.settlementdate >= (select max(settlementdate) from DISPATCH__PRICE) - interval 1 minute
+    //   and r.settlementdate >= (select max(settlementdate) from DISPATCH__PRICE) - interval 1 minute
+    //   order by 1`
+    // );
     addTableWidget("#t1", result);
+
+    // an advantage of not passing a view into the table or chart widgets is that we can share the result
+
+    result = await doGetResult('select settlementdate, rrp as "rrp_" from DISPATCH__PRICE where regionid = "VIC1" order by settlementdate desc limit 50');
+    addChartWidget("#c1", result)
   }
 
   function lookup(rows, key) {
@@ -87,6 +96,18 @@
       },
     });
   }
+
+  function addChartWidget(s, data, opts) {
+    new ChartWidget({
+      target: document.querySelector(s),
+      props: {
+        div: s,
+        data: data,
+        opts: {}
+      },
+    });
+  }
+
 </script>
 
 <main>
