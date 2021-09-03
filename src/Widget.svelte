@@ -1,14 +1,12 @@
 <script>
-    export let txt;
+  export let txt;
 </script>
 
-<main>
-    <div>{txt}</div>
-</main>
+<div>{txt}</div>
 
 <style>
-    div {
-    width:100%;
-    height:100%;
-    }
+  div {
+    width: 100%;
+    height: 100%;
+  }
 </style>
