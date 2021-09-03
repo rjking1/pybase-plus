@@ -8,6 +8,9 @@
   export let data;
   export let opts;
 
+  // console.log(div);
+  let chartContainer = document.querySelector(div);
+
   let col_names = Object.keys(data[0]);
   let df = new DataFrame(data, col_names);
 
@@ -72,10 +75,9 @@
 
     const options = {};
 
-    // let plotDiv = document.getElementById("plotDiv" + chartIndex);
-    console.log(div);
-    let plotDiv = document.querySelector(div);
+    let plotDiv = document.createElement(div.slice(1) + "-" + chartIndex);
     console.log(plotDiv);
+    chartContainer.appendChild(plotDiv);
     // let Plot = new
     Plotly.newPlot(plotDiv, traces, layout, options);
     chartIndex++;

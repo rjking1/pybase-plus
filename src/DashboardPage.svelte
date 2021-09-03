@@ -67,7 +67,7 @@
 
     // an advantage of not passing a view into the table or chart widgets is that we can share the result
 
-    result = await doGetResult('select settlementdate, rrp as "rrp_" from DISPATCH__PRICE where regionid = "VIC1" order by settlementdate desc limit 50');
+    result = await doGetResult('select regionid as "_", settlementdate, rrp as "rrp_" from DISPATCH__PRICE where settlementdate >= now() - interval 1 hour');
     addChartWidget("#c1", result)
   }
 
