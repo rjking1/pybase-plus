@@ -24,6 +24,12 @@
     // Widget = (await import('./Widget.svelte')).default;
     await doGetHTML();
     await doUpdateAll();
+
+    // this updates on each character.  on:change does the same
+    //do I need to do the "debouncing"? ie wait for Enter?
+    document.getElementById("market-time").addEventListener("input", () => {
+      doUpdateAll();
+    });
   });
 
   async function doGetHTML() {
@@ -76,10 +82,22 @@
     // an advantage of not passing a view into the table or chart widgets is that we can share the result
     // tho I'm not doing that here !
 
-    result = await doGetResult(
-      'select regionid as "_", settlementdate, rrp as "rrp_" from DISPATCH__PRICE where settlementdate >= now() - interval 1 hour'
-    );
-    addChartWidget("#c1", result);
+    let dt;
+    let el = document.getElementById("market-time");
+    if (el) {
+      dt = el.value;
+    } else {
+      dt = new Date().toISOString();
+    }
+    // console.log(dt);
+    if (dt != "") {
+      let sql = 
+      'select regionid as "_", settlementdate, rrp as "rrp_" from DISPATCH__PRICE where settlementdate >= "' +
+      dt + '" - interval 30 minute and settlementdate <= "' + dt + '" + interval 30 minute';
+      console.log(sql);
+      result = await doGetResult(sql);
+      addChartWidget("#c1", result);
+    }
 
     // need a way of specifying a view name in the html id="view-1"?
 

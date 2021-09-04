@@ -35,7 +35,11 @@
   const charts_values = df.distinct(charts_col_name).toArray(charts_col_name);
   const series_values = df.distinct(series_col_name).toArray(series_col_name);
 
+  // general problem with tables and charts -- they are appending on each "refresh"
+  // need a clear or rebuild page from scratch
+  
   let chartIndex = 0;
+  chartContainer.innerHTML = '';  // prob better to while (el.hasChildElements()) { el.removeChild(el.lastChild)) }
   for (const chart_value of charts_values) {
     let traces = [];
     let stacked = false;
