@@ -141,7 +141,7 @@
       let l0 = Object.values(row)[0];
       let l1 = Object.values(row)[1];
       let l2 = Object.values(row)[2];
-      let val = parseFloat(Object.values(row)[3]);
+      let val = Math.floor(parseFloat(Object.values(row)[3]));
       if (l2) {
         labels.push(l2); // eg duid
         parents.push(l0 + ":" + l1); // fuel type
@@ -155,17 +155,17 @@
         // console.log(l0 + " root");
         labels.push(l0); // eg rgn
         parents.push("NEM");
-        values.push(val + 5); // to avoid rounding summation error. can we do better?
+        values.push(val + 1); // to avoid rounding summation error. can we do better?
       } else {
-        labels.push("NEM"); // 
+        labels.push("NEM"); //
         parents.push(""); // root
-        values.push(val + 100); // to avoid rounding summation error
+        values.push(val + 10); // to avoid rounding summation error
       }
     });
 
-    var data = [
+    let traces = [
       {
-        type: "treemap",
+        type: "sunburst", //"treemap",
         branchvalues: "total",
         values: values,
         labels: labels,
@@ -175,7 +175,13 @@
       },
     ];
 
-    Plotly.newPlot("plotDiv0", data);
+    let layout = {
+      margin: { l: 20, r: 20, b: 20, t: 20 },
+      width: 1000,
+      height: 1000,
+    };
+
+    Plotly.newPlot("plotDiv0", traces, layout);
   }
 </script>
 
