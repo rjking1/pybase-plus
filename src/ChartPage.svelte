@@ -35,7 +35,7 @@
     // console.log(fields);
 
     let sql_text = v.get_sql.replace("%d", p.id);
-    let [opts, ...sql] = sql_text.split(/\r?\n/);;
+    let [opts, ...sql] = sql_text.split(/\r?\n/);
     if (opts.startsWith("-- {")) {
       opts = JSON.parse(opts.slice(3));
       sql = sql.join("\n");
@@ -52,14 +52,9 @@
     if (v.formDesc == "!chart bar") {
       doBarChart(opts, data);
     }
-    if (v.formDesc == "!chart dots") {
-      doDotChart();
-    }
-    if (v.formDesc == "!chart heatmap") {
-      doHeatmap();
-    }
-    if (v.formDesc == "!chart treemap" || v.formDesc == "!chart pie") {
-      doTreemap();
+    if (v.formDesc == "!chart treemap") {
+      // || v.formDesc == "!chart pie") {
+      doTreemap(options, data);
     }
   }
 
@@ -137,120 +132,50 @@
     }
   }
 
-  function doDotChart() {
-    let pts = {};
+  function doTreemap(opts, data) {
+    let parents = [];
+    let labels = [];
+    let values = [];
+
     data.forEach((row) => {
-      // console.log(row);
-      // we don't care what the col names are
-      // first is the series label - group by this
-      // 2nd colis the x axis value,3rd col is y axis value
-      let yr = Object.values(row)[0];
-      let pt = new Array();
-      pt.push(parseFloat(Object.values(row)[1]));
-      pt.push(parseFloat(Object.values(row)[2]));
-      if (!(yr in pts)) {
-        pts[yr] = [];
+      let l0 = Object.values(row)[0];
+      let l1 = Object.values(row)[1];
+      let l2 = Object.values(row)[2];
+      let val = parseFloat(Object.values(row)[3]);
+      if (l2) {
+        labels.push(l2); // eg duid
+        parents.push(l0 + ":" + l1); // fuel type
+        values.push(val);
+      } else if (l1) {
+        // console.log(l1 + " p:" + l0);
+        labels.push(l0 + ":" + l1); // eg ft
+        parents.push(l0); // rgn
+        values.push(val);
+      } else if (l0) {
+        // console.log(l0 + " root");
+        labels.push(l0); // eg rgn
+        parents.push("NEM");
+        values.push(val + 5); // to avoid rounding summation error. can we do better?
+      } else {
+        labels.push("NEM"); // 
+        parents.push(""); // root
+        values.push(val + 100); // to avoid rounding summation error
       }
-      pts[yr].push(pt);
-    });
-    // console.log(pts);
-
-    let series = [];
-    Object.keys(pts).forEach((yr) => {
-      series.push({
-        name: yr,
-        data: pts[yr],
-      });
-    });
-
-    options = {
-      chart: {
-        type: "scatter",
-        zoom: {
-          enabled: true,
-          type: "xy",
-        },
-      },
-      //dataLabels: { position: "top", enabled: false, offsetY: 30 },
-      series: series,
-      xaxis: {
-        tickAmount: 10,
-        title: {
-          text: "km",
-        },
-      },
-      yaxis: {
-        tickAmount: 10,
-        title: {
-          text: "m",
-        },
-      },
-    };
-  }
-
-  function doHeatmap() {
-    let v = {};
-    let firstMonth = true;
-    let monthStart = 1;
-    data.forEach((row) => {
-      let dt = "." + Object.values(row)[0] + ".";
-      let month = parseInt(dt.substr(6, 2));
-      if (firstMonth) {
-        firstMonth = false;
-        monthStart = month;
-      }
-      let day = parseInt(dt.substr(9, 2));
-      let km = parseFloat(Object.values(row)[1]);
-      if (!v[month]) {
-        v[month] = new Array(31).fill(0);
-      }
-      v[month][day - 1] = km;
     });
 
-    // assumes sql query result is ascending (and only 11 months so get clear separation)
-    let series = [];
-    let i = monthStart - 1;
-    for (let count = 0; count < 12; count++) {
-      series.push({ name: i.toString(), data: v[i] });
-      if (--i < 1) {
-        i = 12;
-      }
-    }
-
-    options = {
-      series: series,
-      chart: {
-        height: 350,
-        type: "heatmap",
-      },
-      dataLabels: {
-        enabled: false,
-      },
-      colors: ["#008FFB"],
-      title: {
-        text: "Km HeatMap",
-      },
-    };
-  }
-
-  function doTreemap() {
-    let series = [];
-    data.forEach((row) => {
-      series.push({
-        x: Object.values(row)[0],
-        y: parseFloat(Object.values(row)[1]),
-      });
-    });
-    options = {
-      series: [{ data: series }],
-      chart: {
-        height: 500,
+    var data = [
+      {
         type: "treemap",
+        branchvalues: "total",
+        values: values,
+        labels: labels,
+        parents: parents,
+        // text: [] of text if we want to change some
+        textinfo: "label+value+percent parent+percent entry+percent root",
       },
-      legend: {
-        show: false,
-      },
-    };
+    ];
+
+    Plotly.newPlot("plotDiv0", data);
   }
 </script>
 
