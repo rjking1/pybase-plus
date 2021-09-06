@@ -27,7 +27,7 @@
 
     // this updates on each character.  on:change does the same
     //do I need to do the "debouncing"? ie wait for Enter?
-    document.getElementById("market-time").addEventListener("input", () => {
+    document.getElementById("market-text").addEventListener("change", () => {
       doUpdateAll();
     });
   });
@@ -83,13 +83,13 @@
     // tho I'm not doing that here !
 
     let dt;
-    let el = document.getElementById("market-time");
+    let el = document.getElementById("market-text");
     if (el) {
       dt = el.value;
     } else {
       dt = new Date().toISOString();
     }
-    // console.log(dt);
+    console.log(dt);
     if (dt != "") {
       let sql = 
       'select regionid as "_", settlementdate, rrp as "rrp_" from DISPATCH__PRICE where settlementdate >= "' +

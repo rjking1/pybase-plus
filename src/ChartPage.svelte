@@ -52,8 +52,7 @@
     if (v.formDesc == "!chart bar") {
       doBarChart(opts, data);
     }
-    if (v.formDesc == "!chart treemap") {
-      // || v.formDesc == "!chart pie") {
+    if (v.formDesc == "!chart treemap" || v.formDesc == "!chart sunburst") {
       doTreemap(options, data);
     }
   }
@@ -165,7 +164,7 @@
 
     let traces = [
       {
-        type: "sunburst", //"treemap",
+        type: v.formDesc.split(" ")[1], // "sunburst", //"treemap",
         branchvalues: "total",
         values: values,
         labels: labels,

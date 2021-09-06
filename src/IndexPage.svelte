@@ -37,6 +37,7 @@
       case "!chart dots":
       case "!chart heatmap":
       case "!chart treemap":
+      case "!chart sunburst":
       case "!chart pie":
         $page = gotoPage("chart", name, 0);
         break;
