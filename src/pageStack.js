@@ -1,7 +1,7 @@
 
 let stack = []
 
-export function gotoPage(pg, viewName, id, fk) {
+export function gotoPage(pg, viewName, id, fk) { // fk  = parentID
   // eg gotoPage('list', 'All members', 0) 
   // eg gotoPage('record', 'member', 1234) 
   stack.push({ page: pg, viewName: viewName, id: id, fk: fk })

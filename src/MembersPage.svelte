@@ -99,11 +99,11 @@
     let cboxes = Array.from(document.getElementsByClassName("checkrow"));
     cboxes.forEach((cbox) => {
       if (cbox.checked) {
-        let index = cbox.getAttribute("data-index")
-        console.log(qresult[index])
+        let index = cbox.getAttribute("data-index");
+        console.log(qresult[index]);
         ids.push(qresult[index]["ID"]);
         names.push(qresult[index]["NAME"]);
-        if ((action_type == "email") && qresult[index]["EMAIL"]) {
+        if (action_type == "email" && qresult[index]["EMAIL"]) {
           emails.push({
             no: qresult[index]["No"],
             name: qresult[index]["NAME"],
@@ -112,9 +112,9 @@
         }
       }
     });
-    console.log('ids=', ids);
+    console.log("ids=", ids);
     console.log("names=", names);
-    console.log('emails=', emails);
+    console.log("emails=", emails);
 
     if (ids.length == 0) {
       window.alert("Please select one or more rows"); //  if no %id in script then don't need to check !
@@ -131,7 +131,7 @@
           " by " +
           $permissions.u_name;
         console.log(script.replace("%d", ids.join()));
-        await doFetch($dbN, script.replace("%d", ids.join()), audit_text);  // todo: doco: unlike before use in (%d) rather than =%d
+        await doFetch($dbN, script.replace("%d", ids.join()), audit_text); // todo: doco: unlike before use in (%d) rather than =%d
         doListMembers();
       }
       if (action_type == "email") {
@@ -140,14 +140,18 @@
         $emailDetails = emails;
         $page = gotoPage("email");
       }
-      if(action_type=="open_url") {
-        window.open(script, '_blank');  // script = url
+      if (action_type == "open_url") {
+        window.open(script, "_blank"); // script = url
       }
     }
   }
 
   function editId(anID) {
-    $page = gotoPage("memberEdit", v.to_view, anID); // edit a record doesn't need to pass FK
+    if (v.to_view == "dashboard") {
+      $page = gotoPage("dashboard", "dashboard", anID); // pass extra info in an object?
+    } else {
+      $page = gotoPage("memberEdit", v.to_view, anID); // edit a record doesn't need to pass FK
+    }
   }
 
   function addRow() {
@@ -168,14 +172,16 @@
 
   function doCheckAll() {
     const table = document.getElementsByClassName("filterable");
-    const rows = table[0].getElementsByTagName("tr");   // todo: first table ??!!
+    const rows = table[0].getElementsByTagName("tr"); // todo: first table ??!!
 
     // Loop through all table rows, and check/uncheck only those that are visible
-    for (let i = 1; i < rows.length; i++) { // skip header row
+    for (let i = 1; i < rows.length; i++) {
+      // skip header row
       let row = rows[i];
-      if(row.style.display != "none") {
+      if (row.style.display != "none") {
         let firstCell = row.getElementsByTagName("td")[0]; // get first cell on row
-        firstCell.getElementsByClassName("checkrow")[0].checked = document.getElementById("idCheckAll").checked;
+        firstCell.getElementsByClassName("checkrow")[0].checked =
+          document.getElementById("idCheckAll").checked;
       }
     }
   }
@@ -226,7 +232,12 @@
         {#each qresult as row, index}
           <tr>
             <td>
-              <input class="checkrow" type="checkbox" unchecked data-index={index} />
+              <input
+                class="checkrow"
+                type="checkbox"
+                unchecked
+                data-index={index}
+              />
               {#if viewIsEditable}
                 <button
                   class="editrow"

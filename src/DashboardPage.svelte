@@ -16,6 +16,7 @@
   let viewName;
   let v;
   let html = undefined;
+  let datetime;
   // let Widget;
 
   const regionNames = ["QLD1", "NSW1", "VIC1", "SA1", "TAS1"];
@@ -34,13 +35,21 @@
 
   async function doGetHTML() {
     p = pageDetails();
-    viewName = "dashboard"; //p.viewName;  // "dashboard" first time
+    console.log(p);
+    viewName = p.viewName;  // 1 of N dashboards (dashboards are just special multi-views)
     v = viewDetail($views, viewName);
     // console.log(v);
+    let res = await doFetch($dbN, "select datetime from events where id=" + p.id)
+    console.log(res)
+    datetime = res[0].datetime;
+    console.log(datetime);
     html = v.formDesc;
   }
 
   async function doUpdateAll() {
+
+    addWidget("#market_time", datetime);
+    
     const matches = document.querySelectorAll("[id^='sql']");
     let sql = matches[0].dataset.sql; // special function: reads data-sql attribute
     // console.log(sql);
@@ -82,29 +91,34 @@
     // an advantage of not passing a view into the table or chart widgets is that we can share the result
     // tho I'm not doing that here !
 
-    let dt;
-    let el = document.getElementById("market-text");
-    if (el) {
-      dt = el.value;
-    } else {
-      dt = new Date().toISOString();
-    }
-    console.log(dt);
-    if (dt != "") {
-      let sql = 
+    let dt = datetime;
+    // let el = document.getElementById("market-text");
+    // if (el) {
+    //   dt = el.value;
+    // } else {
+    //   dt = new Date().toISOString();
+    // }
+    // console.log(dt);
+    // if (dt != "") {
+      sql = 
       'select regionid as "_", settlementdate, rrp as "rrp_" from DISPATCH__PRICE where settlementdate >= "' +
       dt + '" - interval 30 minute and settlementdate <= "' + dt + '" + interval 30 minute';
       console.log(sql);
       result = await doGetResult(sql);
-      addChartWidget("#c1", result);
-    }
+      addChartWidget("#c1", result, "bar");
+    // }
 
-    // need a way of specifying a view name in the html id="view-1"?
+    // use existing view:  need a way of specifying a view name in the html data-view="view-1"?
 
     sql = viewDetail($views, "09 Current gen").get_sql;
     console.log(sql);
     result = await doGetResult(sql);
-    addChartWidget("#c2", result);
+    addChartWidget("#c2", result, "bar");
+
+    sql = viewDetail($views, "reg ft sunburst").get_sql;
+    console.log(sql);
+    result = await doGetResult(sql);
+    addChartWidget("#c3", result, "sunburst");
   }
 
   function lookup(rows, key) {
@@ -133,13 +147,14 @@
     });
   }
 
-  function addChartWidget(s, data, opts) {
+  function addChartWidget(s, data, chartType, opts) {
     new ChartWidget({
       target: document.querySelector(s),
       props: {
         div: s,
         data: data,
-        opts: {},
+        chartType: chartType,
+        opts: opts,
       },
     });
   }
