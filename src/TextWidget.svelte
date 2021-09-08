@@ -2,10 +2,14 @@
   export let txt;
 </script>
 
-<div>{txt}</div>
+<div>
+  <textarea readonly>
+    {txt}
+  </textarea>
+</div>
 
 <style>
-  div {
+  textarea {
     width: 100%;
     height: 100%;
   }

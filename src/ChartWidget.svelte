@@ -12,7 +12,7 @@
   // console.log(div);
   let chartContainer = document.querySelector(div);
 
-  if (chartType == -undefined || chartType == "bar") {
+  if (chartType == undefined || chartType == "bar") {
     let col_names = Object.keys(data[0]);
     let df = new DataFrame(data, col_names);
 

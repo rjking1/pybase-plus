@@ -8,7 +8,7 @@
   } from "../../common/dbutils";
   import { gotoPage, pageDetails } from "./pageStack.js";
   import { dbN, page, permissions, views } from "./Stores.js";
-  import Widget from "./Widget.svelte";
+  import TextWidget from "./TextWidget.svelte";
   import TableWidget from "./TableWidget.svelte";
   import ChartWidget from "./ChartWidget.svelte";
 
@@ -28,47 +28,78 @@
 
     // this updates on each character.  on:change does the same
     //do I need to do the "debouncing"? ie wait for Enter?
-    document.getElementById("market-text").addEventListener("change", () => {
-      doUpdateAll();
-    });
+    // document.getElementById("market-text").addEventListener("change", () => {
+    //   doUpdateAll();
+    // });
   });
 
   async function doGetHTML() {
     p = pageDetails();
     console.log(p);
-    viewName = p.viewName;  // 1 of N dashboards (dashboards are just special multi-views)
+    viewName = p.viewName; // 1 of N dashboards (dashboards are just special multi-views)
     v = viewDetail($views, viewName);
     // console.log(v);
-    let res = await doFetch($dbN, "select datetime from events where id=" + p.id)
-    console.log(res)
+    let res = await doFetch(
+      $dbN,
+      "select datetime from events where id=" + p.id
+    ); // consider passing this in an object of pageDetails - "extras"
+    // console.log(res);
     datetime = res[0].datetime;
-    console.log(datetime);
+    // console.log(datetime);
     html = v.formDesc;
   }
 
   async function doUpdateAll() {
+    addTextWidget("#market_time", "Market time: " + datetime); // can write to a widget directly if we know it is there
 
-    addWidget("#market_time", datetime);
-    
-    const matches = document.querySelectorAll("[id^='sql']");
-    let sql = matches[0].dataset.sql; // special function: reads data-sql attribute
-    // console.log(sql);
+    let results = [];
+    const sqls = document.querySelectorAll("[id^='sql']");
+    for (let sql of sqls) {
+      console.log(sql);
+      let sqlID = sql.id; // todo make this uppercase
+      console.log(sqlID);
+      let sqlStmt = sql.dataset.sql;  // don't forget to drop the "data-" prefix !!!!!
+      sqlStmt = sqlStmt.replaceAll(":datetime:", datetime); // maybe this should also quote the datetime string
+      let result = await doGetResult(sqlStmt);
+      results.push({
+        sqlID: sqlID,
+        result: result,
+      });
+    }
 
-    // should the sql matches result drive what we populate in the dashboard?
-    // do the fields need to be prefixed with the sql id/number?
+    const widgets = document.querySelectorAll("[data-id^='widget']");
+    let result;
+    for (let widget of widgets) {
+      let widgetType = widget.dataset.type;
+      console.log(widgetType);
+      let dataSource = widget.dataset.source;
+      console.log(dataSource);
 
-    let result = await doGetResult(sql);
+      if (widgetType == "text") {
+        // addTextWidget(widget, reg);  ?????
+      }
+      if (widgetType == "table") {
+        result = results.find((r) => r.sqlID == dataSource)["result"];
+        // console.log(widget.id);
+        addTableWidget("#" + widget.id, result);  // not efficient to pass across a selector that needs to be found when we have the element
+      }
+      if(widgetType=="chart") {
+        result = results.find((r) => r.sqlID == dataSource)["result"];
+        addChartWidget("#" + widget.id, result, widget.dataset.subtype);
+      }
+    }
+
+    // for (let reg of regionNames) {
+    //   addWidget("#" + reg + "_price", reg);
+    //   addWidget("#" + reg + "_price", lookup(result, reg + "_price"));
+    // }
+
     //   `select concat(p.regionid, "_price") as "key", rrp as "value" from DISPATCH__PRICE p
     //   where p.settlementdate >= (select max(settlementdate) from DISPATCH__PRICE)`
     // );
     // console.log(result);
-    for (let reg of regionNames) {
-      addWidget("#" + reg + "_price", reg);
-      addWidget("#" + reg + "_price", lookup(result, reg + "_price"));
-      addWidget("#" + reg + "_price", "x");
-    }
 
-    sql = matches[1].dataset.sql; // special function: reads data-sql attribute
+    // sql = matches[1].dataset.sql; // special function: reads data-sql attribute
     // console.log(sql);
 
     /// we already have all the sql in memory in the $views store
@@ -76,7 +107,7 @@
     // which avoids needing to have a copy in the html
     // but having sql in the html as an option allows for max flexibility
 
-    result = await doGetResult(sql);
+    // result = await doGetResult(sql);
     //   `select p.regionid as "Region", format(rrp, 2) as "RRP", format(clearedsupply,0) as "Demand",
     //   format(dispatchablegeneration,0) as "Generation" ,
     //   format(availablegeneration,0) as "Available"
@@ -86,39 +117,39 @@
     //   and r.settlementdate >= (select max(settlementdate) from DISPATCH__PRICE) - interval 1 minute
     //   order by 1`
     // );
-    addTableWidget("#t1", result);
+    // addTableWidget("#t1", result);
 
     // an advantage of not passing a view into the table or chart widgets is that we can share the result
     // tho I'm not doing that here !
 
-    let dt = datetime;
-    // let el = document.getElementById("market-text");
-    // if (el) {
-    //   dt = el.value;
-    // } else {
-    //   dt = new Date().toISOString();
-    // }
-    // console.log(dt);
-    // if (dt != "") {
-      sql = 
-      'select regionid as "_", settlementdate, rrp as "rrp_" from DISPATCH__PRICE where settlementdate >= "' +
-      dt + '" - interval 30 minute and settlementdate <= "' + dt + '" + interval 30 minute';
-      console.log(sql);
-      result = await doGetResult(sql);
-      addChartWidget("#c1", result, "bar");
-    // }
+    // let dt = datetime;
+    // // let el = document.getElementById("market-text");
+    // // if (el) {
+    // //   dt = el.value;
+    // // } else {
+    // //   dt = new Date().toISOString();
+    // // }
+    // // console.log(dt);
+    // // if (dt != "") {
+    //   sql =
+    //   'select regionid as "_", settlementdate, rrp as "rrp_" from DISPATCH__PRICE where settlementdate >= "' +
+    //   dt + '" - interval 30 minute and settlementdate <= "' + dt + '" + interval 30 minute';
+    //   console.log(sql);
+    //   result = await doGetResult(sql);
+    //   addChartWidget("#c1", result, "bar");
+    // // }
 
-    // use existing view:  need a way of specifying a view name in the html data-view="view-1"?
+    // // use existing view:  need a way of specifying a view name in the html data-view="view-1"?
 
-    sql = viewDetail($views, "09 Current gen").get_sql;
-    console.log(sql);
-    result = await doGetResult(sql);
-    addChartWidget("#c2", result, "bar");
+    // sql = viewDetail($views, "09 Current gen").get_sql;
+    // console.log(sql);
+    // result = await doGetResult(sql);
+    // addChartWidget("#c2", result, "bar");
 
-    sql = viewDetail($views, "reg ft sunburst").get_sql;
-    console.log(sql);
-    result = await doGetResult(sql);
-    addChartWidget("#c3", result, "sunburst");
+    // sql = viewDetail($views, "reg ft sunburst").get_sql;
+    // console.log(sql);
+    // result = await doGetResult(sql);
+    // addChartWidget("#c3", result, "sunburst");
   }
 
   function lookup(rows, key) {
@@ -129,8 +160,8 @@
     return await doFetch($dbN, sql);
   }
 
-  function addWidget(s, v) {
-    new Widget({
+  function addTextWidget(s, v) {
+    new TextWidget({
       target: document.querySelector(s),
       props: {
         txt: v,
