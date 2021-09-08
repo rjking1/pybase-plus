@@ -3,9 +3,7 @@
 </script>
 
 <div>
-  <textarea readonly>
-    {txt}
-  </textarea>
+  <textarea readonly>{txt}</textarea>
 </div>
 
 <style>

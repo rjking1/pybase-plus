@@ -74,11 +74,10 @@
       }
 
       const layout = {
-        title: charts_col_name == "!c" ? "title" : chart_value, // todo: allow opts.title?
-        // todo - fix  this:
-        // xaxis: { title: opts.x },
-        // yaxis: { title: opts.y1, side: "left" },
-        // yaxis2: { title: opts.y2, side: "right", overlaying: "y" },
+        title: charts_col_name == "!c" ? "" : chart_value, // todo: allow opts.title?
+        xaxis: { title: opts.x },
+        yaxis: { title: opts.y1, side: "left" },
+        yaxis2: { title: opts.y2, side: "right", overlaying: "y" },
         barmode: stacked ? "relative" : "group", // todo support opts.barmode
       };
 

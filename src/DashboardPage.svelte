@@ -50,42 +50,64 @@
   }
 
   async function doUpdateAll() {
-    addTextWidget("#market_time", "Market time: " + datetime); // can write to a widget directly if we know it is there
+    addTextWidget("#market_time", "Market time: " + datetime); // can write to a widget directly if we know it is there -- do not mark as a "widget" !!
 
     let results = [];
-    const sqls = document.querySelectorAll("[id^='sql']");
-    for (let sql of sqls) {
-      console.log(sql);
-      let sqlID = sql.id; // todo make this uppercase
-      console.log(sqlID);
-      let sqlStmt = sql.dataset.sql;  // don't forget to drop the "data-" prefix !!!!!
+    let sqlStmt;
+
+    // there is a potential bug here - need to onlyload views once - not for every reference
+    const sources = document.querySelectorAll("[data-source^='view']"); // each "source" is actually a widget
+    for (let source of sources) {
+      console.log(source);
+      sqlStmt = viewDetail($views, source.dataset.view).get_sql;
       sqlStmt = sqlStmt.replaceAll(":datetime:", datetime); // maybe this should also quote the datetime string
-      let result = await doGetResult(sqlStmt);
+      console.log(sqlStmt);
+      let [opts, result] = await doGetResult(sqlStmt);
       results.push({
-        sqlID: sqlID,
+        sqlID: source.dataset.source, // careful - data-source here; sql id below
+        opts: opts,
         result: result,
       });
     }
 
-    const widgets = document.querySelectorAll("[data-id^='widget']");
-    let result;
+    const sqls = document.querySelectorAll("[id^='sql-']");
+    for (let sql of sqls) {
+      console.log(sql);
+      let sqlID = sql.id; // todo make this uppercase
+      console.log(sqlID);
+      sqlStmt = sql.dataset.sql; // don't forget to drop the "data-" prefix !!!!!
+      sqlStmt = sqlStmt.replaceAll(":datetime:", datetime); // maybe this should also quote the datetime string
+      let [opts, result] = await doGetResult(sqlStmt);
+      results.push({
+        sqlID: sqlID,
+        opts: opts,
+        result: result,
+      });
+    }
+
+    const widgets = document.querySelectorAll("[data-id='widget']");
     for (let widget of widgets) {
+      console.log(widget.id);
       let widgetType = widget.dataset.type;
       console.log(widgetType);
       let dataSource = widget.dataset.source;
+      if (dataSource == undefined) {
+        dataSource = widget.dataset.view;
+      }
       console.log(dataSource);
+      let opts = results.find((r) => r.sqlID == dataSource)["opts"];
+      let result = results.find((r) => r.sqlID == dataSource)["result"];
 
       if (widgetType == "text") {
-        // addTextWidget(widget, reg);  ?????
+        // in my example the sql result has key and value columns
+        // keys <-> id
+        addTextWidget("#" + widget.id, widget.id + ": " + lookup(result, widget.id)); // could also just set innertext or value of a normal element if we could locate them
       }
       if (widgetType == "table") {
-        result = results.find((r) => r.sqlID == dataSource)["result"];
-        // console.log(widget.id);
-        addTableWidget("#" + widget.id, result);  // not efficient to pass across a selector that needs to be found when we have the element
+        addTableWidget("#" + widget.id, result); // not efficient to pass across a selector that needs to be found when we have the element
       }
-      if(widgetType=="chart") {
-        result = results.find((r) => r.sqlID == dataSource)["result"];
-        addChartWidget("#" + widget.id, result, widget.dataset.subtype);
+      if (widgetType == "chart") {
+        addChartWidget("#" + widget.id, result, widget.dataset.subtype, opts);
       }
     }
 
@@ -156,8 +178,18 @@
     return rows.find((row) => row.key === key)["value"];
   }
 
-  async function doGetResult(sql) {
-    return await doFetch($dbN, sql);
+  async function doGetResult(sql_text) {
+    let [opts, ...sql] = sql_text.split(/\r?\n/);
+    if (opts.startsWith("-- {")) {
+      opts = JSON.parse(opts.slice(3));
+      sql = sql.join("\n");
+    } else {
+      opts = {};
+      sql = sql_text;
+    }
+
+    let res = await doFetch($dbN, sql);
+    return [opts, res];
   }
 
   function addTextWidget(s, v) {
