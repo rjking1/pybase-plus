@@ -8,6 +8,7 @@
   } from "../../common/dbutils";
   import { gotoPage, pageDetails } from "./pageStack.js";
   import { dbN, page, permissions, views } from "./Stores.js";
+  import ButtonWidget from "./ButtonWidget.svelte";
   import TextWidget from "./TextWidget.svelte";
   import TableWidget from "./TableWidget.svelte";
   import ChartWidget from "./ChartWidget.svelte";
@@ -95,19 +96,28 @@
         dataSource = widget.dataset.view;
       }
       console.log(dataSource);
-      let opts = results.find((r) => r.sqlID == dataSource)["opts"];
-      let result = results.find((r) => r.sqlID == dataSource)["result"];
 
-      if (widgetType == "text") {
-        // in my example the sql result has key and value columns
-        // keys <-> id
-        addTextWidget("#" + widget.id, widget.id + ": " + lookup(result, widget.id)); // could also just set innertext or value of a normal element if we could locate them
-      }
-      if (widgetType == "table") {
-        addTableWidget("#" + widget.id, result); // not efficient to pass across a selector that needs to be found when we have the element
-      }
-      if (widgetType == "chart") {
-        addChartWidget("#" + widget.id, result, widget.dataset.subtype, opts);
+      if (widgetType == "button") {
+        console.log(widget.id);
+        addButtonWidget("#" + widget.id, widget.id, () => {
+          datetime = "2021-09-09 13:40";
+          doUpdateAll();
+        });
+      } else {
+        let result = results.find((r) => r.sqlID == dataSource)?.result;
+        let opts = results.find((r) => r.sqlID == dataSource)?.opts;
+        if (widgetType == "text") {
+          // in my example the sql result has key and value columns
+          // keys <-> id
+          addTextWidget(
+            "#" + widget.id,
+            widget.id + ": " + lookup(result, widget.id)
+          ); // could also just set innertext or value of a normal element if we could locate them
+        } else if (widgetType == "table") {
+          addTableWidget("#" + widget.id, result); // not efficient to pass across a selector that needs to be found when we have the element
+        } else if (widgetType == "chart") {
+          addChartWidget("#" + widget.id, result, widget.dataset.subtype, opts);
+        }
       }
     }
 
@@ -190,6 +200,16 @@
 
     let res = await doFetch($dbN, sql);
     return [opts, res];
+  }
+
+  function addButtonWidget(s, c, fn) {
+    new ButtonWidget({
+      target: document.querySelector(s),
+      props: {
+        caption: c,
+        fn: fn
+      },
+    });
   }
 
   function addTextWidget(s, v) {
