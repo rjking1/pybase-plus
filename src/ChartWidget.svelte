@@ -97,29 +97,40 @@
     let labels = [];
     let values = [];
 
+    const col_names = Object.keys(data[0]);
+    const col_count = col_names.length;
+
     data.forEach((row) => {
-      let l0 = Object.values(row)[0];
-      let l1 = Object.values(row)[1];
-      let l2 = Object.values(row)[2];
-      let val = Math.floor(parseFloat(Object.values(row)[3]));
-      if (l2) {
-        labels.push(l2); // eg duid
-        parents.push(l0 + ":" + l1); // fuel type
-        values.push(val);
-      } else if (l1) {
-        // console.log(l1 + " p:" + l0);
-        labels.push(l0 + ":" + l1); // eg ft
-        parents.push(l0); // rgn
-        values.push(val);
-      } else if (l0) {
-        // console.log(l0 + " root");
-        labels.push(l0); // eg rgn
-        parents.push("NEM");
-        values.push(val + 1); // to avoid rounding summation error. can we do better?
-      } else {
-        labels.push("NEM"); //
-        parents.push(""); // root
-        values.push(val + 10); // to avoid rounding summation error
+      let val = Math.floor(parseFloat(Object.values(row)[col_count - 1]));
+      let par;
+      for (let i = col_count - 2; i >= 0; i--) {
+        let lab = Object.values(row)[i];
+        if (i > 0) {
+          par = Object.values(row)[i - 1];
+        } else {
+          par = "NEM"; // opts.rootName
+        }
+        if (lab) {
+          if (i > 0 && i < col_count - 2) {
+            labels.push(Object.values(row)[i - 1] + ":" + lab);
+          } else {
+            labels.push(lab);
+          }
+          if (i > 1) {
+            parents.push(Object.values(row)[i - 2] + ":" + par);
+          } else {
+            parents.push(par);
+          }
+          values.push(val);
+          break;
+        } else {
+          if (i == 0) {
+            // then add root with no parent
+            labels.push("NEM"); // opts.rootName
+            parents.push(""); // root
+            values.push(val + 10); // to avoid rounding summation error
+          }
+        }
       }
     });
 

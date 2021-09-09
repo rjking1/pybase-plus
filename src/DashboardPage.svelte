@@ -19,7 +19,7 @@
   let datetime;
   // let Widget;
 
-  const regionNames = ["QLD1", "NSW1", "VIC1", "SA1", "TAS1"];
+  // const regionNames = ["QLD1", "NSW1", "VIC1", "SA1", "TAS1"];
 
   onMount(async () => {
     // Widget = (await import('./Widget.svelte')).default;
