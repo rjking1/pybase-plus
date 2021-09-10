@@ -9,10 +9,12 @@
   export let chartType;
   export let opts;
 
-  // console.log(div);
-  let chartContainer = document.querySelector(div);
+  // if charttype not set then does nothing (ie for addChartWidget)
 
-  if (chartType == undefined || chartType == "bar") {
+  // console.log(div);
+  const chartContainer = document.querySelector(div);
+
+  if (chartType == "bar") {
     let col_names = Object.keys(data[0]);
     let df = new DataFrame(data, col_names);
 
@@ -41,7 +43,7 @@
     // need a clear or rebuild page from scratch
 
     let chartIndex = 0;
-    chartContainer.innerHTML = ""; // prob better to while (el.hasChildElements()) { el.removeChild(el.lastChild)) }
+    // chartContainer.innerHTML = ""; // prob better to while (el.hasChildElements()) { el.removeChild(el.lastChild)) }
     for (const chart_value of charts_values) {
       let traces = [];
       let stacked = false;
@@ -87,7 +89,7 @@
       console.log(plotDiv);
       chartContainer.appendChild(plotDiv);
       // let Plot = new
-      Plotly.newPlot(plotDiv, traces, layout, options);
+      Plotly.react(plotDiv, traces, layout, options);
       chartIndex++;
     }
   }
@@ -158,6 +160,6 @@
     console.log(plotDiv);
     chartContainer.appendChild(plotDiv);
 
-    Plotly.newPlot(plotDiv, traces, layout, options);
+    Plotly.react(plotDiv, traces, layout, options);
   }
 </script>
