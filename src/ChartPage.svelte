@@ -4,6 +4,7 @@
   import { gotoPage, pageDetails } from "./pageStack.js";
   import { doFetch, titleCase, viewDetail } from "../../common/dbutils";
   import DataFrame from "dataframe-js";
+  import { roundedDateTimeToISO } from "./utilFuncs.js";
 
   let p;
   let v;
@@ -45,6 +46,10 @@
     }
 
     console.log(opts);
+
+    console.log(sql);
+    const datetime = roundedDateTimeToISO();
+    sql = sql.replaceAll(":datetime:", datetime); // maybe this should also quote the datetime string
     console.log(sql);
 
     let data = await doFetch($dbN, sql);

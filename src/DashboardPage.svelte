@@ -12,6 +12,7 @@
   import TextWidget from "./TextWidget.svelte";
   import TableWidget from "./TableWidget.svelte";
   import ChartWidget from "./ChartWidget.svelte";
+  import { roundedDateTimeToISO } from "./utilFuncs";
 
   let p;
   let viewName;
@@ -117,18 +118,8 @@
       if (widgetType == "button") {
         addButtonWidget("#" + widget.id, widget.id, async () => {
           if (widget.id == "now") {
-            let dt = new Date();
-            const ms = 1000 * 60 * 5;
-            let rounded = new Date(
-              Math.round((dt.getTime() + 1 * 60 * 1000) / ms) * ms
-            ); // add 1 minute into future
-
-            datetime = rounded
-              .toLocaleString("en-GB", { hour12: false })
-              .slice(0, 17)
-              .replace(",", "")
-              .replace(/(\d+)\/(\d+)\/(\d+)/, "$3-$2-$1"); //"2021-09-10 12:00";
-            await performQueries(); // need to requery!
+            datetime = roundedDateTimeToISO();
+            await performQueries();
             doUpdateAll();
           }
         });
