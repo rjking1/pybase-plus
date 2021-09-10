@@ -1,11 +1,8 @@
-<svelte:options accessors={true} />
-
+<!-- <svelte:options accessors={true} /> -->
 <script>
-
   // options above help wen debugging
 
   export let txt = "";
-
 </script>
 
 <textarea readonly>{txt}</textarea>

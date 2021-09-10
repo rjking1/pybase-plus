@@ -1,3 +1,4 @@
+<!-- <svelte:options accessors={true} /> -->
 <script>
   import DataFrame from "dataframe-js";
 
@@ -11,8 +12,10 @@
 
   // if charttype not set then does nothing (ie for addChartWidget)
 
-  // console.log(div);
-  const chartContainer = document.querySelector(div);
+  console.log("in chartWidget:" + div);
+  console.log("chartType:" + chartType);
+
+  let chartContainer = document.querySelector(div);
 
   if (chartType == "bar") {
     let col_names = Object.keys(data[0]);
@@ -43,7 +46,7 @@
     // need a clear or rebuild page from scratch
 
     let chartIndex = 0;
-    // chartContainer.innerHTML = ""; // prob better to while (el.hasChildElements()) { el.removeChild(el.lastChild)) }
+    chartContainer.innerHTML = ""; // prob better to while (el.hasChildElements()) { el.removeChild(el.lastChild)) }
     for (const chart_value of charts_values) {
       let traces = [];
       let stacked = false;

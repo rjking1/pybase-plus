@@ -45,7 +45,6 @@
   }
 
   async function performQueries() {
-
     results = [];
 
     let sqlStmt;
@@ -101,6 +100,8 @@
     // known widgets not marked as widgets -- no datasource or sql --can detect as datasource is undefined at line 108
     addTextWidget("#market_time", "Market time: " + datetime); // can write to a widget directly if we know it is there -- do not mark as a "widget" !!
 
+    // todo: make above a friendly time
+
     // tagged widgets
     const widgets = document.querySelectorAll("[data-id='widget']");
     for (let widget of widgets) {
@@ -118,18 +119,25 @@
           if (widget.id == "now") {
             let dt = new Date();
             const ms = 1000 * 60 * 5;
-            let rounded = new Date(Math.round((dt.getTime() + 1 * 60 * 1000) / ms) * ms); // add 1 minute into future
+            let rounded = new Date(
+              Math.round((dt.getTime() + 1 * 60 * 1000) / ms) * ms
+            ); // add 1 minute into future
 
-            datetime = rounded.toLocaleString('en-GB', { hour12: false }).slice(0, 17).replace(',', '').replace(/(\d+)\/(\d+)\/(\d+)/, '$3-$2-$1'); //"2021-09-10 12:00";
+            datetime = rounded
+              .toLocaleString("en-GB", { hour12: false })
+              .slice(0, 17)
+              .replace(",", "")
+              .replace(/(\d+)\/(\d+)\/(\d+)/, "$3-$2-$1"); //"2021-09-10 12:00";
             await performQueries(); // need to requery!
             doUpdateAll();
           }
         });
       } else if (widgetType == "text") {
-        addTextWidget("#" + widget.id, "loading...");
+        addTextWidget("#" + widget.id);
       } else if (widgetType == "table") {
         addTableWidget("#" + widget.id); // not efficient to pass across a selector that needs to be found when we have the element
       } else if (widgetType == "chart") {
+        console.log("adding chart #" + widget.id);
         addChartWidget("#" + widget.id);
       }
     }
@@ -164,7 +172,10 @@
         } else if (widgetType == "table") {
           updateTableWidget("#" + widget.id, result); // not efficient to pass across a selector that needs to be found when we have the element
         } else if (widgetType == "chart") {
-          updateChartWidget(
+          console.log("updating chart #" + widget.id);
+          console.log(widget.dataset.subtype);
+          addChartWidget(
+            // this shuould be update but plotly draws into a div I give it and this makes it differnt
             "#" + widget.id,
             result,
             widget.dataset.subtype,
@@ -205,53 +216,52 @@
   }
 
   function updateTextWidget(s, v) {
-    // const target = document.querySelector(s);
-    // const widget = target.lastChild; // added widget
     let widget = widgetList.find((w) => w.sel == s)["wgt"];
-    console.log(widget);
-    console.log(v);
-    widget.$set({txt: v});
-    // widget.txt=v;
-    // widget.setText(v);
-    console.log(widget);
+    widget.$set({ txt: v });
   }
 
   function addTableWidget(s, v) {
-    new TableWidget({
-      target: document.querySelector(s),
-      props: {
-        qresult: v,
-      },
+    widgetList.push({
+      sel: s,
+      wgt: new TableWidget({
+        target: document.querySelector(s),
+        props: {
+          qresult: v,
+        },
+      }),
     });
   }
 
   function updateTableWidget(s, v) {
-    const target = document.querySelector(s);
-    const widget = target.lastChild; // added widget
-    // widget.$set({ qresult: v });
+    let widget = widgetList.find((w) => w.sel == s)["wgt"];
+    widget.$set({ qresult: v });
   }
 
   function addChartWidget(s, data, chartType, opts) {
-    new ChartWidget({
-      target: document.querySelector(s),
-      props: {
-        div: s,
-        data: data,
-        chartType: chartType,
-        opts: opts,
-      },
+    widgetList.push({
+      sel: s,
+      wgt: new ChartWidget({
+        target: document.querySelector(s),
+        props: {
+          div: s,
+          data: data,
+          chartType: chartType,
+          opts: opts,
+        },
+      }),
     });
   }
 
   function updateChartWidget(s, data, chartType, opts) {
-    const target = document.querySelector(s);
-    const widget = target.lastChild; // added widget
-    // widget.$set({
-    //   div: s,
-    //   data: data,
-    //   chartType: chartType,
-    //   opts: opts,
-    // });
+    let widget = widgetList.find((w) => w.sel == s)["wgt"];
+    console.log("found chart: ");
+    console.log(widget);
+    widget.$set({
+      div: s,
+      data: data,
+      chartType: chartType,
+      opts: opts,
+    });
   }
 </script>
 
