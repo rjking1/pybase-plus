@@ -155,7 +155,7 @@
           par = "NEM"; // opts.rootName
         }
         if (lab) {
-          if (i > 0 && i < col_count - 2) {
+          if (i > 0){ //} && i < col_count - 2) {
             labels.push(Object.values(row)[i - 1] + ":" + lab);
           } else {
             labels.push(lab);
@@ -191,7 +191,7 @@
         labels: labels,
         parents: parents,
         // text: [] of text if we want to change some
-        textinfo: "label+value+percent parent+percent entry+percent root",
+        textinfo: "label+value+percent parent+percent root",
       },
     ];
 

@@ -120,7 +120,7 @@
           if (widget.id == "now") {
             datetime = roundedDateTimeToISO();
             await performQueries();
-            doUpdateAll();
+            await doUpdateAll();
           }
         });
       } else if (widgetType == "text") {
