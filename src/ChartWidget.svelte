@@ -101,6 +101,7 @@
     let parents = [];
     let labels = [];
     let values = [];
+    let text = [];
 
     const col_names = Object.keys(data[0]);
     const col_count = col_names.length;
@@ -127,6 +128,7 @@
             parents.push(par);
           }
           values.push(val);
+          text.push(val + " MW");
           break;
         } else {
           if (i == 0) {
@@ -134,6 +136,7 @@
             labels.push("NEM"); // opts.rootName
             parents.push(""); // root
             values.push(val + 10); // to avoid rounding summation error
+            text.push(val + " MW");
           }
         }
       }
@@ -144,10 +147,12 @@
         type: chartType,
         branchvalues: "total",
         values: values,
+        text: text,
         labels: labels,
         parents: parents,
         // text: [] of text if we want to change some
-        textinfo: "label+value+percent parent+percent root",
+        textinfo: "label+text+percent parent+percent root",
+        hoverinfo: "label+text+percent parent+percent root",
       },
     ];
 
