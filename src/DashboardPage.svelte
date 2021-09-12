@@ -12,7 +12,7 @@
   import TextWidget from "./TextWidget.svelte";
   import TableWidget from "./TableWidget.svelte";
   import ChartWidget from "./ChartWidget.svelte";
-  import { roundedDateTimeToISO } from "./utilFuncs";
+  import { abbreviateDate, roundedDateTimeToISO } from "./utilFuncs";
 
   let p;
   let viewName;
@@ -116,12 +116,18 @@
       // if dataSource is undefined here then this is a non-data-aware widget
 
       if (widgetType == "button") {
+        // todo: consider having a data-name attribute
+        // todo: make these into standard actions
         addButtonWidget("#" + widget.id, widget.id, async () => {
-          if (widget.id == "now") {
+          if (widget.id == "Prev") {
+            datetime = addMinutes(datetime, -5);
+          } else if (widget.id == "Next") {
+            datetime = addMinutes(datetime, 5);
+          } else if (widget.id == "Now") {
             datetime = roundedDateTimeToISO();
-            await performQueries();
-            await doUpdateAll();
           }
+          await performQueries();
+          await doUpdateAll();
         });
       } else if (widgetType == "text") {
         addTextWidget("#" + widget.id);
@@ -132,6 +138,18 @@
         addChartWidget("#" + widget.id);
       }
     }
+  }
+
+  function addMinutes(dt, minutes) {
+    let d = dt;
+    console.log(d);
+    d = new Date(d);
+    console.log(d);
+    d = d.getTime() + minutes * 60000;
+    console.log(d);
+    let d2 = new Date(d);
+    console.log(d2);
+    return abbreviateDate(d2);
   }
 
   async function doUpdateAll() {
