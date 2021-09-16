@@ -86,13 +86,22 @@
         barmode: stacked ? "relative" : "group", // todo support opts.barmode
       };
 
-      const options = {};
+      let config = {
+        modeBarButtonsToAdd: [
+          {
+            name: "downloadCsv",
+            title: "Download data as csv",
+            icon: Plotly.Icons.disk,
+            click: saveChartToCSV,
+          },
+        ],
+      };
 
       let plotDiv = document.createElement(div.slice(1) + "-" + chartIndex);
       console.log(plotDiv);
       chartContainer.appendChild(plotDiv);
       // let Plot = new
-      Plotly.react(plotDiv, traces, layout, options);
+      Plotly.react(plotDiv, traces, layout, config);
       chartIndex++;
     }
   }
@@ -117,7 +126,8 @@
           par = "NEM"; // opts.rootName
         }
         if (lab) {
-          if (i > 0) {//} && i < col_count - 2) {
+          if (i > 0) {
+            //} && i < col_count - 2) {
             labels.push(Object.values(row)[i - 1] + ":" + lab);
           } else {
             labels.push(lab);
@@ -162,12 +172,64 @@
       height: 1000,
     };
 
-    const options = {};
+    let config = {
+      modeBarButtonsToAdd: [
+        {
+          name: "downloadCsv",
+          title: "Download data as csv",
+          icon: Plotly.Icons.disk,
+          click: saveChartToCSV,
+        },
+      ],
+    };
 
     let plotDiv = document.createElement(div.slice(1) + "-" + "99"); //  chartIndex
     console.log(plotDiv);
     chartContainer.appendChild(plotDiv);
 
-    Plotly.react(plotDiv, traces, layout, options);
+    Plotly.react(plotDiv, traces, layout, config);
+  }
+
+  function saveChartToCSV() {
+    const fileName = "saved_chart";
+    let csv = [];
+
+    let col_names = Object.keys(data[0]);
+    let row = [];
+    col_names.forEach((col) => {
+      row.push(col);
+    });
+    csv.push(row.join());
+
+    data.forEach((dataRow) => {
+      row = [];
+      Object.values(dataRow).forEach((cell) => {
+        row.push(cell);
+      });
+      csv.push(row.join(","));
+    });
+    const csvFile = csv.join("\n");
+
+    // let csvFile = csv
+    //   .map((e) =>
+    //     e
+    //       .map((a) => '"' + (a || "").toString().replace(/"/gi, '""') + '"')
+    //       .join(",")
+    //   )
+    //   .join("\r\n"); //quote all fields, escape quotes by doubling them.
+
+    let blob = new Blob([csvFile], { type: "text/csv;charset=utf-8;" });
+    let link = document.createElement("a");
+    let url = URL.createObjectURL(blob);
+    link.setAttribute("href", url);
+    link.setAttribute(
+      "download",
+      fileName.replace(/[^a-z0-9_.-]/gi, "_") + ".csv"
+    );
+
+    link.style.visibility = "hidden";
+    document.body.appendChild(link);
+    link.click();
+    document.body.removeChild(link);
   }
 </script>
