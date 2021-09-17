@@ -230,8 +230,7 @@
   function saveChartToCSV() {
     let fileName = "saved_chart";
     fileName = window.prompt("Save to file name?", fileName);
-    console.log(fileName);
-    if (!fileName) {
+    if (fileName != null) {
       let csv = [];
 
       let col_names = Object.keys(data[0]);

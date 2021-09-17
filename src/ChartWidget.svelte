@@ -193,7 +193,6 @@
   function saveChartToCSV() {
     let fileName = "saved_chart";
     fileName = window.prompt("Save to file name?", fileName);
-    console.log(fileName);
     if (fileName != null) {
       let csv = [];
 
