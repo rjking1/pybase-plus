@@ -28,6 +28,15 @@
   if (urlParams.has("db")) {
     $dbName = urlParams.get("db");
   }
+
+  window.addEventListener('beforeunload', function (e) {
+    if(window.confirm("Exit pybase?")) {
+      // the absence of a returnValue property on the event will guarantee the browser unload happens
+      delete e['returnValue'];
+    } else {
+      e.returnValue = '?';
+    }
+});
 </script>
 
 <svelte:head>

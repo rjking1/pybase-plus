@@ -225,47 +225,53 @@
     Plotly.newPlot("plotDiv0", traces, layout, config);
   }
 
+  // move to somewhere common unless ChartPage uses ChartWidget (preferred!)
+
   function saveChartToCSV() {
-    const fileName = "saved_chart"
-    let csv = [];
+    let fileName = "saved_chart";
+    fileName = window.prompt("Save to file name?", fileName);
+    console.log(fileName);
+    if (!fileName) {
+      let csv = [];
 
-    let col_names = Object.keys(data[0]);
-    let row = [];
-    col_names.forEach((col) => {
-      row.push(col);
-    });
-    csv.push(row.join());
-
-    data.forEach((dataRow) => {
-      row = [];
-      Object.values(dataRow).forEach((cell) => {
-        row.push(cell);
+      let col_names = Object.keys(data[0]);
+      let row = [];
+      col_names.forEach((col) => {
+        row.push(col);
       });
-      csv.push(row.join(","));
-    });
-    const csvFile = csv.join("\n");
+      csv.push(row.join());
 
-    // let csvFile = csv
-    //   .map((e) =>
-    //     e
-    //       .map((a) => '"' + (a || "").toString().replace(/"/gi, '""') + '"')
-    //       .join(",")
-    //   )
-    //   .join("\r\n"); //quote all fields, escape quotes by doubling them.
+      data.forEach((dataRow) => {
+        row = [];
+        Object.values(dataRow).forEach((cell) => {
+          row.push(cell);
+        });
+        csv.push(row.join(","));
+      });
+      const csvFile = csv.join("\n");
 
-    let blob = new Blob([csvFile], { type: "text/csv;charset=utf-8;" });
-    let link = document.createElement("a");
-    let url = URL.createObjectURL(blob);
-    link.setAttribute("href", url);
-    link.setAttribute(
-      "download",
-      fileName.replace(/[^a-z0-9_.-]/gi, "_") + ".csv"
-    );
+      // let csvFile = csv
+      //   .map((e) =>
+      //     e
+      //       .map((a) => '"' + (a || "").toString().replace(/"/gi, '""') + '"')
+      //       .join(",")
+      //   )
+      //   .join("\r\n"); //quote all fields, escape quotes by doubling them.
 
-    link.style.visibility = "hidden";
-    document.body.appendChild(link);
-    link.click();
-    document.body.removeChild(link);
+      let blob = new Blob([csvFile], { type: "text/csv;charset=utf-8;" });
+      let link = document.createElement("a");
+      let url = URL.createObjectURL(blob);
+      link.setAttribute("href", url);
+      link.setAttribute(
+        "download",
+        fileName.replace(/[^a-z0-9_.-]/gi, "_") + ".csv"
+      );
+
+      link.style.visibility = "hidden";
+      document.body.appendChild(link);
+      link.click();
+      document.body.removeChild(link);
+    }
   }
 </script>
 
