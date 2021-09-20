@@ -110,7 +110,9 @@
     let parents = [];
     let labels = [];
     let values = [];
-    let text = [];
+    // let text = [];
+    let ids = [];
+    let texttemplates = [];
 
     const col_names = Object.keys(data[0]);
     const col_count = col_names.length;
@@ -127,9 +129,10 @@
         }
         if (lab) {
           if (i > 0) {
-            //} && i < col_count - 2) {
-            labels.push(Object.values(row)[i - 1] + ":" + lab);
+            ids.push(Object.values(row)[i - 1] + ":" + lab);
+            labels.push(lab);
           } else {
+            ids.push(lab);
             labels.push(lab);
           }
           if (i > 1) {
@@ -138,15 +141,18 @@
             parents.push(par);
           }
           values.push(val);
-          text.push(val + " MW");
+          // text.push(val + " MW");
+          texttemplates.push("%{label}<br>%{percentParent} of %{parent}<br>%{percentRoot} of NEM<br>%{value}MW") 
           break;
         } else {
           if (i == 0) {
             // then add root with no parent
+            ids.push("NEM"); // opts.rootName
             labels.push("NEM"); // opts.rootName
             parents.push(""); // root
             values.push(val + 10); // to avoid rounding summation error
-            text.push(val + " MW");
+            // text.push(val + " MW");
+            texttemplates.push("%{label}<br>%{value}MW") 
           }
         }
       }
@@ -157,11 +163,12 @@
         type: chartType,
         branchvalues: "total",
         values: values,
-        text: text,
+        // text: text,
         labels: labels,
         parents: parents,
-        // text: [] of text if we want to change some
-        textinfo: "label+text+percent parent+percent root",
+        ids: ids,
+        // textinfo: "label+text+percent parent+percent root",
+        texttemplate: texttemplates,
         hoverinfo: "label+text+percent parent+percent root",
       },
     ];
