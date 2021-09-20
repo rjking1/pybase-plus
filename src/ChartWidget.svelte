@@ -142,7 +142,15 @@
           }
           values.push(val);
           // text.push(val + " MW");
-          texttemplates.push("%{label}<br>%{percentParent} of %{parent}<br>%{percentRoot} of NEM<br>%{value}MW") 
+          if (i == 0) {
+            texttemplates.push(
+              "%{label}<br>%{percentParent} of %{parent}<br>%{value}MW"
+            );
+          } else {
+            texttemplates.push(
+              "%{label}<br>%{percentParent} of %{parent}<br>%{percentRoot} of NEM<br>%{value}MW"
+            );
+          }
           break;
         } else {
           if (i == 0) {
@@ -152,7 +160,7 @@
             parents.push(""); // root
             values.push(val + 10); // to avoid rounding summation error
             // text.push(val + " MW");
-            texttemplates.push("%{label}<br>%{value}MW") 
+            texttemplates.push("%{label}<br>%{value}MW");
           }
         }
       }
@@ -169,7 +177,7 @@
         ids: ids,
         // textinfo: "label+text+percent parent+percent root",
         texttemplate: texttemplates,
-        hoverinfo: "label+text+percent parent+percent root",
+        hoverinfo: "label+value+percent parent+percent root",
       },
     ];
 
