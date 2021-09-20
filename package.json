@@ -11,6 +11,7 @@
     "@fullcalendar/daygrid": "^5.6.0",
     "@rollup/plugin-commonjs": "^17.0.0",
     "@rollup/plugin-node-resolve": "^11.0.0",
+    "blueimp-md5": "^2.18.0",
     "cl-editor": "^2.2.0",
     "dataframe-js": "^1.4.4",
     "postcss": "^8.2.14",
