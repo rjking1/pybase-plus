@@ -79,7 +79,7 @@
       }
 
       const layout = {
-        title: charts_col_name == "!c" ? "" : chart_value, // todo: allow opts.title?
+        title: charts_col_name == "!c" ? "Market time: 2021-09-24 13:15" : chart_value, // todo: allow opts.title?
         xaxis: { title: opts.x },
         yaxis: { title: opts.y1, side: "left" },
         yaxis2: { title: opts.y2, side: "right", overlaying: "y" },
@@ -144,11 +144,11 @@
           // text.push(val + " MW");
           if (i == 0) {
             texttemplates.push(
-              "%{label}<br>%{percentParent} of %{parent}<br>%{value}MW"
+              "%{label}<br>%{percentParent:.1%} of %{parent}<br>%{value}MW"
             );
           } else {
             texttemplates.push(
-              "%{label}<br>%{percentParent} of %{parent}<br>%{percentRoot} of NEM<br>%{value}MW"
+              "%{label}<br>%{percentParent} of %{parent}<br>%{percentRoot:.1%} of NEM<br>%{value}MW"  
             );
           }
           break;
@@ -182,9 +182,10 @@
     ];
 
     let layout = {
-      margin: { l: 20, r: 20, b: 20, t: 20 },
+      title: "Market time: 2021-09-24 13:15", //
+      margin: { l: 20, r: 20, b: 20, t: 40 },
       width: 1000,
-      height: 1000,
+      height: 1050,
     };
 
     let config = {
