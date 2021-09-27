@@ -64,14 +64,19 @@
             // console.log(col);
             // console.log(df_filt.toArray(col));
             stacked = stacked || col.endsWith("#"); // any
+            // const seriesName = series_col_name != "!s" ? series_value + " " + col : col; // todo -- need option as to whether we add col to series_value
+            const seriesName = series_col_name != "!s" ? series_value : col; // todo -- for the moment do as in nempy - don't append col so colour lookup works
             const series_type =
-              col.endsWith("_") || col.endsWith("$") ? "scatter" : "bar";
+              col.endsWith("_") || col.endsWith("$") ? "scatter" : "bar"; // lookup in endsWith dictionary
+            const line_type = col.endsWith(".") ? "dot" : "solid";
             traces.push({
-              name: series_col_name != "!s" ? series_value + " " + col : col,
+              name: seriesName,
               x: x,
               y: df_filt.toArray(col),
               type: series_type,
               mode: "lines",
+              line: { dash: line_type },
+              marker: { color: colourFromName(seriesName) },
               yaxis: col.endsWith("$") ? "y2" : "y",
             });
           }
@@ -79,7 +84,10 @@
       }
 
       const layout = {
-        title: charts_col_name == "!c" ? "Market time: 2021-09-24 13:15" : chart_value, // todo: allow opts.title?
+        title:
+          charts_col_name == "!c"
+            ? opts.datetime
+            : chart_value, // todo: allow opts.title?
         xaxis: { title: opts.x },
         yaxis: { title: opts.y1, side: "left" },
         yaxis2: { title: opts.y2, side: "right", overlaying: "y" },
@@ -148,7 +156,7 @@
             );
           } else {
             texttemplates.push(
-              "%{label}<br>%{percentParent} of %{parent}<br>%{percentRoot:.1%} of NEM<br>%{value}MW"  
+              "%{label}<br>%{percentParent} of %{parent}<br>%{percentRoot:.1%} of NEM<br>%{value}MW"
             );
           }
           break;
@@ -182,7 +190,7 @@
     ];
 
     let layout = {
-      title: "Market time: 2021-09-24 13:15", //
+      title: opts.datetime,
       margin: { l: 20, r: 20, b: 20, t: 40 },
       width: 1000,
       height: 1050,
@@ -250,5 +258,38 @@
       link.click();
       document.body.removeChild(link);
     }
+  }
+
+  function colourFromName(n) {
+    const colourMap = {
+      hydro: "#1f77b4", // muted blue				NSW
+      gas: "#ff7f0e", // safety orange			SA
+      // xwind: "#2ca02c", // cooked asparagus green	VIC
+      wind: "#8de5db", // lighter green	VIC
+      "battery storage": "#d62728", // brick red				QLD
+      "liquid fuel": "#9467bd", // muted purple				TAS
+      "brown coal": "#8c564b", // chestnut brown
+      biomass: "#e377c2", // raspberry yogurt pink
+      "black coal": "#7f7f7f", // middle gray
+      solar: "#bcbd22", // curry yellow-green
+      // "xhydro storage": "#17becf", // blue-teal				TAS?
+      "hydro storage": "#62b2e6", // skyish blue
+      "rooftop pv": "#ffbe7f", // corn silk like colour
+      // '#d8696b'  // brick red -- spare
+    };
+    return colourMap[n.toLowerCase()] || stringToColour(n);
+  }
+
+  function stringToColour(str) {
+    let hash = 0;
+    for (let i = 0; i < str.length; i++) {
+      hash = str.charCodeAt(i) + ((hash << 5) - hash);
+    }
+    let colour = "#";
+    for (let i = 0; i < 3; i++) {
+      let value = (hash >> (i * 8)) & 0xff;
+      colour += ("00" + value.toString(16)).substr(-2);
+    }
+    return colour;
   }
 </script>

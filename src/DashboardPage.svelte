@@ -59,12 +59,15 @@
       sqlStmt = sqlStmt.replaceAll(":datetime:", datetime); // maybe this should also quote the datetime string
       console.log(sqlStmt);
       let [opts, result] = await doGetResult(sqlStmt);
+      opts.datetime = datetime;
       results.push({
         sqlID: source.dataset.source, // careful - using data-source here; sql id below -- all must be unique
         opts: opts,
         result: result,
       });
     }
+
+    // todo: remove this near duplication
 
     const sqls = document.querySelectorAll("[id^='sql-']");
     for (let sql of sqls) {
@@ -75,6 +78,7 @@
       sqlStmt = sqlStmt.replaceAll(":datetime:", datetime); // maybe this should also quote the datetime string
       console.log(sqlStmt);
       let [opts, result] = await doGetResult(sqlStmt);
+      opts.datetime = datetime;
       results.push({
         sqlID: sqlID,
         opts: opts,
