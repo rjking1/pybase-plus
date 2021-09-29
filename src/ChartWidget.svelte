@@ -266,20 +266,25 @@
 
   function colourFromName(n) {
     const colourMap = {
-      hydro: "#1f77b4", // muted blue				NSW
-      gas: "#ff7f0e", // safety orange			SA
-      // xwind: "#2ca02c", // cooked asparagus green	VIC
-      wind: "#8de5db", // lighter green	VIC
-      "battery storage": "#d62728", // brick red				QLD
-      "liquid fuel": "#9467bd", // muted purple				TAS
+      hydro: "#1f77b4", // muted blue
+      gas: "#ff7f0e", // safety orange
+      // xwind: "#2ca02c", // cooked asparagus green
+      wind: "#8de5db", // lighter green
+      "battery storage": "#d62728", // brick red
+      "liquid fuel": "#9467bd", // muted purple
       "brown coal": "#8c564b", // chestnut brown
       biomass: "#e377c2", // raspberry yogurt pink
       "black coal": "#7f7f7f", // middle gray
       solar: "#bcbd22", // curry yellow-green
-      // "xhydro storage": "#17becf", // blue-teal				TAS?
+      // "xhydro storage": "#17becf", // blue-teal
       "hydro storage": "#62b2e6", // skyish blue
       "rooftop pv": "#ffbe7f", // corn silk like colour
-      // '#d8696b'  // brick red -- spare
+      // '#d8696b'  // lesser brick red -- spare
+      qld1: "#d62728", // brick red
+      nsw1: "#1f77b4", // muted blue
+      vic1: "#8de5db", // lighter green
+      sa1: "#ff7f0e", // safety orange
+      tas1: "#9467bd", // muted purple
     };
     return colourMap[n.toLowerCase()] || stringToColour(n);
   }
