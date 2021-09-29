@@ -122,6 +122,9 @@
     let ids = [];
     let texttemplates = [];
 
+    opts.rootName = opts.rootName || "NEM";
+    opts.units = opts.units || "MW";
+
     const col_names = Object.keys(data[0]);
     const col_count = col_names.length;
 
@@ -133,7 +136,7 @@
         if (i > 0) {
           par = Object.values(row)[i - 1];
         } else {
-          par = "NEM"; // opts.rootName
+          par = opts.rootName;
         }
         if (lab) {
           if (i > 0) {
@@ -149,26 +152,26 @@
             parents.push(par);
           }
           values.push(val);
-          // text.push(val + " MW");
+          // text.push(val + " " + opts.units);
           if (i == 0) {
             texttemplates.push(
-              "%{label}<br>%{percentParent:.1%} of %{parent}<br>%{value}MW"
+              "%{label}<br>%{percentParent:.1%} of %{parent}<br>%{value} " + opts.units
             );
           } else {
             texttemplates.push(
-              "%{label}<br>%{percentParent} of %{parent}<br>%{percentRoot:.1%} of NEM<br>%{value}MW"
+              "%{label}<br>%{percentParent} of %{parent}<br>%{percentRoot:.1%} of NEM<br>%{value} " + opts.units
             );
           }
           break;
         } else {
           if (i == 0) {
             // then add root with no parent
-            ids.push("NEM"); // opts.rootName
-            labels.push("NEM"); // opts.rootName
+            ids.push(opts.rootName);
+            labels.push(opts.rootName);
             parents.push(""); // root
-            values.push(val + 10); // to avoid rounding summation error
-            // text.push(val + " MW");
-            texttemplates.push("%{label}<br>%{value}MW");
+            values.push(val + 1); // to avoid rounding summation error
+            // text.push(val + " " + opts.units);
+            texttemplates.push("%{label}<br>%{value} " + opts.units);
           }
         }
       }
