@@ -84,10 +84,7 @@
       }
 
       const layout = {
-        title:
-          charts_col_name == "!c"
-            ? opts.datetime
-            : chart_value, // todo: allow opts.title?
+        title: charts_col_name == "!c" ? opts.datetime : chart_value, // todo: allow opts.title?
         xaxis: { title: opts.x },
         yaxis: { title: opts.y1, side: "left" },
         yaxis2: { title: opts.y2, side: "right", overlaying: "y" },
@@ -155,11 +152,15 @@
           // text.push(val + " " + opts.units);
           if (i == 0) {
             texttemplates.push(
-              "%{label}<br>%{percentParent:.1%} of %{parent}<br>%{value} " + opts.units
+              "%{label}<br>%{percentParent:.1%} of %{parent}<br>%{value} " +
+                opts.units
             );
           } else {
             texttemplates.push(
-              "%{label}<br>%{percentParent} of %{parent}<br>%{percentRoot:.1%} of NEM<br>%{value} " + opts.units
+              "%{label}<br>%{percentParent} of %{parent}<br>%{percentRoot:.1%} of " +
+                opts.rootName +
+                "<br>%{value} " +
+                opts.units
             );
           }
           break;
