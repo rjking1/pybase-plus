@@ -89,6 +89,8 @@
         yaxis: { title: opts.y1, side: "left" },
         yaxis2: { title: opts.y2, side: "right", overlaying: "y" },
         barmode: stacked ? "relative" : "group", // todo support opts.barmode
+        width: opts.width || 800,
+        height: opts.height || 850,
       };
 
       let config = {
@@ -193,14 +195,14 @@
       },
     ];
 
-    let layout = {
+    const layout = {
       title: opts.datetime,
       margin: { l: 20, r: 20, b: 20, t: 40 },
-      width: 1000,
-      height: 1050,
+      width: opts.width || 800,
+      height: opts.height || 850,
     };
 
-    let config = {
+    const config = {
       modeBarButtonsToAdd: [
         {
           name: "downloadCsv",

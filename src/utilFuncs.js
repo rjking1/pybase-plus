@@ -7,7 +7,7 @@ export function roundedDateTimeToISO(dt) {
   }
   const ms = 1000 * 60 * 5;
   let roundedDate = new Date(
-    Math.round((dt.getTime() + 1.5 * 60 * 1000) / ms) * ms // push slightly into the future in addition to rounding
+    Math.round((dt.getTime() - 5 * 60 * 1000) / ms) * ms // get time of start of last DI so scada can work -- (old:) push slightly into the future in addition to rounding, was 1.5 * 60 ...)
   );
 
   return abbreviateDate(roundedDate);
