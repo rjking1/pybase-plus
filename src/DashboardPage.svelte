@@ -2,6 +2,7 @@
   import { onMount } from "svelte";
   import {
     doFetch,
+    getLatestDateTimeAsISO,
     isAllowedTo,
     titleCase,
     viewDetail,
@@ -128,7 +129,7 @@
           } else if (widget.id == "Next") {
             datetime = addMinutes(datetime, 5);
           } else if (widget.id == "Now") {
-            datetime = roundedDateTimeToISO();
+            datetime = abbreviateDate(await getLatestDateTimeAsISO($dbN));
           }
           await performQueries();
           await doUpdateAll();

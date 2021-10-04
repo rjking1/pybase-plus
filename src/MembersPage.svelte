@@ -3,6 +3,7 @@
   import Filter from "./Filter.svelte";
   import {
     doFetch,
+    getLatestDateTimeAsISO,
     isAllowedTo,
     titleCase,
     viewDetail,
@@ -11,7 +12,7 @@
   import { dbN, page, permissions, views, emailDetails } from "./Stores.js";
   import { gotoPage, pageDetails } from "./pageStack.js";
   import { clickHook } from "./sortable.js";
-  import { roundedDateTimeToISO } from "./utilFuncs";
+  import { abbreviateDate, roundedDateTimeToISO } from "./utilFuncs";
 
   let p;
   let v;
@@ -41,8 +42,9 @@
     fields.push({ fieldName: "id", visibility: false });
     console.log(fields);
     let sql = v.get_sql.replace("%d", p.id);
-    const datetime = roundedDateTimeToISO();
-    sql = sql.replaceAll(":datetime:", datetime); // maybe this should also quote the datetime string
+    // const datetime = roundedDateTimeToISO();
+    const datetime = abbreviateDate(await getLatestDateTimeAsISO($dbN));
+    sql = sql.replaceAll(":datetime:", datetime); // maybe this should also quote the datetime string -- this seems to leave a trailing colon ?? todo
     console.log(sql);
 
     qresult = await doFetch($dbN, sql);

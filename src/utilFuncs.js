@@ -18,7 +18,7 @@ export function abbreviateDate(roundedDate) {
     .toLocaleString("en-GB", { hour12: false })
     .slice(0, 17)
     .replace(",", "")
-    .replace(/(\d+)\/(\d+)\/(\d+)/, "$3-$2-$1"); // eg "2021-09-10 12:00";
+    .replace(/(\d+)\/(\d+)\/(\d+)/, "$3-$2-$1"); // eg "2021-09-10 12:00"; // todo 17 chars gives a colon on end at time, 16 is too short ??
 }
 
 export function pivotTable(dataframe, values = [], index = [], columns = []) {

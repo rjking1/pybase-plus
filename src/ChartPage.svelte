@@ -2,9 +2,14 @@
   import { onMount } from "svelte";
   import { dbN, page, permissions, views, emailDetails } from "./Stores.js";
   import { gotoPage, pageDetails } from "./pageStack.js";
-  import { doFetch, titleCase, viewDetail } from "../../common/dbutils";
+  import {
+    doFetch,
+    getLatestDateTimeAsISO,
+    titleCase,
+    viewDetail,
+  } from "../../common/dbutils";
   import DataFrame from "dataframe-js";
-  import { roundedDateTimeToISO } from "./utilFuncs.js";
+  import { abbreviateDate, roundedDateTimeToISO } from "./utilFuncs.js";
   import ChartWidget from "./ChartWidget.svelte";
 
   let p;
@@ -49,7 +54,8 @@
     }
 
     console.log(sql);
-    const datetime = roundedDateTimeToISO();
+    // const datetime = roundedDateTimeToISO();
+    const datetime = abbreviateDate(await getLatestDateTimeAsISO($dbN));
     sql = sql.replaceAll(":datetime:", datetime); // maybe this should also quote the datetime string
     console.log(sql);
 
