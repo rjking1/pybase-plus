@@ -303,4 +303,24 @@
     }
     return colour;
   }
+
+  const crypto = require('crypto')
+
+// var txtToHash = "Hello¤World¤";
+// var md5sum = crypto.createHash('md5');
+// md5sum.update(new Buffer(txtToHash, 'binary')); -- new: md5sum.update(new Buffer(txtToHash, 'utf8'));
+// md5val = md5sum.digest('hex');
+
+// def colorhash(s):
+//     h = hashlib.md5(s.encode()).hexdigest()
+//     #print('colorhash({})={}'.format(s,h[:6]))
+//     return '#{}{}{}{}{}{}'.format(h[0],h[0], h[1],h[1], h[-2],h[-2])
+
+// #def colors_from_labels(labels):
+// #    return [color_map.get(x, colorhash(x)) for x in labels]
+
+// def color_from_name(x):
+//     t = x.replace('.', '')
+//     return color_map.get(t, colorhash(t))
+
 </script>
