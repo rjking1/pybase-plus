@@ -304,7 +304,7 @@
     return colour;
   }
 
-  const crypto = require('crypto')
+//  const crypto = require('crypto')
 
 // var txtToHash = "Hello¤World¤";
 // var md5sum = crypto.createHash('md5');
