@@ -29,14 +29,14 @@
     $dbName = urlParams.get("db");
   }
 
-  window.addEventListener('beforeunload', function (e) {
-    if(window.confirm("Exit pybase?")) {
-      // the absence of a returnValue property on the event will guarantee the browser unload happens
-      delete e['returnValue'];
-    } else {
-      e.returnValue = '?';
-    }
-});
+  // window.addEventListener("beforeunload", function (e) {
+  //   if (window.confirm("Exit pybase?")) {
+  //     // the absence of a returnValue property on the event will guarantee the browser unload happens
+  //     delete e["returnValue"];
+  //   } else {
+  //     e.returnValue = "?";
+  //   }
+  // });
 </script>
 
 <svelte:head>
@@ -47,28 +47,30 @@
 
 <!-- =============== HTML =============== -->
 
-<nav>
-  <h1>
-    <span style="text-align:left;">
-      {$society}
-    </span>
-    <span style="float:right; font-size: medium;">
-      {#if $permissions.u_name}
-        DB: {$dbName}<br />{$permissions.u_name}
-      {/if}
-    </span>
-  </h1>
-  <NavButton name="login">Sign in</NavButton>
-  <NavButton name="index">Home</NavButton>
-  <NavButton name="back">Back</NavButton>
-  <!-- <NavButton  name="members">Members</NavButton>
-  <NavButton  name="memberEdit">Member Edit</NavButton> 
-  <NavButton  name="calendar">Calendar</NavButton> 
-  <NavButton  name="email">Email</NavButton> -->
-  {#if $permissions.cap === "D"}
-    <NavButton name="query">Database</NavButton>
-    <NavButton name="dashboard">Dashboard</NavButton>
-  {/if}
+<h1>
+  <span style="text-align:left;">
+    {$society}
+  </span>
+  <span style="float:right; font-size: medium;">
+    {#if $permissions.u_name}
+      DB: {$dbName}<br />{$permissions.u_name}
+    {/if}
+  </span>
+</h1>
+<nav class="xsticky">
+  <div>
+    <NavButton name="login">Sign in</NavButton>
+    <NavButton name="index">Home</NavButton>
+    <NavButton name="back">Back</NavButton>
+    <!-- <NavButton  name="members">Members</NavButton>
+    <NavButton  name="memberEdit">Member Edit</NavButton> 
+    <NavButton  name="calendar">Calendar</NavButton> 
+    <NavButton  name="email">Email</NavButton> -->
+    {#if $permissions.cap === "D"}
+      <NavButton name="query">Database</NavButton>
+      <!-- <NavButton name="dashboard">Dashboard</NavButton> -->
+    {/if}
+  </div>
 </nav>
 
 <main>
@@ -81,18 +83,23 @@
 
 <style>
   main {
-    padding: 10px;
+    padding: 5px;
   }
 
   nav {
-    /* display: flex; */
-    align-items: center;
     background-color: cornflowerblue;
-    padding: 10px;
+    padding: 5px 5px 5px 5px;
+    position: fixed;
+    bottom: 0px;
+    right: 5px;
+    margin: 0px;
   }
 
   h1 {
     color: aliceblue;
     padding-right: 10px;
+    background-color: cornflowerblue;
+    margin: 5px;
   }
+
 </style>

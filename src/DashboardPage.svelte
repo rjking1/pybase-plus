@@ -130,6 +130,14 @@
             datetime = addMinutes(datetime, 5);
           } else if (widget.id == "Now") {
             datetime = abbreviateDate(await getLatestDateTimeAsISO($dbN));
+          } else {
+            // todo use data-action
+            p.viewName = widget.dataset.view;
+            await doGetHTML();
+            await performQueries(); // views and embedded SQL
+            await addWidgetsToHTML();
+            await doUpdateAll();
+            $page = gotoPage("dashboard", widget.dataset.view, p.id);
           }
           await performQueries();
           await doUpdateAll();

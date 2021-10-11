@@ -36,6 +36,7 @@
     border-radius: var(--space);
     height: 38px;
     margin-right: var(--space);
+    margin-bottom: 0px;
     padding: var(--space);
     /* display: none; */
   }
