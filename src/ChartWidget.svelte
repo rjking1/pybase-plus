@@ -67,7 +67,13 @@
             // const seriesName = series_col_name != "!s" ? series_value + " " + col : col; // todo -- need option as to whether we add col to series_value
             const seriesName = series_col_name != "!s" ? series_value : col; // todo -- for the moment do as in nempy - don't append col so colour lookup works
             const series_type =
-              col.endsWith("_") || col.endsWith("$") ? "scatter" : "bar"; // lookup in endsWith dictionary
+              col.endsWith("_") || col.endsWith("$")
+                ? "scatter"
+                : series_value == undefined
+                ? "bar"
+                : series_value.endsWith("_") || series_value.endsWith("$")
+                ? "scatter"
+                : "bar"; // lookup in endsWith dictionary
             const line_type = col.endsWith(".") ? "dot" : "solid";
             traces.push({
               name: seriesName,
@@ -77,7 +83,13 @@
               mode: "lines",
               line: { dash: line_type },
               marker: { color: colourFromName(seriesName) },
-              yaxis: col.endsWith("$") ? "y2" : "y",
+              yaxis: col.endsWith("$")
+                ? "y2"
+                : series_value == undefined
+                ? "y"
+                : series_value.endsWith("$")
+                ? "y2"
+                : "y",
             });
           }
         });
@@ -304,23 +316,22 @@
     return colour;
   }
 
-//  const crypto = require('crypto')
+  //  const crypto = require('crypto')
 
-// var txtToHash = "Hello¤World¤";
-// var md5sum = crypto.createHash('md5');
-// md5sum.update(new Buffer(txtToHash, 'binary')); -- new: md5sum.update(new Buffer(txtToHash, 'utf8'));
-// md5val = md5sum.digest('hex');
+  // var txtToHash = "Hello¤World¤";
+  // var md5sum = crypto.createHash('md5');
+  // md5sum.update(new Buffer(txtToHash, 'binary')); -- new: md5sum.update(new Buffer(txtToHash, 'utf8'));
+  // md5val = md5sum.digest('hex');
 
-// def colorhash(s):
-//     h = hashlib.md5(s.encode()).hexdigest()
-//     #print('colorhash({})={}'.format(s,h[:6]))
-//     return '#{}{}{}{}{}{}'.format(h[0],h[0], h[1],h[1], h[-2],h[-2])
+  // def colorhash(s):
+  //     h = hashlib.md5(s.encode()).hexdigest()
+  //     #print('colorhash({})={}'.format(s,h[:6]))
+  //     return '#{}{}{}{}{}{}'.format(h[0],h[0], h[1],h[1], h[-2],h[-2])
 
-// #def colors_from_labels(labels):
-// #    return [color_map.get(x, colorhash(x)) for x in labels]
+  // #def colors_from_labels(labels):
+  // #    return [color_map.get(x, colorhash(x)) for x in labels]
 
-// def color_from_name(x):
-//     t = x.replace('.', '')
-//     return color_map.get(t, colorhash(t))
-
+  // def color_from_name(x):
+  //     t = x.replace('.', '')
+  //     return color_map.get(t, colorhash(t))
 </script>
