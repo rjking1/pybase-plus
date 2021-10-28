@@ -34,9 +34,9 @@
     --space: 0.5rem;
     background-color: white;
     border-radius: var(--space);
-    height: 38px;
+    height: 40px;
     margin-right: var(--space);
-    margin-bottom: 0px;
+    margin-bottom: 2 px;
     padding: var(--space);
     /* display: none; */
   }

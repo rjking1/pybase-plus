@@ -51,14 +51,7 @@
   <span style="text-align:left;">
     {$society}
   </span>
-  <span style="float:right; font-size: medium;">
-    {#if $permissions.u_name}
-      DB: {$dbName}<br />{$permissions.u_name}
-    {/if}
-  </span>
-</h1>
-<nav class="xsticky">
-  <div>
+  <span style="font-size: medium;">
     <NavButton name="login">Sign in</NavButton>
     <NavButton name="index">Home</NavButton>
     <NavButton name="back">Back</NavButton>
@@ -70,8 +63,13 @@
       <NavButton name="query">Database</NavButton>
       <!-- <NavButton name="dashboard">Dashboard</NavButton> -->
     {/if}
-  </div>
-</nav>
+  </span>
+  <span style="float:right; font-size: medium;">
+    {#if $permissions.u_name}
+      DB: {$dbName}<br />{$permissions.u_name}
+    {/if}
+  </span>
+</h1>
 
 <main>
   <!-- {#if $page == 'memberEdit' }
@@ -84,15 +82,6 @@
 <style>
   main {
     padding: 5px;
-  }
-
-  nav {
-    background-color: cornflowerblue;
-    padding: 5px 5px 5px 5px;
-    position: fixed;
-    bottom: 0px;
-    right: 5px;
-    margin: 0px;
   }
 
   h1 {
