@@ -8,7 +8,7 @@
     viewDetail,
   } from "../../common/dbutils";
   import { gotoPage, pageDetails } from "./pageStack.js";
-  import { dbN, page, permissions, views } from "./Stores.js";
+  import { dbN, page, permissions, views, gOptions } from "./Stores.js";
   import ButtonWidget from "./ButtonWidget.svelte";
   import TextWidget from "./TextWidget.svelte";
   import TableWidget from "./TableWidget.svelte";
@@ -32,17 +32,21 @@
     await doUpdateAll();
   });
 
+  export async function init() {
+    console.log("init called");
+    await doGetHTML();
+    await performQueries(); // views and embedded SQL
+    await addWidgetsToHTML();
+    await doUpdateAll();
+  }
+
   async function doGetHTML() {
     p = pageDetails();
     console.log(p);
     viewName = p.viewName; // 1 of N dashboards (dashboards are just special multi-views)
     v = viewDetail($views, viewName);
     // console.log(v);
-    let res = await doFetch(
-      $dbN,
-      "select datetime from events where id=" + p.id
-    ); // consider passing this in an object of pageDetails - "extras"
-    datetime = res[0].datetime;
+    datetime = $gOptions.datetime;
     html = v.formDesc;
   }
 
@@ -126,21 +130,24 @@
         addButtonWidget("#" + widget.id, widget.id, async () => {
           if (widget.id == "Prev") {
             datetime = addMinutes(datetime, -5);
+            $gOptions.datetime = datetime;
+            await performQueries(); 
+            await doUpdateAll();
           } else if (widget.id == "Next") {
             datetime = addMinutes(datetime, 5);
+            $gOptions.datetime = datetime;
+            await performQueries(); 
+            await doUpdateAll();
           } else if (widget.id == "Now") {
             datetime = abbreviateDate(await getLatestDateTimeAsISO($dbN));
+            $gOptions.datetime = datetime;
+            await performQueries(); 
+            await doUpdateAll();
           } else {
             // todo use data-action
-            p.viewName = widget.dataset.view;
-            await doGetHTML();
-            await performQueries(); // views and embedded SQL
-            await addWidgetsToHTML();
-            await doUpdateAll();
             $page = gotoPage("dashboard", widget.dataset.view, p.id);
+            await init();
           }
-          await performQueries();
-          await doUpdateAll();
         });
       } else if (widgetType == "text") {
         addTextWidget("#" + widget.id);

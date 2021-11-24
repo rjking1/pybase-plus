@@ -11,6 +11,9 @@
   import CalendarPage from "./CalendarPage.svelte";
   import ChartPage from "./ChartPage.svelte";
   import DashboardPage from "./DashboardPage.svelte";
+import { tick } from "svelte";
+
+  let pg;
 
   const pageMap = {
     login: LoginPage,
@@ -37,6 +40,12 @@
   //     e.returnValue = "?";
   //   }
   // });
+
+  async function callback() {
+    console.log("callback");
+    // await tick();
+    await pg.init();
+  }
 </script>
 
 <svelte:head>
@@ -54,7 +63,7 @@
   <span style="font-size: medium;">
     <NavButton name="login">Sign in</NavButton>
     <NavButton name="index">Home</NavButton>
-    <NavButton name="back">Back</NavButton>
+    <NavButton name="back" fn={callback}>Back</NavButton>
     <!-- <NavButton  name="members">Members</NavButton>
     <NavButton  name="memberEdit">Member Edit</NavButton> 
     <NavButton  name="calendar">Calendar</NavButton> 
@@ -72,11 +81,11 @@
 </h1>
 
 <main>
-  <!-- {#if $page == 'memberEdit' }
-    <svelte:component this={ pageMap[$page] } /> 
-  {:else}  -->
+  {#if $page == 'dashboard' }
+    <svelte:component this={ pageMap[$page] } bind:this={pg} /> 
+  {:else}
   <svelte:component this={pageMap[$page]} />
-  <!-- {/if} -->
+  {/if}
 </main>
 
 <style>

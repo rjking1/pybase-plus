@@ -8,13 +8,19 @@
   import { loggedIn, page } from "./Stores.js";
 
   export let name;
+  export let fn;
 
-  function doLoginCheck() {
+  async function doLoginCheck() {
     if ($loggedIn == "false") {
       $page = "login";
     } else if (name == "back") {
       if (canGoBack()) {
         $page = goBack();
+        if($page == "dashboard"){
+          if(fn) {
+            fn()  // initFn -- eventually for all pages
+          }
+        }
       }
     } else if (name == "index") {
       clearPageHistory();

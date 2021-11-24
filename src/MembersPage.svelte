@@ -9,7 +9,7 @@
     viewDetail,
     writeAuditText,
   } from "../../common/dbutils";
-  import { dbN, page, permissions, views, emailDetails } from "./Stores.js";
+  import { dbN, page, permissions, views, emailDetails, gOptions } from "./Stores.js";
   import { gotoPage, pageDetails } from "./pageStack.js";
   import { clickHook } from "./sortable.js";
   import { abbreviateDate, roundedDateTimeToISO } from "./utilFuncs";
@@ -153,8 +153,13 @@
     }
   }
 
-  function editId(anID) {
+  async function editId(anID) {
     if (v.to_view == "dashboard") {
+      let res = await doFetch(
+        $dbN,
+        "select datetime from events where id=" + anID
+      ); 
+      $gOptions.datetime = res[0].datetime;
       $page = gotoPage("dashboard", "dashboard", anID); // pass extra info in an object?
     } else {
       $page = gotoPage("memberEdit", v.to_view, anID); // edit a record doesn't need to pass FK
