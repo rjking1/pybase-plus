@@ -26,14 +26,12 @@
   // const regionNames = ["QLD1", "NSW1", "VIC1", "SA1", "TAS1"];
 
   onMount(async () => {
-    await doGetHTML();
-    await performQueries(); // views and embedded SQL
-    await addWidgetsToHTML();
-    await doUpdateAll();
+    await init();
   });
 
   export async function init() {
     console.log("init called");
+    widgetList = [];
     await doGetHTML();
     await performQueries(); // views and embedded SQL
     await addWidgetsToHTML();
@@ -131,17 +129,17 @@
           if (widget.id == "Prev") {
             datetime = addMinutes(datetime, -5);
             $gOptions.datetime = datetime;
-            await performQueries(); 
+            await performQueries();
             await doUpdateAll();
           } else if (widget.id == "Next") {
             datetime = addMinutes(datetime, 5);
             $gOptions.datetime = datetime;
-            await performQueries(); 
+            await performQueries();
             await doUpdateAll();
           } else if (widget.id == "Now") {
             datetime = abbreviateDate(await getLatestDateTimeAsISO($dbN));
             $gOptions.datetime = datetime;
-            await performQueries(); 
+            await performQueries();
             await doUpdateAll();
           } else {
             // todo use data-action
