@@ -125,7 +125,7 @@
       if (widgetType == "button") {
         // todo: consider having a data-name attribute
         // todo: make these into standard actions
-        addButtonWidget("#" + widget.id, widget.id, async () => {
+        addButtonWidget("#" + widget.id,  widget.dataset.caption, async () => {
           if (widget.id == "Prev") {
             datetime = addMinutes(datetime, -5);
             $gOptions.datetime = datetime;
@@ -152,7 +152,6 @@
       } else if (widgetType == "table") {
         addTableWidget("#" + widget.id); // not efficient to pass across a selector that needs to be found when we have the element
       } else if (widgetType == "chart") {
-        console.log("adding chart #" + widget.id);
         addChartWidget("#" + widget.id);
       }
     }
@@ -200,9 +199,9 @@
           updateTableWidget("#" + widget.id, result); // not efficient to pass across a selector that needs to be found when we have the element
         } else if (widgetType == "chart") {
           console.log("updating chart #" + widget.id);
-          console.log(widget.dataset.subtype);
+          // console.log(widget.dataset.subtype);
           addChartWidget(
-            // this shuould be update but plotly draws into a div I give it and this makes it differnt
+            // this should be update but plotly draws into a div I give it and this makes it differnt
             "#" + widget.id,
             result,
             widget.dataset.subtype,
