@@ -43,7 +43,8 @@
     console.log(fields);
     let sql = v.get_sql.replace("%d", p.id);
     // const datetime = roundedDateTimeToISO();
-    const datetime = abbreviateDate(await getLatestDateTimeAsISO($dbN));
+    // const datetime = abbreviateDate(await getLatestDateTimeAsISO($dbN));
+    const datetime = $gOptions.datetime;
     sql = sql.replaceAll(":datetime:", datetime); // maybe this should also quote the datetime string -- this seems to leave a trailing colon ?? todo
     console.log(sql);
 
@@ -154,12 +155,12 @@
   }
 
   async function editId(anID) {
-    if (v.to_view == "dashboard") {
+    if (v.to_view.startsWith("dashboard")) {
       let res = await doFetch(
         $dbN,
-        "select datetime from events where id=" + anID
+        "select datetime from events where id=" + anID  // todo is this special case still relevant/necessary?
       ); 
-      $gOptions.datetime = res[0].datetime;
+      $gOptions.datetime = res[0].datetime;  // isn't this enough?  NO todo -- generalise
       $page = gotoPage("dashboard", "dashboard", anID); // pass extra info in an object?
     } else {
       $page = gotoPage("memberEdit", v.to_view, anID); // edit a record doesn't need to pass FK

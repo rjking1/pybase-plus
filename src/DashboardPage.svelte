@@ -143,8 +143,16 @@
             await doUpdateAll();
           } else {
             // todo use data-action
-            $page = gotoPage("dashboard", widget.dataset.view, p.id);
-            await init();
+            // console.log(widget.dataset.view);
+            // let vDetail = viewDetail($views, widget.dataset.view);
+            // console.log(vDetail)
+            // if(vDetail.formDesc == "dashboard") {
+            if(widget.dataset.view.startsWith("dashboard")) {
+              $page = gotoPage("dashboard", widget.dataset.view, p.id);
+              await init();
+            } else {
+              $page = gotoPage("members", widget.dataset.view, p.id);
+            }
           }
         });
       } else if (widgetType == "text") {
