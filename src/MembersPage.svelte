@@ -154,16 +154,33 @@
     }
   }
 
-  async function editId(anID) {
+  async function editId(row) {
+    // store row's field name and values
+    Object.keys(row).forEach((colName)=>{
+      $gOptions[colName] = row[colName]
+    })
+    console.log($gOptions);
+
+    // todo: fix this dependency on view starting "dashboard"
+    //todo tidy passing anId now that we have ID in gOptions 
+    let anID = row["ID"];
     if (v.to_view.startsWith("dashboard")) {
-      let res = await doFetch(
-        $dbN,
-        "select datetime from events where id=" + anID  // todo is this special case still relevant/necessary?
-      ); 
-      $gOptions.datetime = res[0].datetime;  // isn't this enough?  NO todo -- generalise
-      $page = gotoPage("dashboard", "dashboard", anID); // pass extra info in an object?
+      // let res = await doFetch(
+      //   $dbN,
+      //   "select datetime from events where id=" + anID  // todo is this special case still relevant/necessary?
+      // ); 
+      // $gOptions.datetime = res[0].datetime;  // isn't this enough?  NO todo -- generalise
+      $page = gotoPage("dashboard", v.to_view, anID); // extra info passed in $gOptions (todo rename)
     } else {
-      $page = gotoPage("memberEdit", v.to_view, anID); // edit a record doesn't need to pass FK
+      let fd = viewDetail($views, v.to_view).formDesc;
+      //todo use a global function to determine what we are going to
+      // see todo in IndexPage.svelte
+      if(!fd) {
+        $page = gotoPage("memberEdit", v.to_view, anID); // edit a record doesn't need to pass FK
+      }
+      if(fd.startsWith("!chart")) {
+        $page = gotoPage("chart", v.to_view, anID); // edit a record doesn't need to pass FK
+      } 
     }
   }
 
@@ -254,7 +271,7 @@
               {#if viewIsEditable}
                 <button
                   class="editrow"
-                  on:click={editId(Object.values(row)[0])}
+                  on:click={editId(row)}
                 >
                   ✎
                 </button>

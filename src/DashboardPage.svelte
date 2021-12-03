@@ -44,7 +44,7 @@
     viewName = p.viewName; // 1 of N dashboards (dashboards are just special multi-views)
     v = viewDetail($views, viewName);
     // console.log(v);
-    datetime = $gOptions.datetime;
+    datetime = $gOptions.datetime; //todo do we need to keep this special case? duid is done below
     html = v.formDesc;
   }
 
@@ -60,6 +60,7 @@
       console.log(source);
       sqlStmt = viewDetail($views, source.dataset.view).get_sql;
       sqlStmt = sqlStmt.replaceAll(":datetime:", datetime); // maybe this should also quote the datetime string
+      sqlStmt = sqlStmt.replaceAll(":duid:", $gOptions.duid); 
       console.log(sqlStmt);
       let [opts, result] = await doGetResult(sqlStmt);
       opts.datetime = datetime;
@@ -151,7 +152,7 @@
               $page = gotoPage("dashboard", widget.dataset.view, p.id);
               await init();
             } else {
-              $page = gotoPage("members", widget.dataset.view, p.id);
+              $page = gotoPage("members", widget.dataset.view, p.id);  // todo: fix this
             }
           }
         });

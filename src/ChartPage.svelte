@@ -1,6 +1,6 @@
 <script>
   import { onMount } from "svelte";
-  import { dbN, page, permissions, views, emailDetails } from "./Stores.js";
+  import { dbN, page, permissions, views, emailDetails, gOptions } from "./Stores.js";
   import { gotoPage, pageDetails } from "./pageStack.js";
   import {
     doFetch,
@@ -8,8 +8,7 @@
     titleCase,
     viewDetail,
   } from "../../common/dbutils";
-  import DataFrame from "dataframe-js";
-  import { abbreviateDate, roundedDateTimeToISO } from "./utilFuncs.js";
+  // import DataFrame from "dataframe-js";
   import ChartWidget from "./ChartWidget.svelte";
 
   let p;
@@ -53,10 +52,10 @@
       sql = sql_text;
     }
 
-    console.log(sql);
-    // const datetime = roundedDateTimeToISO();
-    const datetime = abbreviateDate(await getLatestDateTimeAsISO($dbN));
-    sql = sql.replaceAll(":datetime:", datetime); // maybe this should also quote the datetime string
+    // console.log(sql);
+    const datetime = $gOptions.datetime
+    sql = sql.replaceAll(":datetime:", datetime ); // maybe this should also quote the datetime string
+    sql = sql.replaceAll(":duid:", $gOptions.duid); 
     console.log(sql);
 
     opts.datetime = datetime;

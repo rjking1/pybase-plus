@@ -1,9 +1,10 @@
 <script>
   import { onMount } from "svelte";
 
-  import { doFetch, isAllowedTo, titleCase, viewDetail } from "../../common/dbutils";
+  import { doFetch, getLatestDateTimeAsISO, isAllowedTo, titleCase, viewDetail } from "../../common/dbutils";
   import { gotoPage, pageDetails } from "./pageStack.js";
-  import { dbN, page, permissions, views } from "./Stores.js";
+  import { dbN, page, permissions, views, gOptions } from "./Stores.js";
+  import { abbreviateDate, roundedDateTimeToISO } from "./utilFuncs.js";
 
   let p
   let viewName
@@ -11,6 +12,8 @@
   let links = null;
 
   onMount(async () => {
+    $gOptions.datetime = abbreviateDate(await getLatestDateTimeAsISO($dbN));
+    $gOptions.duid = 'BALDHWF1';  // todo but why not?
     await doGetLinks() 
   });
 
@@ -24,11 +27,13 @@
     links = await doFetch($dbN, sql);
   }
 
+  // be good if this was a global function
   async function viewClick(name, formdesc) {
     switch (formdesc) {
       case "!index":
         $page = gotoPage("index", name, 0);
         await doGetLinks();
+        //todo add an Init function like I've done with dashboards
         break;
       case "!calendar":
         $page = gotoPage("calendar", name, 0);
@@ -42,6 +47,7 @@
         $page = gotoPage("chart", name, 0);
         break;
       default:
+        // todo add test for dashboard -- startsWith("<!DOCTYPE") ....
         $page = gotoPage("members", name, 0);
     }
   }
