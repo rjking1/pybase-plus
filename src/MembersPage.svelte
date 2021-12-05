@@ -175,7 +175,8 @@
       let fd = viewDetail($views, v.to_view).formDesc;
       //todo use a global function to determine what we are going to
       // see todo in IndexPage.svelte
-      if(!fd) {
+      console.log(fd)
+      if(fd === null || fd.length == 0 || fd.startsWith('"')) {  // todo  bug here if formdesc starts !... (delphi stuff)
         $page = gotoPage("memberEdit", v.to_view, anID); // edit a record doesn't need to pass FK
       }
       if(fd.startsWith("!chart")) {
