@@ -15,7 +15,7 @@
       <tr>
         {#each Object.keys(qresult[0]) as column}
           {#if includeField(column)}
-            <th>{titleCase(column)}</th>
+            <th contenteditable="false" bind:innerHTML={column} />
           {/if}
         {/each}
       </tr>
@@ -49,11 +49,16 @@
     border-bottom: 1px solid #cecece;
   }
   table th {
-    padding-left : 5px;
-    padding-right : 5px;
+    padding-left: 5px;
+    padding-right: 5px;
+    background: #5c4dff;
+    color: rgb(255, 255, 255);
+    text-align: center;
+    font-weight: normal;
   }
 
   .cell {
     padding: 5px;
+    text-align: center;
   }
 </style>

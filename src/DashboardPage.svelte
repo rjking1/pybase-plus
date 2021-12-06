@@ -60,7 +60,7 @@
       console.log(source);
       sqlStmt = viewDetail($views, source.dataset.view).get_sql;
       sqlStmt = sqlStmt.replaceAll(":datetime:", datetime); // maybe this should also quote the datetime string
-      sqlStmt = sqlStmt.replaceAll(":duid:", $gOptions.duid); 
+      sqlStmt = sqlStmt.replaceAll(":duid:", $gOptions.duid);
       console.log(sqlStmt);
       let [opts, result] = await doGetResult(sqlStmt);
       opts.datetime = datetime;
@@ -126,7 +126,7 @@
       if (widgetType == "button") {
         // todo: consider having a data-name attribute
         // todo: make these into standard actions
-        addButtonWidget("#" + widget.id,  widget.dataset.caption, async () => {
+        addButtonWidget("#" + widget.id, widget.dataset.caption, async () => {
           if (widget.id == "Prev") {
             datetime = addMinutes(datetime, -5);
             $gOptions.datetime = datetime;
@@ -148,11 +148,11 @@
             // let vDetail = viewDetail($views, widget.dataset.view);
             // console.log(vDetail)
             // if(vDetail.formDesc == "dashboard") {
-            if(widget.dataset.view.startsWith("dashboard")) {
+            if (widget.dataset.view.startsWith("dashboard")) {
               $page = gotoPage("dashboard", widget.dataset.view, p.id);
               await init();
             } else {
-              $page = gotoPage("members", widget.dataset.view, p.id);  // todo: fix this
+              $page = gotoPage("members", widget.dataset.view, p.id); // todo: fix this
             }
           }
         });

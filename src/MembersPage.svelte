@@ -9,7 +9,14 @@
     viewDetail,
     writeAuditText,
   } from "../../common/dbutils";
-  import { dbN, page, permissions, views, emailDetails, gOptions } from "./Stores.js";
+  import {
+    dbN,
+    page,
+    permissions,
+    views,
+    emailDetails,
+    gOptions,
+  } from "./Stores.js";
   import { gotoPage, pageDetails } from "./pageStack.js";
   import { clickHook } from "./sortable.js";
   import { abbreviateDate, roundedDateTimeToISO } from "./utilFuncs";
@@ -156,32 +163,33 @@
 
   async function editId(row) {
     // store row's field name and values
-    Object.keys(row).forEach((colName)=>{
-      $gOptions[colName] = row[colName]
-    })
+    Object.keys(row).forEach((colName) => {
+      $gOptions[colName.toLowerCase()] = row[colName];
+    });
     console.log($gOptions);
 
     // todo: fix this dependency on view starting "dashboard"
-    //todo tidy passing anId now that we have ID in gOptions 
+    //todo tidy passing anId now that we have ID in gOptions
     let anID = row["ID"];
     if (v.to_view.startsWith("dashboard")) {
       // let res = await doFetch(
       //   $dbN,
       //   "select datetime from events where id=" + anID  // todo is this special case still relevant/necessary?
-      // ); 
+      // );
       // $gOptions.datetime = res[0].datetime;  // isn't this enough?  NO todo -- generalise
       $page = gotoPage("dashboard", v.to_view, anID); // extra info passed in $gOptions (todo rename)
     } else {
       let fd = viewDetail($views, v.to_view).formDesc;
       //todo use a global function to determine what we are going to
       // see todo in IndexPage.svelte
-      console.log(fd)
-      if(fd === null || fd.length == 0 || fd.startsWith('"')) {  // todo  bug here if formdesc starts !... (delphi stuff)
+      console.log(fd);
+      if (fd === null || fd.length == 0 || fd.startsWith('"')) {
+        // todo  bug here if formdesc starts !... (delphi stuff)
         $page = gotoPage("memberEdit", v.to_view, anID); // edit a record doesn't need to pass FK
       }
-      if(fd.startsWith("!chart")) {
+      if (fd.startsWith("!chart")) {
         $page = gotoPage("chart", v.to_view, anID); // edit a record doesn't need to pass FK
-      } 
+      }
     }
   }
 
@@ -254,7 +262,12 @@
           </th>
           {#each Object.keys(qresult[0]) as column}
             {#if includeField(column)}
-              <th class="sticky" on:click={clickHook}>{titleCase(column)}</th>
+              <th
+                class="sticky"
+                on:click={clickHook}
+                contenteditable="false"
+                bind:innerHTML={column}
+              />
             {/if}
           {/each}
         </tr>
@@ -270,12 +283,7 @@
                 data-index={index}
               />
               {#if viewIsEditable}
-                <button
-                  class="editrow"
-                  on:click={editId(row)}
-                >
-                  ✎
-                </button>
+                <button class="editrow" on:click={editId(row)}> ✎ </button>
               {/if}
             </td>
             {#each Object.values(row) as cell, index}
@@ -322,10 +330,10 @@
     border-bottom: 1px solid #cecece;
   }
 
-  /* .cell {
-    padding-left: 5px;
-    padding-right: 5px;
-  } */
+  .cell {
+    padding: 5px;
+    text-align: center;
+  }
 
   .sortable {
     border-spacing: 0;
@@ -358,8 +366,8 @@
     color: rgb(255, 255, 255);
     cursor: pointer;
     font-weight: normal;
-    text-align: left;
-    text-transform: capitalize;
+    text-align: center;
+    /* text-transform: capitalize; */
     vertical-align: baseline;
     /* white-space: nowrap; */
   }

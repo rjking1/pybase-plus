@@ -82,7 +82,7 @@
               type: series_type,
               mode: "lines",
               line: { dash: line_type },
-              marker: { color: colourFromName(seriesName) },
+              marker: { color: colourFromName(seriesName, series_type) },
               yaxis: col.endsWith("$")
                 ? "y2"
                 : series_value == undefined
@@ -278,7 +278,7 @@
     }
   }
 
-  function colourFromName(n) {
+  function colourFromName(n, typ) {
     const colourMap = {
       hydro: "#1f77b4", // muted blue
       gas: "#ff7f0e", // safety orange
@@ -300,10 +300,15 @@
       sa1: "#ff7f0e", // safety orange
       tas1: "#9467bd", // muted purple
     };
-    return colourMap[n.toLowerCase()] || stringToColour(n);
+    return colourMap[n.toLowerCase()] || stringToColour(n, typ);
   }
 
-  function stringToColour(str) {
+  // https://stackoverflow.com/questions/5560248/programmatically-lighten-or-darken-a-hex-color-or-rgb-and-blend-colors -- one liner way down
+  function adjustColour(color, amount) {
+    return '#' + color.replace(/^#/, '').replace(/../g, color => ('0'+Math.min(255, Math.max(0, parseInt(color, 16) + amount)).toString(16)).substr(-2));
+  }
+
+  function stringToColour(str, typ) {
     let hash = 0;
     for (let i = 0; i < str.length; i++) {
       hash = str.charCodeAt(i) + ((hash << 5) - hash);
@@ -311,9 +316,18 @@
     let colour = "#";
     for (let i = 0; i < 3; i++) {
       let value = (hash >> (i * 8)) & 0xff;
+      // if(typ=="bar" && value < 0xb0){
+      //   value += 0x10; //  attempt to lighten bar colours
+      // }
+      // if(typ!="bar" && value > 0x10){
+      //   value -= 0x10; //  attempt to darken line colours
+      // }
       colour += ("00" + value.toString(16)).substr(-2);
     }
-    return colour;
+    console.log(colour)
+    colour = adjustColour(colour, typ == "bar" ? 40 : -40);
+    console.log(colour)
+    return colour
   }
 
   //  const crypto = require('crypto')
