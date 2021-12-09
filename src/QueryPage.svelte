@@ -1,19 +1,27 @@
 <script>
-  import { doFetch, doBuRest } from "../../common/dbutils";
+  import {
+    doFetch,
+    doBuRest,
+    doRunpy,
+    writeAuditText,
+  } from "../../common/dbutils";
 
-  import { dbN, dbName } from "./Stores.js";
+  import { dbN, dbName, permissions } from "./Stores.js";
 
   let [db, server_abbrev] = $dbName.split(":");
   let backupToFile = db;
   let backupFromDB = db;
   let restoreToDB = "test";
+  let opts = "";
+  let tables = "";
+  let py_params = "2021 mm dd 12 00 load";
   let sql = "select * from py_logs order by date_time desc limit 50";
   let result = undefined;
   let cmd = "";
 
   async function doBackup() {
     cmd = "Backing up...";
-    await doBuRest($dbN.server, backupFromDB, backupToFile, "b");
+    await doBuRest($dbN.server, backupFromDB, backupToFile, "b", opts, tables);
     cmd = "Backed up";
   }
 
@@ -25,23 +33,40 @@
 
   async function doQuery() {
     result = await doFetch($dbN, sql);
+    writeAuditText(
+      $dbN,
+      $permissions.u_id,
+      $permissions.u_name,
+      "sql query: " + sql
+    );
+  }
+
+  async function doLoadHist() {
+    cmd = "Loading...";
+    await doRunpy(py_params);
+    cmd = "Loaded";
   }
 </script>
 
 database <input id="bu_db" class="short" bind:value={backupFromDB} />
 to file <input id="bu_file" class="short" bind:value={backupToFile} />
+opts<input id="py_params" class="short" bind:value={opts} />
+tables<input id="py_params" class="short" bind:value={tables} />
 <button id="backup" on:click={doBackup}>Backup</button>
 <br />
 file <input id="rest_file" class="short" bind:value={backupToFile} />
 to database <input id="rest_db" class="short" bind:value={restoreToDB} />
 <button id="restore" on:click={doRestore}>Restore</button>
 <hr />
+params<input id="py_params" class="short" bind:value={py_params} />
+<button id="run_py" on:click={doLoadHist}>Load Historical data</button>
+<hr />
 <div id="status">
   <span style="background-color: rgb(251, 243, 199);">{cmd}</span>
 </div>
 <hr />
 SQL<br />
-<textarea id="sql" bind:value={sql} />
+<textarea id="sql" rows="4" bind:value={sql} />
 <button id="query" on:click={doQuery}>Query</button>
 
 {#if result}
@@ -70,7 +95,6 @@ SQL<br />
     width: 60%;
   }
   textarea {
-    width: 90%;
-    height: 20%;
+    width: 100%;
   }
 </style>
