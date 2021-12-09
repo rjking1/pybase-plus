@@ -16,7 +16,8 @@
   let tables = "";
   let py_params = "2021 mm dd 12 00 load";
   let sql = "select * from py_logs order by date_time desc limit 50";
-  let result = undefined;
+  let result;
+  let text_result;
   let cmd = "";
 
   async function doBackup() {
@@ -43,15 +44,15 @@
 
   async function doLoadHist() {
     cmd = "Loading...";
-    await doRunpy($dbN.server, py_params);
+    text_result = await doRunpy($dbN.server, py_params);
     cmd = "Loaded";
   }
 </script>
 
 database <input id="bu_db" class="short" bind:value={backupFromDB} />
 to file <input id="bu_file" class="short" bind:value={backupToFile} />
-opts<input id="py_params" class="short" bind:value={opts} />
-tables<input id="py_params" class="short" bind:value={tables} />
+opts<input id="opts" class="short" bind:value={opts} />
+tables<input id="tables" class="short" bind:value={tables} />
 <button id="backup" on:click={doBackup}>Backup</button>
 <br />
 file <input id="rest_file" class="short" bind:value={backupToFile} />
@@ -68,6 +69,12 @@ params<input id="py_params" class="short" bind:value={py_params} />
 SQL<br />
 <textarea id="sql" rows="4" bind:value={sql} />
 <button id="query" on:click={doQuery}>Query</button>
+
+{#if text_result}
+  <hr />
+  {text_result}
+  <hr />
+{/if}
 
 {#if result}
   <table>
