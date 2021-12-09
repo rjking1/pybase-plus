@@ -43,7 +43,7 @@
 
   async function doLoadHist() {
     cmd = "Loading...";
-    await doRunpy(py_params);
+    await doRunpy($dbN.server, py_params);
     cmd = "Loaded";
   }
 </script>
