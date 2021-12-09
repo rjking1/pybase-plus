@@ -51,15 +51,15 @@
 
 database <input id="bu_db" class="short" bind:value={backupFromDB} />
 to file <input id="bu_file" class="short" bind:value={backupToFile} />
-opts<input id="opts" class="short" bind:value={opts} />
-tables<input id="tables" class="short" bind:value={tables} />
+opts <input id="opts" class="short" bind:value={opts} />
+tables <input id="tables" class="short" bind:value={tables} />
 <button id="backup" on:click={doBackup}>Backup</button>
 <br />
 file <input id="rest_file" class="short" bind:value={backupToFile} />
 to database <input id="rest_db" class="short" bind:value={restoreToDB} />
 <button id="restore" on:click={doRestore}>Restore</button>
 <hr />
-params<input id="py_params" class="short" bind:value={py_params} />
+params <input id="py_params" class="short" bind:value={py_params} />
 <button id="run_py" on:click={doLoadHist}>Load Historical data</button>
 <hr />
 <div id="status">
