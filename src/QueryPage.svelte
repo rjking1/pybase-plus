@@ -3,6 +3,7 @@
     doFetch,
     doBuRest,
     doRunpy,
+    doShellExec,
     writeAuditText,
   } from "../../common/dbutils";
 
@@ -17,7 +18,6 @@
   let py_params = "2021 mm dd 12 00 load";
   let sql = "select * from py_logs order by date_time desc limit 50";
   let result;
-  let text_result;
   let cmd = "";
 
   async function doBackup() {
@@ -28,7 +28,7 @@
 
   async function doRestore() {
     cmd = "Restoring...";
-    cmd = await doBuRest($dbN.server, restoreToDB, backupToFile, "r", "", "");
+    await doBuRest($dbN.server, restoreToDB, backupToFile, "r", "", "");
     cmd = "Restored";
   }
 
@@ -44,8 +44,14 @@
 
   async function doLoadHist() {
     cmd = "Loading...";
-    text_result = await doRunpy($dbN.server, py_params);
+    await doRunpy($dbN.server, py_params);
     cmd = "Loaded";
+  }
+
+  async function shellExec() {
+    cmd = "Running...";
+    await doShellExec($dbN.server, py_params);
+    cmd = "Done";
   }
 </script>
 
@@ -61,20 +67,15 @@ to database <input id="rest_db" class="short" bind:value={restoreToDB} />
 <hr />
 params <input id="py_params" class="short" bind:value={py_params} />
 <button id="run_py" on:click={doLoadHist}>Load Historical data</button>
+<button id="shell_exec" on:click={shellExec}>Shell Exec</button>
 <hr />
 <div id="status">
   <span style="background-color: rgb(251, 243, 199);">{cmd}</span>
 </div>
 <hr />
-SQL<br />
+SQL (on logged in DB)<br />
 <textarea id="sql" rows="4" bind:value={sql} />
 <button id="query" on:click={doQuery}>Query</button>
-
-{#if text_result}
-  <hr />
-  {text_result}
-  <hr />
-{/if}
 
 {#if result}
   <table>
