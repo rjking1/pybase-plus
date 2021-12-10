@@ -28,7 +28,7 @@
 
   async function doRestore() {
     cmd = "Restoring...";
-    cmd = await doBuRest($dbN.server, restoreToDB, backupToFile, "r");
+    cmd = await doBuRest($dbN.server, restoreToDB, backupToFile, "r", "", "");
     cmd = "Restored";
   }
 

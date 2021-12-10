@@ -1,5 +1,5 @@
 <script>
-  import { dbName, society, page, permissions } from "./Stores.js";
+  import { dbName, society, page, permissions, gOptions } from "./Stores.js";
 
   import NavButton from "./NavButton.svelte";
   import LoginPage from "./LoginPage.svelte";
@@ -12,6 +12,7 @@
   import ChartPage from "./ChartPage.svelte";
   import DashboardPage from "./DashboardPage.svelte";
 import { tick } from "svelte";
+import { abbreviateDate, roundedDateTimeToISO } from "./utilFuncs.js";
 
   let pg;
 
@@ -31,6 +32,9 @@ import { tick } from "svelte";
   if (urlParams.has("db")) {
     $dbName = urlParams.get("db");
   }
+  $gOptions.datetime = roundedDateTimeToISO(); // abbreviateDate( await getLatestDateTimeAsISO($dbN));
+  console.log($gOptions.datetime);
+  $gOptions.duid = 'BALDHWF1';  // todo but why not?
 
   // window.addEventListener("beforeunload", function (e) {
   //   if (window.confirm("Exit pybase?")) {

@@ -21,10 +21,9 @@
 
   async function doLogin() {
     $dbName = $dbName.toLowerCase();
-    console.log($dbName);
     let [db, server_abbrev] = $dbName.split(":"); // so for pybase, specify as nem:py
-    console.log(server);
     console.log(db);
+    console.log(server_abbrev);
     if(server_abbrev == "py") {
       server = PYBASE_DSQL_URL;
       dbprefix = PYBASE_DB_PREFIX;

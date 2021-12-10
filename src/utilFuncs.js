@@ -3,11 +3,13 @@ import DataFrame from "dataframe-js";
 export function roundedDateTimeToISO(dt) {
   if (!dt) {
     dt = new Date();
-    console.log(dt);
+    // console.log(dt);
   }
+  // round to 5 minutes
   const ms = 1000 * 60 * 5;
+  const OFFSET = 1000 * 60 * 60; // back to AEST !!!  RUBBISH HACK -- todo fix !!!
   let roundedDate = new Date(
-    Math.round((dt.getTime() - 5 * 60 * 1000) / ms) * ms // get time of start of last DI so scada can work -- (old:) push slightly into the future in addition to rounding, was 1.5 * 60 ...)
+    Math.round((dt.getTime() - OFFSET - 5 * 60 * 1000) / ms) * ms // get time of start of last DI so scada can work -- TODO this needs fixing
   );
 
   return abbreviateDate(roundedDate);

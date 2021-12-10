@@ -1,10 +1,9 @@
 <script>
   import { onMount } from "svelte";
 
-  import { doFetch, getLatestDateTimeAsISO, isAllowedTo, titleCase, viewDetail } from "../../common/dbutils";
+  import { doFetch, isAllowedTo, titleCase, viewDetail } from "../../common/dbutils";
   import { gotoPage, pageDetails } from "./pageStack.js";
-  import { dbN, page, permissions, views, gOptions } from "./Stores.js";
-  import { abbreviateDate, roundedDateTimeToISO } from "./utilFuncs.js";
+  import { dbN, page, permissions, views } from "./Stores.js";
 
   let p
   let viewName
@@ -12,8 +11,6 @@
   let links = null;
 
   onMount(async () => {
-    $gOptions.datetime = abbreviateDate(await getLatestDateTimeAsISO($dbN));
-    $gOptions.duid = 'BALDHWF1';  // todo but why not?
     await doGetLinks() 
   });
 
