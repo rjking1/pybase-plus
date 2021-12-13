@@ -36,9 +36,11 @@
       {db: dbprefix + db, server: server},
       "select u.id, u.user_name, def_capab, exceptions from py_roles r join py_users u on r.id=u.role_id where upper(u.user_name)='" +
         username.toUpperCase() +
-        "' and u.password='" +
+        "' and (u.password='" +
         md5(password) +
-        "'"
+        "' or u.password='" +
+        password +
+        "')"
     );
     if (qresult.length == 0) {
       alert("Invalid user name or password");

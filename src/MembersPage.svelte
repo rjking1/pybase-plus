@@ -118,11 +118,11 @@
         console.log(qresult[index]);
         ids.push(qresult[index]["ID"]);
         names.push(qresult[index]["NAME"]);
-        if (action_type == "email" && qresult[index]["EMAIL"]) {
+        if (action_type == "email" && qresult[index]["Email"]) {
           emails.push({
             no: qresult[index]["No"],
-            name: qresult[index]["NAME"],
-            email: qresult[index]["EMAIL"],
+            name: qresult[index]["Name"],
+            email: qresult[index]["Email"],
           }); // todo: or just push undefined if col does not exist?
         }
       }
