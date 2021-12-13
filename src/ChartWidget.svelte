@@ -116,7 +116,8 @@
         ],
       };
 
-      let plotDiv = document.createElement(div.slice(1) + "-" + chartIndex);
+      let plotDiv = document.createElement('div');
+      plotDiv.setAttribute('id', div.slice(1) + "-" + chartIndex);
       console.log(plotDiv);
       chartContainer.appendChild(plotDiv);
       // let Plot = new
