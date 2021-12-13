@@ -117,7 +117,7 @@
         let index = cbox.getAttribute("data-index");
         console.log(qresult[index]);
         ids.push(qresult[index]["ID"]);
-        names.push(qresult[index]["NAME"]);
+        names.push(qresult[index]["Name"]);
         if (action_type == "email" && qresult[index]["Email"]) {
           emails.push({
             no: qresult[index]["No"],
