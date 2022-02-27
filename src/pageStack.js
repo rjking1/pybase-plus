@@ -4,6 +4,7 @@ let stack = []
 export function gotoPage(pg, viewName, id, fk) { // fk  = parentID
   // eg gotoPage('list', 'All members', 0) 
   // eg gotoPage('record', 'member', 1234) 
+  // history.pushState({ page: pg, viewName: viewName, id: id, fk: fk }, none)
   stack.push({ page: pg, viewName: viewName, id: id, fk: fk })
   return pg
 }

@@ -1,6 +1,7 @@
 <script>
   import { onMount } from "svelte";
   import Filter from "./Filter.svelte";
+  import GotoTopButton from "./GotoTopButton.svelte";
   import {
     doFetch,
     getLatestDateTimeAsISO,
@@ -314,6 +315,7 @@
         {/if}
       {/each}
     {/if}
+    <GotoTopButton />
   {/if}
 </main>
 

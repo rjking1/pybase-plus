@@ -8,7 +8,7 @@
     titleCase,
     viewDetail,
   } from "../../common/dbutils";
-  // import DataFrame from "dataframe-js";
+  import GotoTopButton from "./GotoTopButton.svelte";
   import ChartWidget from "./ChartWidget.svelte";
 
   let p;
@@ -85,3 +85,5 @@
 <h3>{entityName}</h3>
 
 <div id="plotlychart" />
+
+<GotoTopButton/>

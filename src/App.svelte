@@ -11,8 +11,8 @@
   import CalendarPage from "./CalendarPage.svelte";
   import ChartPage from "./ChartPage.svelte";
   import DashboardPage from "./DashboardPage.svelte";
-import { tick } from "svelte";
-import { abbreviateDate, roundedDateTimeToISO } from "./utilFuncs.js";
+  import { tick } from "svelte";
+  import { abbreviateDate, roundedDateTimeToISO } from "./utilFuncs.js";
 
   let pg;
 
@@ -34,7 +34,7 @@ import { abbreviateDate, roundedDateTimeToISO } from "./utilFuncs.js";
   }
   $gOptions.datetime = roundedDateTimeToISO(); // abbreviateDate( await getLatestDateTimeAsISO($dbN));
   console.log($gOptions.datetime);
-  $gOptions.duid = 'BALDHWF1';  // todo but why not?
+  $gOptions.duid = "BALDHWF1"; // todo but why not?
 
   // window.addEventListener("beforeunload", function (e) {
   //   if (window.confirm("Exit pybase?")) {
@@ -85,10 +85,10 @@ import { abbreviateDate, roundedDateTimeToISO } from "./utilFuncs.js";
 </h1>
 
 <main>
-  {#if $page == 'dashboard' }
-    <svelte:component this={ pageMap[$page] } bind:this={pg} /> 
+  {#if $page == "dashboard"}
+    <svelte:component this={pageMap[$page]} bind:this={pg} />
   {:else}
-  <svelte:component this={pageMap[$page]} />
+    <svelte:component this={pageMap[$page]} />
   {/if}
 </main>
 

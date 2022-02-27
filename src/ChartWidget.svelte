@@ -306,7 +306,7 @@
 
   // https://stackoverflow.com/questions/5560248/programmatically-lighten-or-darken-a-hex-color-or-rgb-and-blend-colors -- one liner way down
   function adjustColour(color, amount) {
-    return '#' + color.replace(/^#/, '').replace(/../g, color => ('0'+Math.min(255, Math.max(0, parseInt(color, 16) + amount)).toString(16)).substr(-2));
+    return '#' + color.replace(/^#/, '').replace(/../g, color => ('0'+Math.min(255, Math.max(0, parseInt(color, 16) + amount)).toString(16)).slice(-2)); // need to do something here as well
   }
 
   function stringToColour(str, typ) {
@@ -323,9 +323,9 @@
       // if(typ!="bar" && value > 0x10){
       //   value -= 0x10; //  attempt to darken line colours
       // }
-      colour += ("00" + value.toString(16)).substr(-2);
+      colour += ("00" + value.toString(16)).slice(-2); // was substr(-2)
     }
-    console.log(colour)
+    // console.log(colour)
     colour = adjustColour(colour, typ == "bar" ? 40 : -40);
     console.log(colour)
     return colour
