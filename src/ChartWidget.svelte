@@ -82,7 +82,7 @@
               type: series_type,
               mode: "lines",
               line: { dash: line_type },
-              marker: { color: colourFromName(seriesName, series_type) },
+              marker: { color: opts.colours == "default" ? col_names[0]  : colourFromName(seriesName, series_type) },
               yaxis: col.endsWith("$")
                 ? "y2"
                 : series_value == undefined
