@@ -126,6 +126,92 @@
     }
   }
 
+  if (chartType == "heatmap") {
+    let col_names = Object.keys(data[0]);
+    let df = new DataFrame(data, col_names);
+
+    if (!col_names[0].startsWith("$")) {
+      col_names.splice(0, 0, "!c");
+      // df = df.restructure(col_names);
+      df = df.withColumn("!c");
+    }
+
+    if (!col_names[1].startsWith("_")) {
+      col_names.splice(1, 0, "!s");
+      // df = df.restructure(col_names);
+      df = df.withColumn("!s");
+    }
+
+    // note col_names order is not nec same order as columns in df now
+    console.log(col_names);
+    df.show(5);
+
+    const charts_col_name = col_names[0];
+    const series_col_name = col_names[1];
+    const charts_values = df.distinct(charts_col_name).toArray(charts_col_name);
+    const series_values = df.distinct(series_col_name).toArray(series_col_name);
+
+    // general problem with tables and charts -- they are appending on each "refresh"
+    // need a clear or rebuild page from scratch
+
+    let chartIndex = 0;
+    for (const chart_value of charts_values) {
+      let rows = [];
+
+      // for (const series_value of series_values) {  // y on heatmap
+        // console.log(series_value);
+      let df_filt = df.filter(
+        (row) => row.get(charts_col_name) == chart_value
+      );
+
+      // df_filt = df_filt.filter(
+      //   (row) => row.get(series_col_name) == series_value
+      // ); // combine into 1 using .chain or .filter({charts_col_name: chart_value, series_col_name: series_value})
+
+      df_filt.map(row => {
+        rows.push(row.toArray().slice(3))          
+      });
+
+      // console.log(rows);
+
+      const data = [
+        {
+          z: rows, // [[1, null, 30, 50, 1], [20, 1, 60, 80, 30], [30, 60, 1, -10, 20]],
+          y: df_filt.toArray(col_names[2]),
+          x: col_names.slice(3),
+          type: 'heatmap',
+          hoverongaps: false
+        }
+      ];
+
+      const layout = {
+        title: charts_col_name == "!c" ? opts.datetime : chart_value, // todo: allow opts.title?
+        width: opts.width || 800,
+        height: opts.height || 850,
+      };
+
+      let config = {
+        modeBarButtonsToAdd: [
+          {
+            name: "downloadCsv",
+            title: "Download data as csv",
+            icon: Plotly.Icons.disk,
+            click: saveChartToCSV,
+          },
+        ],
+      };
+
+      let plotDiv = document.createElement('div');
+      plotDiv.setAttribute('id', div.slice(1) + "-" + chartIndex);
+      console.log(plotDiv);
+      chartContainer.appendChild(plotDiv);
+      // let Plot = new
+      Plotly.react(plotDiv, data, layout, config);
+      chartIndex++;
+    }
+  }
+
+
   if (chartType == "treemap" || chartType == "sunburst") {
     let parents = [];
     let labels = [];
