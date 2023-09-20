@@ -1,22 +1,27 @@
 <script>
   import { onMount } from "svelte";
 
-  import { doFetch, isAllowedTo, titleCase, viewDetail } from "../../common/dbutils";
+  import {
+    doFetch,
+    isAllowedTo,
+    titleCase,
+    viewDetail,
+  } from "../../common/dbutils";
   import { gotoPage, pageDetails } from "./pageStack.js";
   import { dbN, page, permissions, views } from "./Stores.js";
 
-  let p
-  let viewName
-  let v
+  let p;
+  let viewName;
+  let v;
   let links = null;
 
   onMount(async () => {
-    await doGetLinks() 
+    await doGetLinks();
   });
 
   async function doGetLinks() {
     p = pageDetails();
-    viewName = p.viewName;  // "index" first time
+    viewName = p.viewName; // "index" first time
     v = viewDetail($views, viewName);
     console.log(v);
 
@@ -26,26 +31,31 @@
 
   // be good if this was a global function
   async function viewClick(name, formdesc) {
-    switch (formdesc) {
-      case "!index":
-        $page = gotoPage("index", name, 0);
-        await doGetLinks();
-        //todo add an Init function like I've done with dashboards
-        break;
-      case "!calendar":
-        $page = gotoPage("calendar", name, 0);
-        break;
-      case "!chart bar":
-      case "!chart dots":
-      case "!chart heatmap":
-      case "!chart treemap":
-      case "!chart sunburst":
-      case "!chart pie":
-        $page = gotoPage("chart", name, 0);
-        break;
-      default:
-        // todo add test for dashboard -- startsWith("<!DOCTYPE") ....
-        $page = gotoPage("members", name, 0);
+    if (formdesc === null || formdesc.trim() === "") {
+      $page = gotoPage("members", name, 0);
+    } else if (formdesc.startsWith("<!DOCTYPE")) {
+      $page = gotoPage("dashboard", name, 0);
+    } else {
+      switch (formdesc) {
+        case "!index":
+          $page = gotoPage("index", name, 0);
+          await doGetLinks();
+          //todo add an Init function like I've done with dashboards
+          break;
+        case "!calendar":
+          $page = gotoPage("calendar", name, 0);
+          break;
+        case "!chart bar":
+        case "!chart dots":
+        case "!chart heatmap":
+        case "!chart treemap":
+        case "!chart sunburst":
+        case "!chart pie":
+          $page = gotoPage("chart", name, 0);
+          break;
+        default:
+          console.error("unknown form desc", formdesc)
+      }
     }
   }
 </script>
@@ -54,9 +64,7 @@
   {#if links}
     {#each links as view}
       {#if isAllowedTo($permissions, view.name) && !view.name.startsWith("py_")}
-        <button
-          on:click={viewClick(view.name, view.formdesc)}
-        >
+        <button on:click={viewClick(view.name, view.formdesc)}>
           ▸ {view.name}</button
         >
         <br />
@@ -64,9 +72,7 @@
     {/each}
     {#each links as view}
       {#if isAllowedTo($permissions, view.name) && view.name.startsWith("py_")}
-        <button
-          on:click={viewClick(view.name, view.formdesc)}
-        >
+        <button on:click={viewClick(view.name, view.formdesc)}>
           ▸ {view.name}</button
         >
         <br />
@@ -76,5 +82,4 @@
 </main>
 
 <style>
-
 </style>

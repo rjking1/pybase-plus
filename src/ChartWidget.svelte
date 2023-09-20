@@ -82,7 +82,12 @@
               type: series_type,
               mode: "lines",
               line: { dash: line_type },
-              marker: { color: opts.colours == "default" ? col_names[0]  : colourFromName(seriesName, series_type) },
+              marker: {
+                color:
+                  opts.colours == "default"
+                    ? col_names[0]
+                    : colourFromName(seriesName, series_type),
+              },
               yaxis: col.endsWith("$")
                 ? "y2"
                 : series_value == undefined
@@ -98,12 +103,25 @@
       const layout = {
         title: charts_col_name == "!c" ? opts.datetime : chart_value, // todo: allow opts.title?
         xaxis: { title: opts.x },
-        yaxis: { title: opts.y1, side: "left" },
-        yaxis2: { title: opts.y2, side: "right", overlaying: "y" },
+        yaxis: { title: opts.y1, side: "left", rangemode: opts.rangemode },
+        yaxis2: { title: opts.y2, side: "right", overlaying: "y", rangemode: opts.rangemode },
         barmode: stacked ? "relative" : "group", // todo support opts.barmode
         width: opts.width || 800,
         height: opts.height || 850,
+        shapes: [],
       };
+
+      if (opts.vline === "now") {
+        layout.shapes.push({
+          type: "line",
+          x0: Date.now(),
+          x1: Date.now(),
+          y0: 0,
+          y1: 1,
+          yref: "paper",
+          line: { color: "red", dash: "dot" },
+        });
+      }
 
       let config = {
         modeBarButtonsToAdd: [
@@ -116,8 +134,8 @@
         ],
       };
 
-      let plotDiv = document.createElement('div');
-      plotDiv.setAttribute('id', div.slice(1) + "-" + chartIndex);
+      let plotDiv = document.createElement("div");
+      plotDiv.setAttribute("id", div.slice(1) + "-" + chartIndex);
       console.log(plotDiv);
       chartContainer.appendChild(plotDiv);
       // let Plot = new
@@ -159,17 +177,15 @@
       let rows = [];
 
       // for (const series_value of series_values) {  // y on heatmap
-        // console.log(series_value);
-      let df_filt = df.filter(
-        (row) => row.get(charts_col_name) == chart_value
-      );
+      // console.log(series_value);
+      let df_filt = df.filter((row) => row.get(charts_col_name) == chart_value);
 
       // df_filt = df_filt.filter(
       //   (row) => row.get(series_col_name) == series_value
       // ); // combine into 1 using .chain or .filter({charts_col_name: chart_value, series_col_name: series_value})
 
-      df_filt.map(row => {
-        rows.push(row.toArray().slice(3))          
+      df_filt.map((row) => {
+        rows.push(row.toArray().slice(3));
       });
 
       // console.log(rows);
@@ -179,15 +195,16 @@
           z: rows, // [[1, null, 30, 50, 1], [20, 1, 60, 80, 30], [30, 60, 1, -10, 20]],
           y: df_filt.toArray(col_names[2]),
           x: col_names.slice(3),
-          type: 'heatmap',
-          hoverongaps: false
-        }
+          type: "heatmap",
+          hoverongaps: false,
+        },
       ];
 
       const layout = {
         title: charts_col_name == "!c" ? opts.datetime : chart_value, // todo: allow opts.title?
         width: opts.width || 800,
         height: opts.height || 850,
+        margin: { l: 250 },
       };
 
       let config = {
@@ -201,8 +218,8 @@
         ],
       };
 
-      let plotDiv = document.createElement('div');
-      plotDiv.setAttribute('id', div.slice(1) + "-" + chartIndex);
+      let plotDiv = document.createElement("div");
+      plotDiv.setAttribute("id", div.slice(1) + "-" + chartIndex);
       console.log(plotDiv);
       chartContainer.appendChild(plotDiv);
       // let Plot = new
@@ -210,7 +227,6 @@
       chartIndex++;
     }
   }
-
 
   if (chartType == "treemap" || chartType == "sunburst") {
     let parents = [];
@@ -392,7 +408,19 @@
 
   // https://stackoverflow.com/questions/5560248/programmatically-lighten-or-darken-a-hex-color-or-rgb-and-blend-colors -- one liner way down
   function adjustColour(color, amount) {
-    return '#' + color.replace(/^#/, '').replace(/../g, color => ('0'+Math.min(255, Math.max(0, parseInt(color, 16) + amount)).toString(16)).slice(-2)); // need to do something here as well
+    return (
+      "#" +
+      color
+        .replace(/^#/, "")
+        .replace(/../g, (color) =>
+          (
+            "0" +
+            Math.min(255, Math.max(0, parseInt(color, 16) + amount)).toString(
+              16
+            )
+          ).slice(-2)
+        )
+    ); // need to do something here as well
   }
 
   function stringToColour(str, typ) {
@@ -413,8 +441,8 @@
     }
     // console.log(colour)
     colour = adjustColour(colour, typ == "bar" ? 40 : -40);
-    console.log(colour)
-    return colour
+    console.log(colour);
+    return colour;
   }
 
   //  const crypto = require('crypto')

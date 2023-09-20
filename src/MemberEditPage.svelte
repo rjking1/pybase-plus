@@ -1,6 +1,11 @@
 <script>
   import { onMount } from "svelte";
-  import { doFetch, isAllowedTo, titleCase, viewDetail } from "../../common/dbutils";
+  import {
+    doFetch,
+    isAllowedTo,
+    titleCase,
+    viewDetail,
+  } from "../../common/dbutils";
   import { goBack, gotoPage, pageDetails } from "./pageStack.js";
   import { dbN, page, permissions, views } from "./Stores.js";
   // https://github.com/fuzzthink/cl-editor
@@ -165,7 +170,15 @@
 
   function subviewClick(link) {
     console.log(link);
-    $page = gotoPage("members", link, p.id);
+    const v = viewDetail($views, link);
+    console.log(v);
+    //another case of needing a fn to handle how to jump
+    // this is broken if jumping to receipts from a member record -- why???
+    if (v.formDesc?.startsWith("!chart")) {
+      $page = gotoPage("chart", link, p.id);
+    } else {
+      $page = gotoPage("members", link, p.id);
+    }
   }
 
   function includeField(columnName) {

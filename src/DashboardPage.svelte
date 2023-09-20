@@ -107,6 +107,7 @@
 
   async function addWidgetsToHTML() {
     // known widgets not marked as widgets -- no datasource or sql --can detect as datasource is undefined at line 108
+    // why does a dashboard need to have this?
     addTextWidget("#market_time", "Market time: " + datetime); // can write to a widget directly if we know it is there -- do not mark as a "widget" !!
 
     // todo: make above a friendly time
@@ -239,6 +240,8 @@
 
   function addTextWidget(s, v) {
     // can allow an init txt string
+    console.log(s)
+    console.log(v)
     widgetList.push({
       sel: s,
       wgt: new TextWidget({
