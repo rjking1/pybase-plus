@@ -68,7 +68,7 @@
     <NavButton name="login">Sign in</NavButton>
     <NavButton name="index">Home</NavButton>
     <NavButton name="back" fn={callback}>Back</NavButton>
-    <NavButton name="refresh">Refresh</NavButton>
+    <!-- <NavButton name="refresh">Refresh</NavButton> -->
     <!-- <NavButton  name="members">Members</NavButton>
     <NavButton  name="memberEdit">Member Edit</NavButton> 
     <NavButton  name="calendar">Calendar</NavButton> 

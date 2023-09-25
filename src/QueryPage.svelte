@@ -15,7 +15,7 @@
   let restoreToDB = "test";
   let opts = "";
   let tables = "";
-  let py_params = "2021 mm dd 12 00 load";
+  let py_params = "2023 09 15 12 00 16 12 00 agg|load pybaseco_nem"; 
   let sql = "select * from py_logs order by date_time desc limit 50";
   let result;
   let cmd = "";

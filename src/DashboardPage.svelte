@@ -128,7 +128,10 @@
         // todo: consider having a data-name attribute
         // todo: make these into standard actions
         addButtonWidget("#" + widget.id, widget.dataset.caption, async () => {
-          if (widget.id == "Prev") {
+          if (widget.id == "Refresh") {
+            await performQueries();
+            await doUpdateAll();
+          } else if (widget.id == "Prev") {
             datetime = addMinutes(datetime, -5);
             $gOptions.datetime = datetime;
             await performQueries();

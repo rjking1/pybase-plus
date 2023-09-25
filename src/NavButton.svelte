@@ -22,11 +22,6 @@
           }
         }
       }
-    } else if (name == "refresh") {
-      const oldPage =$page;
-      $page = "home";
-      $page = oldPage;
-      // location.reload();
     } else if (name == "index") {
       clearPageHistory();
       $page = gotoPage("index", "index");
