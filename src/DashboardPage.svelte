@@ -2,6 +2,7 @@
   import { onMount } from "svelte";
   import {
     doFetch,
+    doShellExec,
     getLatestDateTimeAsISO,
     isAllowedTo,
     titleCase,
@@ -144,6 +145,12 @@
           } else if (widget.id == "Now") {
             datetime = abbreviateDate(await getLatestDateTimeAsISO($dbN));
             $gOptions.datetime = datetime;
+            await performQueries();
+            await doUpdateAll();
+          } else if (widget.id == "ServerCmd") {
+              console.info(`Running: ${widget.dataset.cmd}...`);
+              await doShellExec($dbN.server, widget.dataset.cmd);
+              console.info(`done`);
             await performQueries();
             await doUpdateAll();
           } else {
