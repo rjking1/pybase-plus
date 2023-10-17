@@ -2,6 +2,7 @@
   import { onMount } from "svelte";
   import {
     doFetch,
+    doRunpy,
     doShellExec,
     getLatestDateTimeAsISO,
     isAllowedTo,
@@ -147,13 +148,15 @@
             $gOptions.datetime = datetime;
             await performQueries();
             await doUpdateAll();
-          } else if (widget.id == "ServerCmd") {
-              console.info(`Running: ${widget.dataset.cmd}...`);
-              await doShellExec($dbN.server, widget.dataset.cmd);
-              console.info(`done`);
+          } else if (widget.dataset.action == "RunPy") {                   // all above .id to become .dataset.action
+            console.info(`Running: ${widget.dataset.cmd}...`);
+            // await doShellExec($dbN.server, widget.dataset.cmd);
+            await doRunpy($dbN.server, widget.dataset.cmd, "");
+            console.info(`done`);
             await performQueries();
             await doUpdateAll();
           } else {
+            // fix this -- dont have a default action -- else error !!
             // todo use data-action
             // console.log(widget.dataset.view);
             // let vDetail = viewDetail($views, widget.dataset.view);
@@ -209,11 +212,12 @@
         let result = results.find((r) => r.sqlID == dataSource)?.result;
         let opts = results.find((r) => r.sqlID == dataSource)?.opts;
         if (widgetType == "text") {
-          // in my example the sql result has key and value columns
-          // keys <-> id
+          // in my example the sql result has key and value columns-- no longer
+          // now we lookup data-rowid in the rows and return data-col value
+          // console.log(lookup2(result, widget.dataset.rowid, widget.dataset.col))
           updateTextWidget(
             "#" + widget.id,
-            widget.id + ": " + lookup(result, widget.id)
+            widget.dataset.label + ": " + lookup2(result, widget.dataset.rowid, widget.dataset.col)
           );
         } else if (widgetType == "table") {
           updateTableWidget("#" + widget.id, result); // not efficient to pass across a selector that needs to be found when we have the element
@@ -233,9 +237,16 @@
   }
 
   function lookup(rows, key) {
-    console.log(rows);
-    console.log(key);
+    // console.log(rows);
+    // console.log(key);
     return rows.find((row) => row.key === key)["value"];
+  }
+
+  function lookup2(rows, row_id, col_name) {
+    // console.log(rows);
+    // console.log(row_id);
+    // console.log(col_name);
+    return rows.find((row) => row.id === row_id)[col_name];
   }
 
   function addButtonWidget(s, c, fn) {

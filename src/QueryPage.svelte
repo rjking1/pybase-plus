@@ -44,7 +44,7 @@
 
   async function doLoadHist() {
     cmd = "Loading...";
-    await doRunpy($dbN.server, py_params);
+    await doRunpy($dbN.server, "/home2/pybaseco/public_html/nempy/aemo_hist_loader.py", py_params);
     cmd = "Loaded";
   }
 
