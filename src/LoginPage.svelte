@@ -1,5 +1,5 @@
 <script>
-  import { doFetch, writeAuditText } from "../../common/dbutils";
+  import { doFetch, doInternalLogin, writeAuditText } from "../../common/dbutils";
   import { gotoPage } from "./pageStack.js";
   import {
     society,
@@ -17,6 +17,7 @@
   let dbprefix;
   let username = "";
   let password = "";
+  let token = "";
   let qresult;
 
   async function doLogin() {
@@ -32,8 +33,19 @@
       dbprefix = ART7_DB_PREFIX;
     }
 
+    // console.log("about to login..", username, password); 
+    qresult = await doInternalLogin(
+      {
+        db: dbprefix + db, 
+        server: server, 
+        up: md5(username.toUpperCase() + md5(password) + "up"),
+      }
+    );
+    token = qresult[0]['token'];
+    console.log("token=", token);
+
     qresult = await doFetch(
-      {db: dbprefix + db, server: server},
+      {db: dbprefix + db, server: server, token: token},
       "select u.id, u.user_name, def_capab, exceptions from py_roles r join py_users u on r.id=u.role_id where upper(u.user_name)='" +
         username.toUpperCase() +
         "' and (u.password='" +
@@ -52,8 +64,9 @@
         u_name: qresult[0]["user_name"],
         cap: qresult[0]["def_capab"],
         ex: qresult[0]["exceptions"],
+        token: token,
       };
-      $dbN = {db: dbprefix + db, server: server};
+      $dbN = {db: dbprefix + db, server: server, token: token};
       $loggedIn = "true";
 
       qresult = await doFetch(
