@@ -1,4 +1,6 @@
 <script>
+  let count;
+
   function doSearch() {
     // Declare variables
     // var input, filter, table, tr, td, i, txtValue;
@@ -7,6 +9,8 @@
 
     const table = document.getElementsByClassName("filterable");
     const rows = table[0].getElementsByTagName("tr"); // todo: first table ??!!
+
+    count = 0;
 
     // Loop through all table rows, and hide those who don't match the search query
     for (let i = 1; i < rows.length; i++) {
@@ -24,6 +28,7 @@
       }
       if (keep) {
         row.style.display = "";
+        count += 1;
       } else {
         row.style.display = "none"; // visibility = "collapse" no better for alt colours
       }
@@ -36,3 +41,6 @@
   type="search"
   on:input={doSearch}
 />
+{#if count}
+&nbsp;&nbsp;&nbsp;Matching records: {count}
+{/if}
