@@ -171,7 +171,7 @@
 
     // todo: fix this dependency on view starting "dashboard"
     //todo tidy passing anId now that we have ID in gOptions
-    let anID = row["ID"] || row["id "];  // need to fix this case issue with ID -- fixes receipt editing 27.1.25
+    let anID = row["ID"] || row["id"];  // need to fix this case issue with ID -- fixes receipt editing 27.1.25
     if (v.to_view.startsWith("dashboard")) {
       // let res = await doFetch(
       //   $dbN,
