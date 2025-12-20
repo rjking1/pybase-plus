@@ -48,6 +48,8 @@
     // console.log(v);
     datetime = $gOptions.datetime; //todo do we need to keep this special case? duid is done below
     html = v.formDesc;
+    // apply any 'fixes'
+    html = html.replaceAll(':random:', Math.trunc(Math.random()*1000000))
   }
 
   async function performQueries() {
